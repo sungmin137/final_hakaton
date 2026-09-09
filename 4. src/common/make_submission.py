@@ -37,6 +37,7 @@ def main() -> None:
     ap.add_argument("--tag", default=None, help="파일명 태그 (기본: <src 모듈>_<버전>[_class_scale]_<YYYYMMDD-HHMM>)")
     ap.add_argument("--approach3-blend", default=None, metavar="WD,WB[,WC]",
                     help="접근 3: driver/burden(/cat) 전문가를 train 전체로 학습해 test 확률을 로그 가중 블렌딩 (v2: 0.5,0.2 / v3: 0.5,0.2,0.4)")
+    ap.add_argument("--drop-genes", default=None, metavar="FILE", help="제거할 유전자 열 목록 파일 (결측 분석 결과)")
     ap.add_argument("--class-scale", default=None, metavar="OOF_DIR",
                     help="정직 CV OOF 디렉토리(6. experiments/…_grp). 그 OOF와 train 라벨로 클래스 배율을 맞춰 test 확률에 곱함")
     a = ap.parse_args()
@@ -55,7 +56,8 @@ def main() -> None:
     t0 = time.time()
     train = load_train()
     le = LabelEncoder(); y = le.fit_transform(train[TARGET])
-    fm = FeatureMaker(a.features).fit(train)
+    drop = [l.strip() for l in open(ROOT / a.drop_genes) if l.strip()] if a.drop_genes else None
+    fm = FeatureMaker(a.features, drop).fit(train)
     model = xgb.XGBClassifier(**params).fit(fm.transform(train), y,
                                             sample_weight=class_weights(y) if a.balanced else None)
     print(f"[train] {train.shape} → 피처 {len(fm.columns)}개, 학습 {time.time()-t0:.0f}s")
