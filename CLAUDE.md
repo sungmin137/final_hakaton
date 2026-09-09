@@ -13,6 +13,12 @@
 - 재사용 코드는 `src/`에, 탐색은 `notebooks/`에. 노트북 → src 승격 시 함수화.
 - Python: `uv` 사용. 시스템 python3.14 + 기존 설치 패키지 사용 가능(pandas/sklearn/lgbm/xgb/catboost/optuna 확인됨).
 
+## 메인 파이프라인
+- 공식 베이스라인(`notebooks/00_official_baseline_xgb.ipynb`, XGBoost)의 5단계 구조를 따른다: Load → Preprocessing → Train → Inference → Submission.
+- 구현체는 `src/main.py` (스크립트) 와 `notebooks/main.ipynb` (동일 로직을 셀로 나눈 것). 로직은 src에만 두고 노트북은 호출만 한다.
+- 피처는 `src/features.py` + `FeatureMaker(kind)`. 새 피처 버전은 kind를 추가(v2, v3…)하고 `--features`로 선택.
+- 실행: `PYTHONPATH=src python3 src/main.py --features v1 --cv [--submit]`. `--submit`이 test.csv를 읽는 유일한 경로.
+
 ## 스타일
 - 응답은 한국어. 코드 주석은 간결하게.
 - 결과 보고 시 CV 점수 표와 다음 실험 후보를 함께 제시.
