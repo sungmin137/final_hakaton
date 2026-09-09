@@ -1,4 +1,4 @@
-# 클래스 비교 (Class Compare) — 암종별로 다른 접근을 쓰는 방법
+# 각 클래스 특징별 비교 (Class Feature Compare) — 암종마다 특징에 맞는 접근을 쓰는 방법
 
 > 아이디어(성민, 2026-09-09): 시각화에서 본 대로 암종마다 신호의 성격이 다르다.
 > driver 표지가 강한 암종은 driver로, 변이가 많은 암종은 변이 개수로 접근하자.
@@ -6,7 +6,7 @@
 ## 버전
 | 버전 | 구성 | 정직 CV Macro F1 | 비고 |
 |---|---|---|---|
-| v1 | 전문가 3개(driver / burden / full) + 로지스틱 회귀 스태킹 | (실행 중) | `src/class_compare_v1.py`, 산출물 `experiments/class_compare_v1/` |
+| v1 | 전문가 3개(driver / burden / full) + 로지스틱 회귀 스태킹 | (실행 중) | `src/class_feature_compare_v1.py`, 산출물 `experiments/class_feature_compare_v1/` |
 
 ## v1 설계
 | 전문가 | 피처 | 역할 |
