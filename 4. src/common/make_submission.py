@@ -45,7 +45,7 @@ def main() -> None:
     # 파일명 규칙: 어느 src 모듈(접근법)에서 나온 결과인지 + 버전 + 옵션 + 제작 시각
     MODULE = {"official": "main_official", "v1": "features_v1", "v2": "approach1_count_weight_v2",
               "v3": "features_v3", "v4": "approach2_knowledge_v4"}
-    tag = MODULE[a.features]
+    tag = MODULE.get(a.features, f"features_{a.features}")
     if a.approach3_blend:
         tag = "approach3_class_feature_compare_" + ("v3" if len(a.approach3_blend.split(",")) > 2 else "v2")
     tag += ("" if a.params == "official" else f"_{a.params}") + ("_balanced" if a.balanced else "")
