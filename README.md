@@ -24,11 +24,5 @@ PYTHONPATH=src/common python3 src/common/main.py --features v4 --cv --group-twin
 python3 src/approach2_v2_20260909_1653.py                  # 제출 재현 → submissions/approach2_v2_20260909_1653.csv
 ```
 
-## 현재 성적 (정직 CV = 쌍둥이를 같은 fold에 묶은 5-Fold)
-| 제출 | 파일 | 정직 CV Macro F1 | 리더보드 |
-|---|---|---|---|
-| 접근1 v2 | approach1_v2_20260909_1442 | 0.4486 | 0.41 |
-| **접근2 v2** | approach2_v2_20260909_1653 | 0.4691 (+배율 0.012) | **0.43** |
-| 접근3 v3 | approach3_v3_20260909_1807 | 약 0.49 | 0.417 |
-
-CV 개선이 리더보드로 거의 옮겨지지 않는다 — test는 변이 31~100개 구간이 train의 2.4배(docs/08). 상세는 `team/approaches/`.
+## 성적·제출 기록
+제출 색인과 리더보드 점수는 `submissions/README.md`, 실험 기록은 `docs/experiments_log.md`, 접근법별 상세는 `team/approaches/`.

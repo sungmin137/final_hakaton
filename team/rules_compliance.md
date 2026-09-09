@@ -1,14 +1,6 @@
-# 대회 규칙 및 준수 체크리스트 (2026-09-09 규칙 수령)
+# 대회 규칙 준수 체크리스트
 
-## 규칙 원문 요약
-| 항목 | 내용 |
-|---|---|
-| 평가 | **Macro F1**. Public = test 100% (리더보드 점수가 곧 최종) |
-| 참여 | 개인/팀 |
-| 외부 데이터 | **사용 불가** |
-| 사전 학습 모델 | 사용 가능 |
-| 제출 | 1일 최대 4회 |
-| Data Leakage (수상 제외) | test를 학습에 활용. 예: test로 label/one-hot 인코딩 fit, test로 스케일링, test에 get_dummies, **test 통계값으로 test 결측 처리**, 그 외 test가 학습에 쓰이는 모든 경우 |
+규칙 원문은 `info/README.md`, 팀 결정은 `decisions.md`.
 
 ## 코드 준수 점검 (sungmin 브랜치, 2026-09-09 기준)
 | 규칙 | 우리 코드 | 근거 위치 | 판정 |
@@ -23,13 +15,6 @@
 | 쌍둥이 규칙(`--twin-rule`) | train 행과 test 행의 완전 일치를 찾아 라벨 뒤집기. test로 학습하지 않는 1-NN 성격의 추론 규칙 | `src/common/postprocess/twin_rule.py` | ⚠️ 규칙 위반은 아니나 회색지대. 팀 판단·설명 가능해야 함. 기본 꺼짐 |
 
 | 클래스 배율 후처리(`--class-scale`) | train의 정직 CV OOF 확률 + train 라벨로만 배율 결정. test 확률·분포 미사용 | `src/common/postprocess/class_scale.py` | ✅ |
-
-## 앞으로 지켜야 할 것
-1. test 분포를 보고 임계값·클래스 비율·후처리를 조정하지 않는다 (예: "STES 21%가 많으니 줄이자" ❌).
-2. 의사라벨링(pseudo-labeling) 금지 — test 예측을 다시 학습에 넣는 것은 명백한 leakage.
-3. 외부 데이터 금지 → info/reference_dacon_2024.md의 상위권 방법(TCGA 병합)은 **사용 불가**.
-4. 하루 4회 제출 → 제출 전 정직 CV로 선별. 제출 이력은 `docs/experiments_log.md`에 기록.
-5. 사전 학습 모델은 허용 → 단백질 언어모델(ESM 등) 임베딩은 규칙상 가능. 후순위 검토.
 
 ## "외부 데이터" 해석 (2026-09-09 팀 합의안)
 | 구분 | 예시 | 판단 |

@@ -12,20 +12,6 @@
 환자의 유전자별 변이 정보(WT/변이 표기)를 기반으로 해당 환자의 암 아형(SUBCLASS)을
 예측하는 **다중 분류(multi-class classification)** 모델을 개발한다.
 
-## 데이터
-| 파일 | 행 수 | 컬럼 |
-|---|---|---|
-| train.csv | 6,201 | ID, SUBCLASS(26종), 유전체 변이 컬럼 4,384개 |
-| test.csv | 2,546 | ID, 유전체 변이 컬럼 4,384개 (train과 동일) |
-| sample_submission.csv | 2,546 | ID, SUBCLASS |
 
-- 배경 설명에는 "6,199개 유전자"로, 데이터 설명에는 "4,384개 컬럼"으로 적혀 있음 → 실제 파일로 확인 필요
-- 변이 표기: `WT`(wild type, 변이 없음) 또는 변이 문자열 (형식은 EDA로 확인)
-- 데이터 위치: `info/data/` (git 제외)
-
-## 확정된 규칙 (2026-09-09, team/rules_compliance.md 참고)
-- [x] 평가 지표: **Macro F1**, Public = test 100%
-- [x] 1일 제출 4회
-- [x] 팀/개인 모두 가능
-- [x] 외부 데이터 **불가**, 사전학습 모델 가능
-- [ ] 제출 마감일, 제출물(코드/발표자료) 범위
+## 데이터·규칙
+- 데이터 구조: `info/data/README.md` · 규칙: `info/README.md`
