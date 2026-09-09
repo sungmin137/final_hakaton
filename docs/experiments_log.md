@@ -27,4 +27,4 @@
 | 2026-09-09 | 접근3 v2: 로그 가중 블렌딩 full+0.5·driver+0.2·burden | OOF 0.486 (낙관), 절반 교차확인 heldout +0.012~0.015 | - | - | 자유도 2로 줄이니 일반화됨 |
 | 2026-09-09 | 4차 제출: v4 + 접근3 v2 블렌딩(0.5,0.2) + 클래스 배율(블렌드 OOF) | make_submission.py --features v4 --approach3-blend 0.5,0.2 --class-scale experiments/approach3_class_feature_compare_v2 | 정직 CV 기준 약 0.49 (0.469 + 블렌딩 0.013 + 배율 0.01) | (제출 후 기록) | submission.csv 갱신 |
 | 2026-09-09 | 접근3 v3: CatBoost 전문가(요약 피처) + 4-모델 로그 앙상블 | cat 단독 0.4593, 앙상블 OOF 0.4905 (낙관) | heldout vs full +0.014~0.020, vs v2 ±0.005 | - | CatBoost 추가 이득 불확실 |
-| 2026-09-09 | 5차 제출: v4 + 접근3 v3 앙상블(0.7,0.4,0.8) + 클래스 배율 | make_submission.py --approach3-blend 0.7,0.4,0.8 --class-scale …v3 | 정직 CV 약 0.49~0.50 | (제출 후 기록) | STES 22.9% 과잉 예측 주의 |
+| 2026-09-09 | 5차 제출: v4 + 접근3 v3 앙상블(0.7,0.4,0.8) + 클래스 배율 | make_submission.py --approach3-blend 0.7,0.4,0.8 --class-scale …v3 | 정직 CV 약 0.49~0.50 | **0.417** | CV +0.04 → LB +0.007. 개선이 test로 안 옮겨짐 |
