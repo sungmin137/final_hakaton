@@ -46,6 +46,25 @@ XGB_TUNED = dict(
 )
 PARAM_SETS = {"official": XGB_PARAMS, "tuned": XGB_TUNED}
 
+# 앙상블용 다른 부스팅 모델
+LGBM_PARAMS = dict(n_estimators=300, learning_rate=0.05, num_leaves=31, feature_fraction=0.3,
+                   bagging_fraction=0.8, bagging_freq=1, min_child_samples=10, reg_lambda=1.0,
+                   random_state=SEED, n_jobs=8, verbose=-1)
+CAT_PARAMS = dict(iterations=300, learning_rate=0.1, depth=6, rsm=0.3, random_seed=SEED,
+                  loss_function="MultiClass", thread_count=8, verbose=0)
+
+
+def make_model(name: str, params: dict):
+    if name == "xgb":
+        return xgb.XGBClassifier(**params)
+    if name == "lgbm":
+        import lightgbm as lgb
+        return lgb.LGBMClassifier(**LGBM_PARAMS)
+    if name == "cat":
+        from catboost import CatBoostClassifier
+        return CatBoostClassifier(**CAT_PARAMS)
+    raise ValueError(name)
+
 
 def class_weights(y: np.ndarray) -> np.ndarray:
     """클래스 빈도의 역수(제곱근 완화)로 샘플 가중치. Macro F1 대응."""
@@ -115,7 +134,8 @@ def twin_groups(train: pd.DataFrame) -> np.ndarray:
 
 
 def cross_validate(train: pd.DataFrame, kind: str, params: dict, n_splits: int = 5,
-                   out_dir: Path | None = None, group_twins: bool = False, balanced: bool = False) -> dict:
+                   out_dir: Path | None = None, group_twins: bool = False, balanced: bool = False,
+                   model_name: str = "xgb") -> dict:
     le = LabelEncoder()
     y = le.fit_transform(train[TARGET])
     if group_twins:   # 쌍둥이를 같은 fold에 묶어 중복 학습 효과를 제거한 '정직한' CV
@@ -128,7 +148,7 @@ def cross_validate(train: pd.DataFrame, kind: str, params: dict, n_splits: int =
     for k, (tri, vai) in enumerate(splits):
         fm = FeatureMaker(kind).fit(train.iloc[tri])
         Xtr, Xva = fm.transform(train.iloc[tri]), fm.transform(train.iloc[vai])
-        model = xgb.XGBClassifier(**params)
+        model = make_model(model_name, params)
         model.fit(Xtr, y[tri], sample_weight=class_weights(y[tri]) if balanced else None)
         oof[vai] = model.predict_proba(Xva)
         pred = oof[vai].argmax(1)
@@ -138,7 +158,7 @@ def cross_validate(train: pd.DataFrame, kind: str, params: dict, n_splits: int =
 
     pred = oof.argmax(1)
     res = dict(
-        features=kind, model="xgb", params=params, folds=folds, group_twins=group_twins, balanced=balanced,
+        features=kind, model=model_name, params=params if model_name == "xgb" else None, folds=folds, group_twins=group_twins, balanced=balanced,
         oof_macro_f1=round(f1_score(y, pred, average="macro"), 4),
         oof_acc=round(accuracy_score(y, pred), 4),
         per_class_f1=dict(zip(le.classes_, f1_score(y, pred, average=None).round(4).tolist())),
@@ -188,16 +208,17 @@ def main() -> None:
     ap.add_argument("--group-twins", action="store_true", help="CV에서 쌍둥이를 같은 fold에 묶음 (정직한 CV)")
     ap.add_argument("--params", default="official", choices=list(PARAM_SETS), help="XGB 파라미터 세트")
     ap.add_argument("--balanced", action="store_true", help="클래스 빈도 역수 샘플 가중치")
+    ap.add_argument("--model", default="xgb", choices=["xgb", "lgbm", "cat"], help="부스팅 모델 (CV 전용)")
     a = ap.parse_args()
 
     params = PARAM_SETS[a.params]
-    tag = (f"{date.today().isoformat()}_{a.features}_xgb" + ("" if a.params == "official" else f"_{a.params}")
+    tag = (f"{date.today().isoformat()}_{a.features}_{a.model}" + ("" if a.params == "official" else f"_{a.params}")
            + ("_bal" if a.balanced else "") + ("_grp" if a.group_twins else ""))
     train = load_train()
     print("train", train.shape, "| features:", a.features)
     if a.cv:
         cross_validate(train, a.features, params, out_dir=ROOT / "experiments" / tag,
-                       group_twins=a.group_twins, balanced=a.balanced)
+                       group_twins=a.group_twins, balanced=a.balanced, model_name=a.model)
     if a.submit:
         fit_full_and_submit(train, a.features, params, tag, twin_rule=a.twin_rule, balanced=a.balanced)
 
