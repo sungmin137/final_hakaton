@@ -13,3 +13,4 @@
 | 2026-09-09 | test 분포를 보고 후처리를 조정하지 않음 (STES 과잉 예측이 보여도) | 규칙 |
 | 2026-09-09 | 제출 기준선 = **v4 피처 + 클래스 배율** (LB 0.43 최고). 접근 3 블렌딩은 LB 역효과라 제출에 안 씀 | `submissions/README.md` |
 | 2026-09-09 | 파일 이름 규칙 `approachN_vK_YYYYMMDD_HHMM` (py = csv 동일 이름), 접근법마다 md 설명 문서 | `file_rules.md` |
+| 2026-09-09 (저녁) | **experiments/ 유실 사고** 후: OOF 확률(`oof_proba.npy`)·클래스별 F1·CV 결과 csv를 git에 포함한다. 삭제·이동 명령은 대상 경로를 명시하고 실행 전 `ls`로 확인 | 19:02~19:11 사이 experiments/ 전체가 사라짐(원인 미특정). git 추적분 32개는 복구, OOF는 CV 재실행으로 재생성 |

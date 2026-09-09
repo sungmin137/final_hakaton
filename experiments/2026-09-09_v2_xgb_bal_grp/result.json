@@ -1,0 +1,73 @@
+{
+  "features": "v2",
+  "model": "xgb",
+  "params": {
+    "n_estimators": 100,
+    "learning_rate": 0.1,
+    "max_depth": 6,
+    "random_state": 42,
+    "eval_metric": "mlogloss",
+    "tree_method": "hist",
+    "n_jobs": 8
+  },
+  "folds": [
+    {
+      "fold": 0,
+      "macro_f1": 0.4413,
+      "acc": 0.4585
+    },
+    {
+      "fold": 1,
+      "macro_f1": 0.4548,
+      "acc": 0.4581
+    },
+    {
+      "fold": 2,
+      "macro_f1": 0.4439,
+      "acc": 0.4416
+    },
+    {
+      "fold": 3,
+      "macro_f1": 0.4383,
+      "acc": 0.4657
+    },
+    {
+      "fold": 4,
+      "macro_f1": 0.4614,
+      "acc": 0.4734
+    }
+  ],
+  "group_twins": true,
+  "balanced": true,
+  "oof_macro_f1": 0.4478,
+  "oof_acc": 0.4594,
+  "per_class_f1": {
+    "ACC": 0.9315,
+    "BLCA": 0.3804,
+    "BRCA": 0.512,
+    "CESC": 0.1789,
+    "COAD": 0.6957,
+    "DLBC": 0.5846,
+    "GBMLGG": 0.4592,
+    "HNSC": 0.3464,
+    "KIPAN": 0.4152,
+    "KIRC": 0.308,
+    "LAML": 0.4987,
+    "LGG": 0.4619,
+    "LIHC": 0.3016,
+    "LUAD": 0.3237,
+    "LUSC": 0.4632,
+    "OV": 0.37,
+    "PAAD": 0.28,
+    "PCPG": 0.3129,
+    "PRAD": 0.3261,
+    "SARC": 0.1818,
+    "SKCM": 0.8668,
+    "STES": 0.4968,
+    "TGCT": 0.5455,
+    "THCA": 0.6443,
+    "THYM": 0.0946,
+    "UCEC": 0.6632
+  },
+  "elapsed_s": 388.3
+}

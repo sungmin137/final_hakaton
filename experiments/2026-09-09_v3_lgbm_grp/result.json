@@ -1,0 +1,65 @@
+{
+  "features": "v3",
+  "model": "lgbm",
+  "params": null,
+  "folds": [
+    {
+      "fold": 0,
+      "macro_f1": 0.4424,
+      "acc": 0.4609
+    },
+    {
+      "fold": 1,
+      "macro_f1": 0.4649,
+      "acc": 0.4855
+    },
+    {
+      "fold": 2,
+      "macro_f1": 0.4459,
+      "acc": 0.4537
+    },
+    {
+      "fold": 3,
+      "macro_f1": 0.4439,
+      "acc": 0.4778
+    },
+    {
+      "fold": 4,
+      "macro_f1": 0.4631,
+      "acc": 0.4823
+    }
+  ],
+  "group_twins": true,
+  "balanced": false,
+  "oof_macro_f1": 0.4516,
+  "oof_acc": 0.472,
+  "per_class_f1": {
+    "ACC": 0.9231,
+    "BLCA": 0.3766,
+    "BRCA": 0.4958,
+    "CESC": 0.2101,
+    "COAD": 0.7464,
+    "DLBC": 0.5517,
+    "GBMLGG": 0.4844,
+    "HNSC": 0.336,
+    "KIPAN": 0.4564,
+    "KIRC": 0.2237,
+    "LAML": 0.4731,
+    "LGG": 0.4615,
+    "LIHC": 0.3095,
+    "LUAD": 0.3859,
+    "LUSC": 0.4588,
+    "OV": 0.3485,
+    "PAAD": 0.2599,
+    "PCPG": 0.3736,
+    "PRAD": 0.303,
+    "SARC": 0.1709,
+    "SKCM": 0.8679,
+    "STES": 0.5036,
+    "TGCT": 0.5975,
+    "THCA": 0.6559,
+    "THYM": 0.0769,
+    "UCEC": 0.69
+  },
+  "elapsed_s": 678.2
+}

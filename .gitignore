@@ -15,6 +15,9 @@ venv/
 # 실험 로그
 experiments/*.log
 !experiments/*_eda_*.log
+!experiments/**/per_class_f1.csv
+!experiments/**/cv_results.csv
+!experiments/**/confusion_matrix.csv
 optuna.db
 catboost_info/
 lightning_logs/
@@ -27,5 +30,4 @@ lightning_logs/
 # 비밀정보
 .env
 
-# 실험 산출물 중 대용량 제외
-experiments/*/oof_proba.npy
+# 실험 산출물: OOF 확률(약 1.3MB)은 재생성 비용이 커서 git에 포함한다 (2026-09-09 experiments 유실 사고 이후)
