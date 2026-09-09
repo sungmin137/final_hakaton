@@ -1,0 +1,13 @@
+[train] (6201, 4386) → 피처 6466개, 학습 103s
+[post] class scales: {'ACC': 0.5, 'BLCA': 1.2, 'BRCA': 0.5, 'CESC': 1.5, 'COAD': 0.5, 'DLBC': 2.0, 'GBMLGG': 0.7, 'HNSC': 0.7, 'KIRC': 2.5, 'LAML': 0.7, 'LGG': 1.2, 'LUAD': 1.2, 'LUSC': 2.0, 'OV': 0.85, 'PAAD': 1.2, 'PCPG': 1.2, 'PRAD': 2.0, 'SARC': 3.0, 'SKCM': 0.5, 'STES': 0.5, 'TGCT': 0.7, 'THCA': 0.5, 'THYM': 2.5}
+[test] (2546, 4385), train과 완전 동일 행 235 (9.2%), 규칙으로 바뀐 예측 6행
+[test] 예측 확신도 중앙값 0.43
+[test] train 비율과 가장 다른 예측 클래스:
+         train   pred   diff
+STES    0.061  0.161  0.100
+BRCA    0.127  0.074 -0.053
+LUSC    0.029  0.071  0.042
+GBMLGG  0.074  0.042 -0.032
+THCA    0.052  0.022 -0.030
+saved: submissions/submission.csv, rerun2_check.csv, rerun2_check_twin_rule.csv
+DONE

@@ -1,0 +1,94 @@
+고유 변이 수 226795 | 유형별 개수(변이 단위):
+type
+missense         147651
+synonymous        59515
+nonsense          11624
+frameshift         7817
+inframe_indel       185
+other                 3
+
+[반복 변이(hotspot, count>=5) 상위 25]
+  gene variant       type  count  n_classes top_class  top_share
+  IDH1   R132H   missense    345          5    GBMLGG      0.496
+  BRAF   V600E   missense    332          7      THCA      0.587
+PIK3CA   E545K   missense    155         17      BRCA      0.342
+PIK3CA  H1047R   missense    154         12      BRCA      0.753
+  TP53   R273C   missense     93         15       LGG      0.290
+PIK3CA   E542K   missense     76         14      BRCA      0.408
+  TP53   R175H   missense     70         12      BRCA      0.243
+  TP53   R273H   missense     63         11      STES      0.222
+  TP53   R248Q   missense     54         12      STES      0.222
+  TP53   R248W   missense     50         13      BRCA      0.160
+  TP53   R213*   nonsense     47         15      STES      0.170
+  IDH1   R132C   missense     46          8      SKCM      0.283
+  TP53   Y220C   missense     41         15        OV      0.171
+  TP53   R196*   nonsense     35         12      BRCA      0.200
+  TP53   R282W   missense     35         10      STES      0.229
+ RPL22   K16fs frameshift     29          7      UCEC      0.724
+  TP53   H179R   missense     28         10    GBMLGG      0.286
+  PTEN   R130Q   missense     26          7      UCEC      0.615
+  HRAS    Q61R   missense     25          4      PCPG      0.480
+ LRIG1    L24V   missense     25          1       ACC      1.000
+PIK3CA  H1047L   missense     25          8      BRCA      0.480
+CDKN2A    R80*   nonsense     24          6      HNSC      0.458
+SOWAHC    L42L synonymous     24          1       ACC      1.000
+ NCOA6   Q269Q synonymous     24          9     KIPAN      0.250
+  TP53   G245S   missense     24          9    GBMLGG      0.250
+
+[유전자 역할 분류]
+ role
+passenger_like           3320
+low_evidence              843
+tumor_suppressor_like      37
+oncogene_like              30
+
+[oncogene_like 상위 15]
+        n_samples  n_lof  n_missense  lof_ratio  max_hotspot  hotspot_ratio
+gene                                                                       
+PIK3CA        801      6         772      0.007          155          0.194
+BRAF          470      9         441      0.019          332          0.706
+IDH1          444      2         435      0.005          345          0.777
+LRIG1         160     10         110      0.062           25          0.156
+CHEK2          91     10          63      0.110           23          0.253
+ERCC2          80      3          56      0.038           15          0.188
+HRAS           75      1          71      0.013           25          0.333
+NFKB2          73      5          35      0.068           16          0.219
+XYLT2          69     24          32      0.348           19          0.275
+IDH2           67      5          58      0.075           14          0.209
+SMAD2          66     15          42      0.227           10          0.152
+NAB2           62      7          36      0.113           11          0.177
+KRT8           61      6          42      0.098           14          0.230
+PEX6           60      6          32      0.100           16          0.267
+B2M            58     38          17      0.655           10          0.172
+
+[tumor_suppressor_like 상위 15]
+        n_samples  n_lof  n_missense  lof_ratio  max_hotspot  hotspot_ratio
+gene                                                                       
+APC           529    284         198      0.537           22          0.042
+ATRX          479    219         214      0.457           10          0.021
+PTEN          458    235         215      0.513           26          0.057
+NF1           403    188         159      0.467            8          0.020
+VHL           346    174         160      0.503            9          0.026
+RB1           194    118          63      0.608            5          0.026
+CDKN2A        193    108          73      0.560           24          0.124
+MAP3K1        185     82          86      0.443            3          0.016
+CDH1          162     67          77      0.414            5          0.031
+GATA3         145     64          52      0.441            8          0.055
+RASA1         122     42          68      0.344            3          0.025
+CTCF          121     46          58      0.380            6          0.050
+HLA-A         108     35          50      0.324            7          0.065
+CASP8         100     36          55      0.360            4          0.040
+HLA-B          96     42          38      0.438            5          0.052
+
+[nonsense(stop) 변이 상위 10 — 어떤 유전자가 잘리는가]
+  gene variant  count top_class  top_share
+  TP53   R213*     47      STES      0.170
+  TP53   R196*     35      BRCA      0.200
+CDKN2A    R80*     24      HNSC      0.458
+  TP53   R306*     23      COAD      0.174
+   APC  R1450*     22      COAD      0.864
+  PTEN   R233*     20      UCEC      0.650
+  TP53   R342*     17      STES      0.294
+CDKN2A   W110*     16      HNSC      0.562
+CDKN2A    R58*     13      HNSC      0.538
+  PTEN   R130*     13      UCEC      0.462

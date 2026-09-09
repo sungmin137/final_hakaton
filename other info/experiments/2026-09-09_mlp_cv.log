@@ -1,0 +1,9 @@
+=== v3 mlp (mps) ===
+train (6201, 4386) | features: v3
+fold0 macroF1=0.3214 acc=0.3683 (77s)
+fold1 macroF1=0.3668 acc=0.4121 (154s)
+fold2 macroF1=0.3257 acc=0.4029 (215s)
+fold3 macroF1=0.3287 acc=0.3745 (289s)
+fold4 macroF1=0.3460 acc=0.3919 (363s)
+OOF macroF1=0.3416 acc=0.3899
+DONE

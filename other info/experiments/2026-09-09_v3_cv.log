@@ -1,0 +1,17 @@
+=== v3 official ===
+train (6201, 4386) | features: v3
+fold0 macroF1=0.4692 acc=0.4754 (89s)
+fold1 macroF1=0.4697 acc=0.4750 (178s)
+fold2 macroF1=0.4563 acc=0.4448 (267s)
+fold3 macroF1=0.4424 acc=0.4762 (357s)
+fold4 macroF1=0.4602 acc=0.4710 (447s)
+OOF macroF1=0.4663 acc=0.4685
+=== v3 tuned ===
+train (6201, 4386) | features: v3
+fold0 macroF1=0.4298 acc=0.4537 (251s)
+fold1 macroF1=0.4668 acc=0.4823 (498s)
+fold2 macroF1=0.4604 acc=0.4537 (747s)
+fold3 macroF1=0.4481 acc=0.4794 (999s)
+fold4 macroF1=0.4845 acc=0.4895 (1259s)
+OOF macroF1=0.4576 acc=0.4717
+DONE

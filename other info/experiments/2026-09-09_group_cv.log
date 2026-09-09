@@ -1,0 +1,14 @@
+train (6201, 4386) | features: v1
+fold0 macroF1=0.3923 acc=0.4182 (26s)
+fold1 macroF1=0.4154 acc=0.4347 (51s)
+fold2 macroF1=0.3960 acc=0.4239 (79s)
+fold3 macroF1=0.4087 acc=0.4415 (104s)
+fold4 macroF1=0.3809 acc=0.4323 (129s)
+OOF macroF1=0.3979 acc=0.4301
+train (6201, 4386) | features: v2
+fold0 macroF1=0.4373 acc=0.4521 (79s)
+fold1 macroF1=0.4621 acc=0.4702 (159s)
+fold2 macroF1=0.4382 acc=0.4335 (235s)
+fold3 macroF1=0.4530 acc=0.4851 (312s)
+fold4 macroF1=0.4524 acc=0.4702 (390s)
+OOF macroF1=0.4486 acc=0.4622
