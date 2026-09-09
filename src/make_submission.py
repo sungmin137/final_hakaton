@@ -7,7 +7,7 @@
 """
 import argparse
 import time
-from datetime import date
+from datetime import datetime
 
 import numpy as np
 import pandas as pd
@@ -33,15 +33,21 @@ def main() -> None:
     ap.add_argument("--features", default="v2")
     ap.add_argument("--params", default="official", choices=list(PARAM_SETS))
     ap.add_argument("--balanced", action="store_true")
-    ap.add_argument("--tag", default=None, help="파일명 태그 (기본: 날짜_피처_xgb[_params][_bal])")
+    ap.add_argument("--tag", default=None, help="파일명 태그 (기본: <src 모듈>_<버전>[_class_scale]_<YYYYMMDD-HHMM>)")
     ap.add_argument("--approach3-blend", default=None, metavar="WD,WB[,WC]",
                     help="접근 3: driver/burden(/cat) 전문가를 train 전체로 학습해 test 확률을 로그 가중 블렌딩 (v2: 0.5,0.2 / v3: 0.5,0.2,0.4)")
     ap.add_argument("--class-scale", default=None, metavar="OOF_DIR",
                     help="정직 CV OOF 디렉토리(experiments/…_grp). 그 OOF와 train 라벨로 클래스 배율을 맞춰 test 확률에 곱함")
     a = ap.parse_args()
     params = PARAM_SETS[a.params]
-    tag = a.tag or (f"{date.today().isoformat()}_{a.features}_xgb"
-                    + ("" if a.params == "official" else f"_{a.params}") + ("_bal" if a.balanced else ""))
+    # 파일명 규칙: 어느 src 모듈(접근법)에서 나온 결과인지 + 버전 + 옵션 + 제작 시각
+    MODULE = {"official": "main_official", "v1": "features_v1", "v2": "approach1_count_weight_v2",
+              "v3": "features_v3", "v4": "approach2_knowledge_v4"}
+    tag = MODULE[a.features]
+    if a.approach3_blend:
+        tag = "approach3_class_feature_compare_" + ("v3" if len(a.approach3_blend.split(",")) > 2 else "v2")
+    tag += ("" if a.params == "official" else f"_{a.params}") + ("_balanced" if a.balanced else "")
+    tag = a.tag or tag
 
     # 1. train 전체 학습
     t0 = time.time()
@@ -71,31 +77,32 @@ def main() -> None:
             p_cat = CatBoostClassifier(**CAT_PARAMS).fit(Xtr_full[cols], y).predict_proba(Xte[cols])
             print(f"[approach3] cat expert: {len(cols)} cols")
             z = np.log(proba + 1e-6) + w_c * np.log(p_cat + 1e-6); z = np.exp(z - z.max(1, keepdims=True)); proba = z / z.sum(1, keepdims=True)
-        tag += "_a3blend" + ("3" if w_c > 0 else "")
+        pass  # 이름은 위 MODULE 규칙에서 이미 approach3_…_v2/v3 로 결정
     if a.class_scale:                                   # Macro F1용 클래스 배율 — train OOF로만 결정 (docs/10)
         oof = np.load(ROOT / a.class_scale / "oof_proba.npy")
         scales = fit_class_scales(oof, y)
         print("[post] class scales:", {c: float(v) for c, v in zip(le.classes_, scales) if v != 1.0})
         proba = proba * scales
-        tag += "_cs"
+        tag += "_class_scale"
     pred = le.inverse_transform(proba.argmax(1))
     sample = pd.read_csv(DATA / "sample_submission.csv")
     labels = set(train[TARGET])
 
     # 3. 저장 — 기본본
     out_dir = ROOT / "submissions"; out_dir.mkdir(exist_ok=True)
+    stamp = datetime.now().strftime("%Y%m%d-%H%M")
     sub = sample.copy(); sub[TARGET] = pred
     validate(sub, sample, labels)
-    sub.to_csv(out_dir / f"{tag}.csv", index=False, encoding="UTF-8-sig")
+    sub.to_csv(out_dir / f"{tag}_{stamp}.csv", index=False, encoding="UTF-8-sig")
     sub.to_csv(out_dir / "submission.csv", index=False, encoding="UTF-8-sig")
 
     # 4. 저장 — 쌍둥이 규칙 적용본 (docs/07 참고, 팀 판단 후 선택)
     pred_tw, n_hit = TwinRule().fit(train).apply(test, pred)
     sub_tw = sample.copy(); sub_tw[TARGET] = pred_tw
     validate(sub_tw, sample, labels)
-    sub_tw.to_csv(out_dir / f"{tag}_twin.csv", index=False, encoding="UTF-8-sig")
+    sub_tw.to_csv(out_dir / f"{tag}_twin_rule_{stamp}.csv", index=False, encoding="UTF-8-sig")
 
-    exp = ROOT / "experiments" / tag; exp.mkdir(parents=True, exist_ok=True)
+    exp = ROOT / "experiments" / "submissions" / f"{tag}_{stamp}"; exp.mkdir(parents=True, exist_ok=True)
     np.save(exp / "test_proba.npy", proba)
 
     # 5. 요약
@@ -105,7 +112,7 @@ def main() -> None:
                          "pred": pd.Series(pred).value_counts(normalize=True)}).fillna(0)
     dist["diff"] = dist.pred - dist.train
     print("[test] train 비율과 가장 다른 예측 클래스:\n", dist.sort_values("diff", key=abs, ascending=False).head(5).round(3).to_string())
-    print(f"saved: submissions/submission.csv, {tag}.csv, {tag}_twin.csv")
+    print(f"saved: submissions/submission.csv, {tag}_{stamp}.csv, {tag}_twin_rule_{stamp}.csv")
 
 
 if __name__ == "__main__":
