@@ -9,7 +9,7 @@
 |---|---|---|---|---|
 | 1차 | approach1_count_weight_v2_20260909-1442.csv | v2 피처(접근1 개수 가중치 점수) + XGB | 0.4486 | **0.41** |
 | 2차 | features_v3_20260909-1553.csv | v3 인사이트 피처 + XGB | 0.4663 | - |
-| 3차 | approach2_knowledge_v4_class_scale_20260909-1653.csv | v4 지식 피처 + 클래스 배율 | 0.4691 (+0.012) | - |
+| 3차 | approach2_knowledge_v4_class_scale_20260909-1653.csv | v4 지식 피처 + 클래스 배율 | 0.4691 (+0.012) | **0.43 (최고)** |
 | 4차 | approach3_class_feature_compare_v2_class_scale_20260909-1715.csv | v4 + driver/burden 블렌딩(0.5,0.2) + 배율 | 약 0.49 | - |
 | 5차 | approach3_class_feature_compare_v3_class_scale_20260909-1807.csv | v4 + driver/burden/CatBoost 앙상블(0.7,0.4,0.8) + 배율 | 약 0.49~0.50 | **0.417** |
 

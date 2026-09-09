@@ -28,8 +28,9 @@ def main():
     for k, (tri, vai) in enumerate(folds):
         tri_m, vai_m = tri[mid[tri]], vai[mid[vai]]
         fm = FeatureMaker("v4").fit(train.iloc[tri_m])
-        m = xgb.XGBClassifier(**XGB_PARAMS).fit(fm.transform(train.iloc[tri_m]), y[tri_m])
-        p = np.zeros((len(vai_m), K)); p[:, m.classes_] = m.predict_proba(fm.transform(train.iloc[vai_m]))
+        present = np.unique(y[tri_m]); remap = {c: i for i, c in enumerate(present)}   # XGB는 연속 라벨 필요
+        m = xgb.XGBClassifier(**XGB_PARAMS).fit(fm.transform(train.iloc[tri_m]), np.array([remap[c] for c in y[tri_m]]))
+        p = np.zeros((len(vai_m), K)); p[:, present] = m.predict_proba(fm.transform(train.iloc[vai_m]))
         oof[vai_m] = p
         print(f"[mid] fold{k} n_train={len(tri_m)} n_val={len(vai_m)} in-bucket F1 mid={f1_score(y[vai_m], p.argmax(1), average='macro'):.3f} base={f1_score(y[vai_m], base[vai_m].argmax(1), average='macro'):.3f} ({time.time()-t0:.0f}s)", flush=True)
     np.save(OUT / "oof_mid.npy", oof)
