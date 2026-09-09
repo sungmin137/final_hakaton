@@ -1,6 +1,6 @@
 # 제출 파일 목록
 
-파일명 규칙 (team/file_rules.md): `approachN_vK_YYYYMMDD_HHMM.csv` — **같은 이름의 `src/….py`가 이 파일을 만든다.**
+파일명 규칙 (team/file_rules.md): `approachN_vK_YYYYMMDD_HHMM.csv` — **같은 이름의 `src/submissions/….py`가 이 파일을 만든다.**
 - 쌍둥이 규칙 적용본(`_twin_rule`)은 `experiments/submissions/twin_rule/`에 보관 · `submission.csv`: 가장 최근 파일 복사본
 - 설정 상세는 `team/approaches/approachN.md`의 해당 버전 섹션
 

@@ -112,10 +112,11 @@ class CountWeightModel:
 
     def scores(self, df: pd.DataFrame) -> np.ndarray:
         X = self._X(df, fit=False)
-        S = np.asarray(X @ self.W.T)
+        # float64 + 반올림: float32 BLAS 합산 순서에 따른 1e-6 수준 차이가 XGB 분기를 바꿔 재현성을 깨는 것을 방지
+        S = np.round(np.asarray(X.astype(np.float64) @ self.W.astype(np.float64).T), 4)
         if self.agg == "mean":
             S = S / np.maximum(np.asarray(X.sum(1)).ravel(), 1)[:, None]
-        return S + self.b
+        return np.round(S + self.b, 4)
 
     def predict(self, df: pd.DataFrame) -> np.ndarray:
         return self.classes_[self.scores(df).argmax(1)]
