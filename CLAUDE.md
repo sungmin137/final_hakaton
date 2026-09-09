@@ -5,6 +5,7 @@
 - 배경/데이터 상세: `docs/00_background.md`
 
 ## 작업 규칙
+- **[최우선] test.csv는 최종 제출 추론 단계에서만 읽는다.** EDA, 전처리 통계, 인코더/스케일러 fit, 피처 선택, 검증, 의사라벨링, 분포 비교 등 어디에도 test 데이터를 사용하지 않는다. 사용자가 명시한 핵심 요구사항.
 - 작업 흐름: 로컬 VSCode → git commit → GitHub push. 커밋은 작은 단위로 한글 메시지.
 - 데이터(`data/`)와 모델(`models/`)은 git에 올리지 않는다. 제출 csv만 `submissions/`에 보관.
 - 실험은 `experiments/`에 날짜_이름 형식으로 기록하고, 결과 요약은 `docs/experiments_log.md`에 누적.
