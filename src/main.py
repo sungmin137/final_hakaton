@@ -27,6 +27,7 @@ from sklearn.preprocessing import LabelEncoder, OrdinalEncoder
 
 from features import ID, TARGET, build_features, gene_columns
 from count_weights import CountWeightFeatures
+from twin_rule import TwinRule
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "data" / "raw"
@@ -124,17 +125,22 @@ def cross_validate(train: pd.DataFrame, kind: str, params: dict, n_splits: int =
 
 
 # ---------------------------------------------------------------- 4~5. Inference & Submission
-def fit_full_and_submit(train: pd.DataFrame, kind: str, params: dict, tag: str) -> Path:
+def fit_full_and_submit(train: pd.DataFrame, kind: str, params: dict, tag: str,
+                        twin_rule: bool = False) -> Path:
     le = LabelEncoder()
     y = le.fit_transform(train[TARGET])
     fm = FeatureMaker(kind).fit(train)
     model = xgb.XGBClassifier(**params).fit(fm.transform(train), y)
 
     test = load_test()                      # ← test.csv는 여기서 처음 읽힌다
-    pred = model.predict(fm.transform(test))
+    pred = le.inverse_transform(model.predict(fm.transform(test)))
+    if twin_rule:                           # docs/07_duplicate_twins.md — 선택 적용
+        pred, n_hit = TwinRule().fit(train).apply(test, pred)
+        print(f"twin rule 적용: test {len(test)}행 중 {n_hit}행이 train 행과 완전 동일")
+        tag += "_twin"
     sub = pd.read_csv(DATA / "sample_submission.csv")
     assert (sub[ID] == test[ID]).all(), "ID 순서 불일치"
-    sub[TARGET] = le.inverse_transform(pred)
+    sub[TARGET] = pred
 
     out = ROOT / "submissions" / f"{tag}.csv"
     sub.to_csv(out, index=False, encoding="UTF-8-sig")
@@ -147,6 +153,7 @@ def main() -> None:
     ap.add_argument("--features", default="v1", choices=["official", "v1", "v2"])
     ap.add_argument("--cv", action="store_true", help="Stratified 5-Fold 평가")
     ap.add_argument("--submit", action="store_true", help="전체 학습 후 test 추론 및 제출 파일 생성")
+    ap.add_argument("--twin-rule", action="store_true", help="추론 시 쌍둥이 규칙 적용 (docs/07 참고, 기본 꺼짐)")
     a = ap.parse_args()
 
     tag = f"{date.today().isoformat()}_{a.features}_xgb"
@@ -155,7 +162,7 @@ def main() -> None:
     if a.cv:
         cross_validate(train, a.features, XGB_PARAMS, out_dir=ROOT / "experiments" / tag)
     if a.submit:
-        fit_full_and_submit(train, a.features, XGB_PARAMS, tag)
+        fit_full_and_submit(train, a.features, XGB_PARAMS, tag, twin_rule=a.twin_rule)
 
 
 if __name__ == "__main__":
