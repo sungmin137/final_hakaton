@@ -6,7 +6,8 @@
 ## 버전
 | 버전 | 구성 | 정직 CV Macro F1 | 비고 |
 |---|---|---|---|
-| v1 | 전문가 3개(driver / burden / full) + 로지스틱 회귀 스태킹 | (실행 중) | `src/approach3_class_feature_compare/approach3_class_feature_compare_v1.py`, 산출물 `experiments/approach3_class_feature_compare_v1/` |
+| v1 | 전문가 3개(driver / burden / full) + 로지스틱 회귀 스태킹 | **0.4455** (full 단독 0.4691보다 낮음) | 메타 모델이 OOF에 과적합. `…_v1.py`, `experiments/approach3_class_feature_compare_v1/` |
+| v2 | 같은 전문가, 로그 확률 가중 블렌딩(자유도 2) | 절반 교차확인 heldout **+0.012~0.015** | `…_v2.py`, `experiments/approach3_class_feature_compare_v2/`. 추론: `make_submission.py --approach3-blend` |
 
 ## v1 설계
 | 전문가 | 피처 | 역할 |
@@ -19,6 +20,27 @@
 - 메타 모델은 세 전문가의 로그 확률(26×3=78)을 입력으로 다항 로지스틱 회귀. 같은 fold로 교차 예측.
 - 하드 라우팅(그룹 먼저 맞히고 그룹별 모델) 대신 스태킹을 쓴 이유: 라우팅 실수가 그대로 오답이 되는 것을 피하기 위해.
 - 산출물 `per_class_f1.csv`: 암종별로 어느 전문가가 가장 잘 맞히는지 → "이 암종은 driver, 이 암종은 개수" 표.
+
+## v1 결과 — 암종별 F1 (driver / burden / full)
+| 암종 | full | driver | burden | 최고 |
+|---|---|---|---|---|
+| SARC | 0.168 | **0.187** | 0.136 | driver |
+| CESC | 0.228 | 0.095 | **0.308** | burden |
+| KIRC | 0.284 | 0.298 | **0.326** | burden |
+| OV | 0.341 | **0.361** | 0.332 | driver |
+| LGG | 0.425 | **0.486** | 0.438 | driver |
+| THCA | 0.640 | **0.646** | 0.627 | driver |
+| 나머지 20개 | full 최고 | | | full |
+
+- 단독 전문가: driver 0.380, burden 0.377 — 전체 피처(0.469)보다 훨씬 낮다. 한 종류 정보만으로는 부족.
+- 그러나 **암종별로 보면** LGG·THCA·OV·SARC는 driver 전문가가, CESC·KIRC는 변이 개수 전문가가 전체 모델보다 낫다 → 사용자의 가설이 부분적으로 맞음.
+- 로지스틱 회귀 스태킹(v1)은 이 장점을 못 살리고 전체적으로 떨어짐. 자유도가 78개라 OOF에 과적합.
+
+## v2 결과 — 로그 가중 블렌딩
+log p = log p_full + w_d·log p_driver + w_b·log p_burden. 가중치 2개만 탐색.
+- 전체 OOF 최적 (w_d, w_b) ≈ (0.5, 0.2): 0.4691 → 0.486 (낙관적)
+- 절반 교차확인: fit 절반에서 찾은 가중치를 나머지 절반에 적용 → **+0.0147 / +0.0124**. 일반화되는 이득.
+- 해석: 전문가는 "다른 관점의 의견"으로 소수 의견 정도(가중치 0.2~0.5)로 섞을 때 가장 좋다.
 
 ## 다음 버전 후보
 - v2: 전문가 추가 — hotspot 전용(변이 위치만), 접근1 개수가중치 점수 전용(`cw_*`)

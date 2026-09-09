@@ -1,0 +1,84 @@
+[driver] fold0 ncols=5763 f1=0.3602 (92s)
+[driver] fold1 ncols=5816 f1=0.3771 (174s)
+[driver] fold2 ncols=5802 f1=0.4009 (258s)
+[driver] fold3 ncols=5823 f1=0.3830 (341s)
+[driver] fold4 ncols=5778 f1=0.3727 (425s)
+[burden] fold0 ncols=83 f1=0.3589 (492s)
+[burden] fold1 ncols=83 f1=0.3985 (560s)
+[burden] fold2 ncols=83 f1=0.3639 (627s)
+[burden] fold3 ncols=83 f1=0.3623 (693s)
+[burden] fold4 ncols=83 f1=0.3938 (758s)
+STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
+
+Increase the number of iterations to improve the convergence (max_iter=2000).
+You might also want to scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+Please also refer to the documentation for alternative solver options:
+    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
+  n_iter_i = _check_optimize_result(
+STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
+
+Increase the number of iterations to improve the convergence (max_iter=2000).
+You might also want to scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+Please also refer to the documentation for alternative solver options:
+    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
+  n_iter_i = _check_optimize_result(
+STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
+
+Increase the number of iterations to improve the convergence (max_iter=2000).
+You might also want to scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+Please also refer to the documentation for alternative solver options:
+    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
+  n_iter_i = _check_optimize_result(
+STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
+
+Increase the number of iterations to improve the convergence (max_iter=2000).
+You might also want to scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+Please also refer to the documentation for alternative solver options:
+    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
+  n_iter_i = _check_optimize_result(
+STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
+
+Increase the number of iterations to improve the convergence (max_iter=2000).
+You might also want to scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+Please also refer to the documentation for alternative solver options:
+    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
+  n_iter_i = _check_optimize_result(
+
+== 정직 CV == {"full": {"macro_f1": 0.4691, "acc": 0.4698}, "driver": {"macro_f1": 0.3801, "acc": 0.4028}, "burden": {"macro_f1": 0.3767, "acc": 0.403}, "stack": {"macro_f1": 0.4455, "acc": 0.4596}}
+
+== 암종별 F1 (driver / burden / full / stack) ==
+         full  driver  burden  stack best_expert
+SARC    0.168   0.187   0.136  0.189      driver
+CESC    0.228   0.095   0.308  0.279      burden
+PAAD    0.276   0.096   0.144  0.263        full
+KIRC    0.284   0.298   0.326  0.330      burden
+PCPG    0.305   0.200   0.253  0.265        full
+HNSC    0.319   0.292   0.256  0.333        full
+PRAD    0.336   0.252   0.233  0.301        full
+THYM    0.340   0.109   0.040  0.086        full
+OV      0.341   0.361   0.332  0.336      driver
+LIHC    0.351   0.313   0.112  0.310        full
+LUAD    0.388   0.217   0.386  0.373        full
+LGG     0.425   0.486   0.438  0.461      driver
+KIPAN   0.434   0.341   0.339  0.420        full
+STES    0.469   0.346   0.406  0.470        full
+BRCA    0.473   0.457   0.423  0.530        full
+BLCA    0.478   0.412   0.278  0.488        full
+LUSC    0.479   0.282   0.473  0.479        full
+GBMLGG  0.496   0.443   0.446  0.480        full
+LAML    0.579   0.498   0.338  0.415        full
+TGCT    0.590   0.338   0.285  0.543        full
+DLBC    0.594   0.400   0.189  0.521        full
+THCA    0.640   0.646   0.627  0.630      driver
+UCEC    0.660   0.556   0.579  0.618        full
+COAD    0.760   0.715   0.728  0.727        full
+SKCM    0.866   0.708   0.810  0.825        full
+ACC     0.919   0.832   0.910  0.912        full
+
+전문가별 '최고' 암종 수: {'full': 20, 'driver': 4, 'burden': 2}
+DONE

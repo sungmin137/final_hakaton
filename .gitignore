@@ -29,4 +29,3 @@ lightning_logs/
 
 # 실험 산출물 중 대용량 제외
 experiments/*/oof_proba.npy
-src/experts.py

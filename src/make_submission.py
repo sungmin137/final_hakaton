@@ -17,6 +17,7 @@ from sklearn.preprocessing import LabelEncoder
 from main import DATA, ID, PARAM_SETS, ROOT, TARGET, FeatureMaker, class_weights, load_test, load_train
 from postprocess.twin_rule import TwinRule
 from postprocess.class_scale import fit_class_scales
+from approach3_class_feature_compare.approach3_class_feature_compare_v2 import EXPERT_COLS, blend
 
 
 def validate(sub: pd.DataFrame, sample: pd.DataFrame, train_labels: set) -> None:
@@ -33,6 +34,8 @@ def main() -> None:
     ap.add_argument("--params", default="official", choices=list(PARAM_SETS))
     ap.add_argument("--balanced", action="store_true")
     ap.add_argument("--tag", default=None, help="파일명 태그 (기본: 날짜_피처_xgb[_params][_bal])")
+    ap.add_argument("--approach3-blend", default=None, metavar="WD,WB",
+                    help="접근 3 v2: driver/burden 전문가를 train 전체로 학습해 test 확률을 로그 가중 블렌딩 (예: 0.5,0.2)")
     ap.add_argument("--class-scale", default=None, metavar="OOF_DIR",
                     help="정직 CV OOF 디렉토리(experiments/…_grp). 그 OOF와 train 라벨로 클래스 배율을 맞춰 test 확률에 곱함")
     a = ap.parse_args()
@@ -51,7 +54,17 @@ def main() -> None:
 
     # 2. test 로드 (이 스크립트에서 test.csv를 읽는 유일한 지점)
     test = load_test()
-    proba = model.predict_proba(fm.transform(test))
+    Xte = fm.transform(test)
+    proba = model.predict_proba(Xte)
+    if a.approach3_blend:                               # 접근 3 v2 — 전문가 블렌딩 (train 전체로 학습)
+        w_d, w_b = map(float, a.approach3_blend.split(","))
+        Xtr_full = fm.transform(train); experts = {}
+        for name, sel in EXPERT_COLS.items():
+            cols = [c for c in Xtr_full.columns if sel(c)]
+            experts[name] = xgb.XGBClassifier(**params).fit(Xtr_full[cols], y).predict_proba(Xte[cols])
+            print(f"[approach3] {name} expert: {len(cols)} cols")
+        proba = blend(proba, experts["driver"], experts["burden"], w_d, w_b)
+        tag += f"_a3blend"
     if a.class_scale:                                   # Macro F1용 클래스 배율 — train OOF로만 결정 (docs/10)
         oof = np.load(ROOT / a.class_scale / "oof_proba.npy")
         scales = fit_class_scales(oof, y)
