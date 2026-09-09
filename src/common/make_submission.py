@@ -3,7 +3,8 @@
 흐름: train 전체 학습 → (여기서 처음) test.csv 로드 → 예측 → 형식 검증 → submissions/ 저장
       쌍둥이 규칙 적용본(_twin)도 함께 생성. 기본 submission.csv는 규칙 미적용본.
 
-실행: PYTHONPATH=src python3 src/make_submission.py --features v2 [--params tuned] [--balanced]
+실행: PYTHONPATH=src/common python3 src/common/make_submission.py --features v4 --class-scale … --tag approach2_v2_YYYYMMDD_HHMM
+      (보통은 src/approachN_vK_일자_시간.py 진입 스크립트가 이 main()을 호출한다)
 """
 import argparse
 import time
@@ -47,6 +48,7 @@ def main() -> None:
     if a.approach3_blend:
         tag = "approach3_class_feature_compare_" + ("v3" if len(a.approach3_blend.split(",")) > 2 else "v2")
     tag += ("" if a.params == "official" else f"_{a.params}") + ("_balanced" if a.balanced else "")
+    fixed_name = bool(a.tag)          # 진입 스크립트가 이름을 지정한 경우: team/file_rules.md 규칙 그대로
     tag = a.tag or tag
 
     # 1. train 전체 학습
@@ -83,26 +85,27 @@ def main() -> None:
         scales = fit_class_scales(oof, y)
         print("[post] class scales:", {c: float(v) for c, v in zip(le.classes_, scales) if v != 1.0})
         proba = proba * scales
-        tag += "_class_scale"
+        if not fixed_name:
+            tag += "_class_scale"
     pred = le.inverse_transform(proba.argmax(1))
     sample = pd.read_csv(DATA / "sample_submission.csv")
     labels = set(train[TARGET])
 
     # 3. 저장 — 기본본
     out_dir = ROOT / "submissions"; out_dir.mkdir(exist_ok=True)
-    stamp = datetime.now().strftime("%Y%m%d-%H%M")
+    stamp = "" if fixed_name else "_" + datetime.now().strftime("%Y%m%d_%H%M")
     sub = sample.copy(); sub[TARGET] = pred
     validate(sub, sample, labels)
-    sub.to_csv(out_dir / f"{tag}_{stamp}.csv", index=False, encoding="UTF-8-sig")
+    sub.to_csv(out_dir / f"{tag}{stamp}.csv", index=False, encoding="UTF-8-sig")
     sub.to_csv(out_dir / "submission.csv", index=False, encoding="UTF-8-sig")
 
     # 4. 저장 — 쌍둥이 규칙 적용본 (docs/07 참고, 팀 판단 후 선택)
     pred_tw, n_hit = TwinRule().fit(train).apply(test, pred)
     sub_tw = sample.copy(); sub_tw[TARGET] = pred_tw
     validate(sub_tw, sample, labels)
-    sub_tw.to_csv(out_dir / f"{tag}_twin_rule_{stamp}.csv", index=False, encoding="UTF-8-sig")
+    sub_tw.to_csv(out_dir / f"{tag}{stamp}_twin_rule.csv", index=False, encoding="UTF-8-sig")
 
-    exp = ROOT / "experiments" / "submissions" / f"{tag}_{stamp}"; exp.mkdir(parents=True, exist_ok=True)
+    exp = ROOT / "experiments" / "submissions" / f"{tag}{stamp}"; exp.mkdir(parents=True, exist_ok=True)
     np.save(exp / "test_proba.npy", proba)
 
     # 5. 요약
@@ -112,7 +115,7 @@ def main() -> None:
                          "pred": pd.Series(pred).value_counts(normalize=True)}).fillna(0)
     dist["diff"] = dist.pred - dist.train
     print("[test] train 비율과 가장 다른 예측 클래스:\n", dist.sort_values("diff", key=abs, ascending=False).head(5).round(3).to_string())
-    print(f"saved: submissions/submission.csv, {tag}_{stamp}.csv, {tag}_twin_rule_{stamp}.csv")
+    print(f"saved: submissions/submission.csv, {tag}{stamp}.csv, {tag}{stamp}_twin_rule.csv")
 
 
 if __name__ == "__main__":

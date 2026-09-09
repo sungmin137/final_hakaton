@@ -5,7 +5,7 @@ v2는 자유도를 2개(driver 가중치, burden 가중치)로 줄인 블렌딩:
     log p = log p_full + w_d · log p_driver + w_b · log p_burden
 가중치는 train OOF에서 격자 탐색하고, 절반 교차확인으로 일반화 이득을 검증한다.
 
-실행: PYTHONPATH=src python3 src/approach3_class_feature_compare/approach3_class_feature_compare_v2.py
+실행: PYTHONPATH=src/common python3 src/common/approach3_class_feature_compare/approach3_class_feature_compare_v2.py
 입력: v1 산출물(experiments/approach3_class_feature_compare_v1/oof_*.npy) + v4 정직 CV OOF
 산출: experiments/approach3_class_feature_compare_v2/result.json (최적 가중치, 교차확인 이득)
 추론: make_submission.py --approach3-blend  (전문가를 train 전체로 학습해 test 확률을 블렌딩)
@@ -17,7 +17,7 @@ from pathlib import Path
 import numpy as np, pandas as pd
 from sklearn.metrics import f1_score
 
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = Path(__file__).resolve().parents[3]
 V1 = ROOT / "experiments" / "approach3_class_feature_compare_v1"
 OUT = ROOT / "experiments" / "approach3_class_feature_compare_v2"
 GRID = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.7, 1.0]
@@ -41,7 +41,7 @@ def search(P, y, idx=None):
 
 
 def main():
-    tr = pd.read_csv(ROOT / "data/raw/train.csv", usecols=["SUBCLASS"]); classes = sorted(tr.SUBCLASS.unique())
+    tr = pd.read_csv(ROOT / "info/data/train.csv", usecols=["SUBCLASS"]); classes = sorted(tr.SUBCLASS.unique())
     y = tr.SUBCLASS.map({c: i for i, c in enumerate(classes)}).to_numpy()
     P = {"full": np.load(ROOT / "experiments/2026-09-09_v4_xgb_grp/oof_proba.npy"),
          "driver": np.load(V1 / "oof_driver.npy"), "burden": np.load(V1 / "oof_burden.npy")}

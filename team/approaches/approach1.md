@@ -1,7 +1,15 @@
-# 접근 1 — 클래스별 변이 개수 기반 가중치 (브랜치 sungmin, 2026-09-09)
+# 접근 1 — 클래스별 변이 개수 기반 가중치 (Count Weight)
+
+## 버전
+| 버전 | 파일 (src / submissions) | 바뀐 것 | 정직 CV Macro F1 | LB |
+|---|---|---|---|---|
+| v1 | (제출 없음) `src/common/approach1_count_weight/count_weights.py` | 클래스별 변이 개수 가중치 합산 단독 분류기 (count/rate/spec/nb × gene/variant) | 최고 0.2765 (variant nb) | - |
+| v2 | `approach1_v2_20260909_1442` | v1 이진화·카운트 피처 + 가중치 점수 140개 → XGB (`--features v2`) | 0.4486 (일반 CV 0.4942는 쌍둥이 부풀림) | **0.41** |
+
+## 상세 (작성 당시 기록, 브랜치 sungmin, 2026-09-09)
 
 회의안: 같은 클래스끼리 묶어 변이를 개수 순으로 정리하고, 많이 나온 변이일수록 큰 가중치를 준다.
-구현: `src/approach1_count_weight/count_weights.py`. train.csv만 사용, 검증은 Stratified 5-Fold.
+구현: `src/common/approach1_count_weight/count_weights.py`. train.csv만 사용, 검증은 Stratified 5-Fold.
 
 ## 1단계 — 가중치 합산만으로 분류 (단독 분류기)
 샘플의 변이마다 클래스별 가중치를 더해 가장 큰 클래스로 예측.

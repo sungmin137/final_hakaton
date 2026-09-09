@@ -4,10 +4,12 @@
 > driver 표지가 강한 암종은 driver로, 변이가 많은 암종은 변이 개수로 접근하자.
 
 ## 버전
-| 버전 | 구성 | 정직 CV Macro F1 | 비고 |
-|---|---|---|---|
-| v1 | 전문가 3개(driver / burden / full) + 로지스틱 회귀 스태킹 | **0.4455** (full 단독 0.4691보다 낮음) | 메타 모델이 OOF에 과적합. `…_v1.py`, `experiments/approach3_class_feature_compare_v1/` |
-| v2 | 같은 전문가, 로그 확률 가중 블렌딩(자유도 2) | 절반 교차확인 heldout **+0.012~0.015** | `…_v2.py`, `experiments/approach3_class_feature_compare_v2/`. 추론: `make_submission.py --approach3-blend` |
+| 버전 | 파일 (src / submissions) | 구성 | 정직 CV Macro F1 | LB |
+|---|---|---|---|---|
+| v1 | (제출 없음) `src/common/approach3_class_feature_compare/…_v1.py` | 전문가 3개(driver / burden / full) + 로지스틱 회귀 스태킹 | **0.4455** (full 0.4691보다 낮음, 과적합) | - |
+| v2 | `approach3_v2_20260909_1715` | 로그 확률 가중 블렌딩 full+0.5·driver+0.2·burden + 클래스 배율 | heldout **+0.012~0.015** | 미제출 |
+| v3 | `approach3_v3_20260909_1807` | + CatBoost 전문가(요약 피처) 4-모델 앙상블(0.7,0.4,0.8) + 클래스 배율 | 약 0.49 (낙관) | 0.417 (접근2 v2보다 낮음) |
+| v4 | (제출 없음) `…_v4.py` | 변이 31~300개 구간 전용 전문가 | 구간 내 0.341 (기존 0.398) | 폐기 |
 
 ## v1 설계
 | 전문가 | 피처 | 역할 |

@@ -18,7 +18,7 @@
 | 2026-09-09 | v3_lgbm (정직 CV) | LightGBM 300트리 lr0.05 ff0.3 | MacroF1 0.4516 / Acc 0.4720 | - | XGB v3 0.4663보다 낮음. 앙상블 재료 |
 | 2026-09-09 | v3_mlp (정직 CV, GPU/MPS) | MLP 512-256, dropout0.4, AdamW, label smoothing | MacroF1 0.3416 / Acc 0.3899 | - | 부스팅보다 낮음. 앙상블 재료 후보 |
 | 2026-09-09 | v3 앙상블 (OOF 가중평균) | xgb 1.0 + mlp 0.2 | MacroF1 0.4699 | - | +0.004. lgbm 섞으면 하락. 모델 앙상블은 지렛대 아님 |
-| 2026-09-09 | v3_xgb + 클래스 배율 후처리 | OOF 좌표상승으로 배율 탐색, 절반 교차확인 | 홀드아웃 +0.012 (0.4663 → 약 0.479) | - | src/postprocess/class_scale.py, 규칙 준수(train OOF만) |
+| 2026-09-09 | v3_xgb + 클래스 배율 후처리 | OOF 좌표상승으로 배율 탐색, 절반 교차확인 | 홀드아웃 +0.012 (0.4663 → 약 0.479) | - | src/common/postprocess/class_scale.py, 규칙 준수(train OOF만) |
 | 2026-09-09 | v3_cat (정직 CV) | CatBoost 300 iter rsm0.3 | 중단 | - | fold0에 11분+ 소요, 앙상블 효과 미미(lgbm 기준)라 중단 |
 | 2026-09-09 | v4_xgb (정직 CV) | v3 + BLOSUM62·아미노산 특성 지식 피처 68개 | MacroF1 0.4691 / Acc 0.4698 | - | v3 0.4663 대비 +0.003 (미미) |
 | 2026-09-09 | 시각화 | train 전용 연관성 대시보드 8종 (docs/viz/mutation_associations.html, 아티팩트 공유) | - | - | 암종×표지유전자, 암종 유사도, 변이수, 유형구성, 동시변이 lift, hotspot→암종, driver 조합, 동일 프로필 쌍 |
@@ -29,3 +29,4 @@
 | 2026-09-09 | 접근3 v3: CatBoost 전문가(요약 피처) + 4-모델 로그 앙상블 | cat 단독 0.4593, 앙상블 OOF 0.4905 (낙관) | heldout vs full +0.014~0.020, vs v2 ±0.005 | - | CatBoost 추가 이득 불확실 |
 | 2026-09-09 | 5차 제출: v4 + 접근3 v3 앙상블(0.7,0.4,0.8) + 클래스 배율 | make_submission.py --approach3-blend 0.7,0.4,0.8 --class-scale …v3 | 정직 CV 약 0.49~0.50 | **0.417** | CV +0.04 → LB +0.007. 개선이 test로 안 옮겨짐 |
 | 2026-09-09 | 접근3 v4: 변이 31~300개 구간 전용 전문가 | 구간 내 F1 0.341 vs 기존 앙상블 0.398, 블렌딩 heldout +0.002 | - | - | 학습 데이터 1,000명으로 부족. 폐기 |
+| 2026-09-09 | v4 시드 배깅 (3시드) | 공식 XGB 파라미터에는 subsample/colsample이 없어 시드가 결과를 바꾸지 않음 (시드 42·7 모두 0.4728 동일) | 0.4728 | - | 중단. 배깅하려면 subsample<1 필요 |

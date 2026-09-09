@@ -6,7 +6,7 @@
   cat            : CatBoost, 요약 피처만 사용 (cw_*, n_*, kf_*, hs_*, combo_*, lof_*, is_*, 구간) → 전체 유전자 4,230개 제외로 속도 확보
 앙상블: log p = log p_full + w_d·log p_driver + w_b·log p_burden + w_c·log p_cat, 격자 탐색 + 절반 교차확인.
 
-실행: PYTHONPATH=src python3 src/approach3_class_feature_compare/approach3_class_feature_compare_v3.py
+실행: PYTHONPATH=src/common python3 src/common/approach3_class_feature_compare/approach3_class_feature_compare_v3.py
 산출: experiments/approach3_class_feature_compare_v3/{oof_cat.npy, oof_proba.npy(앙상블), result.json, per_class_f1.csv}
 """
 from __future__ import annotations

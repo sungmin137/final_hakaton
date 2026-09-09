@@ -7,8 +7,8 @@
   5. Submission       : submissions/{날짜}_{피처}_xgb.csv
 
 실행 예)
-  PYTHONPATH=src python3 src/main.py --features v1 --cv
-  PYTHONPATH=src python3 src/main.py --features v1 --cv --submit
+  PYTHONPATH=src/common python3 src/common/main.py --features v4 --cv --group-twins
+  (제출은 src/approachN_vK_일자_시간.py 진입 스크립트로)
 """
 from __future__ import annotations
 
@@ -32,8 +32,8 @@ from approach1_count_weight.count_weights import CountWeightFeatures
 from postprocess.twin_rule import TwinRule
 from approach2_knowledge.knowledge_features import KnowledgeFeatures
 
-ROOT = Path(__file__).resolve().parents[1]
-DATA = ROOT / "data" / "raw"
+ROOT = Path(__file__).resolve().parents[2]
+DATA = ROOT / "info" / "data"          # 원본 데이터 (git 제외)
 SEED = 42
 
 # 공식 베이스라인과 동일한 하이퍼파라미터 (tree_method만 hist로 고정: 속도)

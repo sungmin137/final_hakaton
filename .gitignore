@@ -1,5 +1,5 @@
 # 데이터 (대회 데이터는 git에 올리지 않음)
-data/
+info/data/
 models/
 *.csv
 !submissions/*.csv

@@ -22,7 +22,7 @@ SEED = 42
 
 def main() -> None:
     t0 = time.time()
-    tr = pd.read_csv("data/raw/train.csv")
+    tr = pd.read_csv("info/data/train.csv")
     genes = gene_columns(tr)
     X = build_features(tr, genes)
     # 전부 WT인 유전자 제거 (train 기준, test는 이 컬럼 목록을 그대로 따른다)
