@@ -1,4 +1,4 @@
-"""각 클래스 특징별 비교 v1 — 암종(클래스)마다 특징(driver / 변이 개수)에 맞는 전문가 모델을 두고 스태킹으로 합친다. (사용자 제안 2026-09-09)
+"""접근 3 — 각 클래스 특징별 비교 v1: 암종(클래스)마다 특징(driver / 변이 개수)에 맞는 전문가 모델을 두고 스태킹으로 합친다. (사용자 제안 2026-09-09)
 
 전문가:
   driver : 유전자 변이 유무(g_*), hotspot 위치(hs_*), LoF 유전자(lof_*), 조합(combo_*)      ← "driver 비율이 높은 암종"
@@ -6,9 +6,9 @@
   full   : v4 전체 (기존 OOF 재사용: experiments/…_v4_xgb_grp)
 메타   : 세 전문가의 OOF 확률(로그)을 입력으로 다항 로지스틱 회귀. 같은 정직 fold로 cross_val_predict.
 산출   : 정직 CV Macro F1 (전문가별 / 스태킹), 암종별 "어느 전문가가 가장 잘 맞히나" 표.
-train.csv만 사용. 실행: PYTHONPATH=src python3 src/class_feature_compare/class_feature_compare_v1.py
-산출물: experiments/class_feature_compare_v1/ (oof_*.npy, per_class_f1.csv, result.json)
-문서  : docs/11_class_feature_compare.md
+train.csv만 사용. 실행: PYTHONPATH=src python3 src/approach3_class_feature_compare/approach3_class_feature_compare_v1.py
+산출물: experiments/approach3_class_feature_compare_v1/ (oof_*.npy, per_class_f1.csv, result.json)
+문서  : docs/11_approach3_class_feature_compare.md
 """
 import json, time
 from pathlib import Path
@@ -19,7 +19,7 @@ from sklearn.model_selection import StratifiedGroupKFold
 from sklearn.preprocessing import LabelEncoder
 from main import ROOT, SEED, TARGET, XGB_PARAMS, FeatureMaker, load_train, twin_groups
 
-OUT = ROOT / "experiments" / "class_feature_compare_v1"; OUT.mkdir(parents=True, exist_ok=True)
+OUT = ROOT / "experiments" / "approach3_class_feature_compare_v1"; OUT.mkdir(parents=True, exist_ok=True)
 EXPERTS = {
     "driver": lambda c: c.startswith(("g_", "hs_", "lof_", "combo_")),
     "burden": lambda c: c.startswith(("n_", "log_", "syn_ratio", "is_", "kf_", "lof_gene_ratio")) and not c.startswith("lof_") or c in ("n_lof_genes",),

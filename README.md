@@ -16,7 +16,7 @@ final_hakaton/
 │   ├── features/                  # v1 이진화·카운트, v3 인사이트 피처
 │   ├── approach1_count_weight/    # 접근 1: 클래스별 변이 개수 가중치 (v2 점수 피처)
 │   ├── approach2_knowledge/       # 접근 2: 지식 기반 변이 특성 (BLOSUM62, v4)
-│   ├── class_feature_compare/     # 각 클래스 특징별 비교 v1 (전문가 + 스태킹)
+│   ├── approach3_class_feature_compare/  # 접근 3: 각 클래스 특징별 비교 v1 (전문가 + 스태킹)
 │   ├── postprocess/               # 쌍둥이 규칙, 클래스 배율 후처리
 │   └── models/                    # GPU MLP
 ├── experiments/     # 실험 설정/결과 로그
