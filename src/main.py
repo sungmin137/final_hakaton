@@ -30,6 +30,7 @@ import re
 from features import ID, TARGET, InsightFeatures, build_features, gene_columns
 from count_weights import CountWeightFeatures
 from twin_rule import TwinRule
+from knowledge_features import KnowledgeFeatures
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "data" / "raw"
@@ -115,16 +116,19 @@ class FeatureMaker:
             self._enc = OrdinalEncoder(handle_unknown="use_encoded_value", unknown_value=-1)
             self._enc.fit(df[self.genes])
             self.columns = list(self.genes)
-        elif self.kind in ("v1", "v2", "v3"):
+        elif self.kind in ("v1", "v2", "v3", "v4"):
             X = build_features(df, self.genes)
             # 전부 WT인 유전자 컬럼 제거 (train 부분 기준)
             self.columns = [c for c in X.columns if not (c.startswith("g_") and X[c].sum() == 0)]
-            if self.kind in ("v2", "v3"):              # 접근 1: 클래스별 개수 가중치 점수 피처
+            if self.kind in ("v2", "v3", "v4"):        # 접근 1: 클래스별 개수 가중치 점수 피처
                 self._cw = CountWeightFeatures().fit(df)
                 self.columns += list(self._cw.transform(df).columns)
-            if self.kind == "v3":                      # 인사이트 피처: hotspot 위치, LoF 유전자, 조합, 특수 그룹
+            if self.kind in ("v3", "v4"):              # 인사이트 피처: hotspot 위치, LoF 유전자, 조합, 특수 그룹
                 self._ins = InsightFeatures().fit(df)
                 self.columns += list(self._ins.transform(df).columns)
+            if self.kind == "v4":                      # 지식 피처: BLOSUM62·아미노산 특성 변화 (docs/10 해석)
+                self._kf = KnowledgeFeatures().fit(df)
+                self.columns += list(self._kf.transform(df).columns)
         else:
             raise ValueError(f"unknown features: {self.kind}")
         return self
@@ -133,10 +137,12 @@ class FeatureMaker:
         if self.kind == "official":
             return pd.DataFrame(self._enc.transform(df[self.genes]), columns=self.genes, index=df.index)
         X = build_features(df, self.genes)
-        if self.kind in ("v2", "v3"):
+        if self.kind in ("v2", "v3", "v4"):
             X = pd.concat([X, self._cw.transform(df)], axis=1)
-        if self.kind == "v3":
+        if self.kind in ("v3", "v4"):
             X = pd.concat([X, self._ins.transform(df)], axis=1)
+        if self.kind == "v4":
+            X = pd.concat([X, self._kf.transform(df)], axis=1)
         X = X.reindex(columns=self.columns, fill_value=0)
         X.columns = _safe_names(X.columns)
         return X
@@ -218,7 +224,7 @@ def fit_full_and_submit(train: pd.DataFrame, kind: str, params: dict, tag: str,
 
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--features", default="v1", choices=["official", "v1", "v2", "v3"])
+    ap.add_argument("--features", default="v1", choices=["official", "v1", "v2", "v3", "v4"])
     ap.add_argument("--cv", action="store_true", help="Stratified 5-Fold 평가")
     ap.add_argument("--submit", action="store_true", help="전체 학습 후 test 추론 및 제출 파일 생성")
     ap.add_argument("--twin-rule", action="store_true", help="추론 시 쌍둥이 규칙 적용 (docs/07 참고, 기본 꺼짐)")
