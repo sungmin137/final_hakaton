@@ -21,7 +21,7 @@ PYTHONPATH=src python3 src/main.py --features v1 --cv --submit  # + 전체 학�
 ```
 제출 파일 생성 (test.csv는 여기서만 읽힘):
 ```bash
-PYTHONPATH=src python3 src/make_submission.py --features v2   # → submissions/submission.csv (+ _twin.csv)
+PYTHONPATH=src python3 src/make_submission.py --features v3   # → submissions/submission.csv (+ _twin.csv)
 ```
 피처 버전: `v1` 이진화+카운트 · `v2` = v1 + 접근1 개수가중치 점수 · `v3` = v2 + hotspot 위치·LoF 유전자·조합·특수그룹
 
@@ -32,6 +32,17 @@ PYTHONPATH=src python3 src/make_submission.py --features v2   # → submissions/
 | 공식 베이스라인 인코딩 + XGB | 0.3048 | 0.3288 |
 | v1 피처 + XGB | 0.3845 | 0.3917 |
 | v2 = v1 + 접근1 개수 가중치 점수 (sungmin) | 0.4942 | 0.5265 |
+
+**정직 CV (쌍둥이를 같은 fold에, `--group-twins`) — 이 기준으로 비교**
+
+| 실험 | 정직 CV Macro F1 | 리더보드 |
+|---|---|---|
+| v1 | 0.3979 | - |
+| v2 | 0.4486 | 0.41 |
+| v2 + 클래스가중치 | 0.4478 | - |
+| v2 + 튜닝 파라미터 | 0.4535 | - |
+| **v3 (현재 submission.csv)** | **0.4663** | (제출 대기) |
+| v3 + 튜닝 파라미터 | 0.4576 | - |
 
 ## 시작
 ```bash

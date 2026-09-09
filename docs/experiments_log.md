@@ -11,3 +11,7 @@
 | 2026-09-09 | v1_xgb (정직 CV, 쌍둥이 그룹) | 동일 피처, StratifiedGroupKFold(쌍둥이 같은 fold) | MacroF1 0.3979 / Acc 0.4301 | - | 쌍둥이 효과 제거 기준선 |
 | 2026-09-09 | v2_xgb (정직 CV, 쌍둥이 그룹) | 동일 피처, 쌍둥이 같은 fold | MacroF1 0.4486 / Acc 0.4622 | 0.41 (제출본) | 일반 CV 0.4942 → 0.4486. LB 격차 0.08 → 0.04로 축소 |
 | 2026-09-09 | v2_xgb + 클래스가중치 (정직 CV) | sqrt 역빈도 sample_weight | MacroF1 0.4478 / Acc 0.4594 | - | 효과 없음 (기준 0.4486) |
+| 2026-09-09 | v2_xgb tuned + 클래스가중치 (정직 CV) | 600트리 lr0.05 colsample0.3 subsample0.8 | MacroF1 0.4535 / Acc 0.4682 | - | 기준 0.4486 대비 +0.005 |
+| 2026-09-09 | v3_xgb (정직 CV) | v2 + hotspot 위치 one-hot·LoF 유전자·조합·특수그룹 플래그, 공식 파라미터 | MacroF1 0.4663 / Acc 0.4685 | - | v2 0.4486 대비 +0.018 |
+| 2026-09-09 | v3_xgb tuned (정직 CV) | v3 + 600트리 lr0.05 colsample0.3 | MacroF1 0.4576 / Acc 0.4717 | - | v3 공식(0.4663)보다 낮음 → 공식 파라미터 채택 |
+| 2026-09-09 | v3_xgb 2차 제출 | make_submission.py --features v3, 공식 파라미터 | 정직 CV 0.4663 | (제출 후 기록) | submission.csv 갱신. STES 21% 과잉 예측은 여전 |
