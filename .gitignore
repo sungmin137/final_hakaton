@@ -1,8 +1,8 @@
 # 데이터 (대회 데이터는 git에 올리지 않음)
-data/
-models/
+1. info/data/
+/models/
 *.csv
-!submissions/*.csv
+!5. submissions/*.csv
 
 # Python
 __pycache__/
@@ -13,8 +13,11 @@ venv/
 *.egg-info/
 
 # 실험 로그
-experiments/*.log
-!experiments/*_eda_*.log
+6. experiments/*.log
+!6. experiments/*_eda_*.log
+!6. experiments/**/per_class_f1.csv
+!6. experiments/**/cv_results.csv
+!6. experiments/**/confusion_matrix.csv
 optuna.db
 catboost_info/
 lightning_logs/
@@ -27,5 +30,4 @@ lightning_logs/
 # 비밀정보
 .env
 
-# 실험 산출물 중 대용량 제외
-experiments/*/oof_proba.npy
+# 실험 산출물: OOF 확률(약 1.3MB)은 재생성 비용이 커서 git에 포함한다 (2026-09-09 experiments 유실 사고 이후)

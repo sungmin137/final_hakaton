@@ -1,0 +1,17 @@
+level,scheme,agg,macro_f1,acc,sec
+variant,nb,mean,0.2765,0.3079,8
+variant,rate,sum,0.235,0.2425,8
+variant,rate,mean,0.235,0.2425,8
+variant,spec,sum,0.2319,0.2419,8
+variant,spec,mean,0.2319,0.2419,8
+variant,count,sum,0.2295,0.2604,8
+variant,count,mean,0.2295,0.2604,8
+variant,nb,sum,0.2165,0.2274,8
+gene,spec,sum,0.1384,0.1776,10
+gene,spec,mean,0.1384,0.1776,10
+gene,rate,sum,0.1047,0.1359,10
+gene,rate,mean,0.1047,0.1359,10
+gene,count,sum,0.0902,0.1738,10
+gene,count,mean,0.0902,0.1738,10
+gene,nb,sum,0.0574,0.0853,10
+gene,nb,mean,0.0392,0.0913,10

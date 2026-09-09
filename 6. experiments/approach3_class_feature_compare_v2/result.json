@@ -1,0 +1,24 @@
+{
+  "weights": {
+    "driver": 0.5,
+    "burden": 0.2
+  },
+  "oof_f1": 0.4875,
+  "full_f1": 0.4683,
+  "cross_check": [
+    {
+      "weights": [
+        0.7,
+        0.2
+      ],
+      "heldout_gain": 0.0116
+    },
+    {
+      "weights": [
+        0.2,
+        0.4
+      ],
+      "heldout_gain": 0.0173
+    }
+  ]
+}

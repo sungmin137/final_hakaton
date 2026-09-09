@@ -11,3 +11,5 @@ seaborn
 jupyter
 ipykernel
 tqdm
+biopython
+torch
