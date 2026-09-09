@@ -20,7 +20,7 @@
 ## 메인 파이프라인
 - 공식 베이스라인(`1. info/baseline.py`, `1. info/baseline.py`)의 5단계 구조를 따른다: Load → Preprocessing → Train → Inference → Submission.
 - 구현체는 `4. src/common/main.py` .
-- **파일 규칙은 `2. team/file_rules.md`가 기준.** 제출 재현 스크립트 `4. src/submissions/approachN_vK_YYYYMMDD_HHMM.py` = 같은 이름의 `5. submissions/….csv`. 공용 로직은 `4. src/common/`. 접근법 설명은 `2. team/approaches/approachN.md`에 버전별로 상세 기록.
+- **파일 규칙은 `2. team/file_rules.md`가 기준.** 제출 재현 스크립트 `4. src/submissions_source/approachN_vK_YYYYMMDD_HHMM.py` = 같은 이름의 `5. submissions/….csv`. 공용 로직은 `4. src/common/`. 접근법 설명은 `2. team/approaches/approachN.md`에 버전별로 상세 기록.
 - 피처는 `4. src/common/features/features.py` + `FeatureMaker(kind)`. import는 `PYTHONPATH="4. src/common"` 기준(`features.features`, `approach1_count_weight.count_weights` …).
 - 실행: `PYTHONPATH="4. src/common" python3 "4. src/common/main.py" --features v4 --cv --group-twins`. test.csv는 `make_submission.py`(진입 스크립트 경유)에서만 읽는다.
 

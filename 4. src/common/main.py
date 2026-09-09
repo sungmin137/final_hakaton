@@ -123,20 +123,20 @@ class FeatureMaker:
             self._enc = OrdinalEncoder(handle_unknown="use_encoded_value", unknown_value=-1)
             self._enc.fit(df[self.genes])
             self.columns = list(self.genes)
-        elif self.kind in ("v1", "v2", "v3", "v4", "v5"):
+        elif self.kind in ("v1", "v2", "v3", "v4", "v5", "a2", "a4"):
             X = build_features(df, self.genes)
             # 전부 WT인 유전자 컬럼 제거 (train 부분 기준)
             self.columns = [c for c in X.columns if not (c.startswith("g_") and X[c].sum() == 0)]
             if self.kind in ("v2", "v3", "v4", "v5"):  # 접근 1: 클래스별 개수 가중치 점수 피처
                 self._cw = CountWeightFeatures().fit(df)
                 self.columns += list(self._cw.transform(df).columns)
-            if self.kind in ("v3", "v4", "v5"):        # 인사이트 피처: hotspot 위치, LoF 유전자, 조합, 특수 그룹
+            if self.kind in ("v3", "v4", "v5", "a2"):  # 인사이트 피처: hotspot 위치, LoF 유전자, 조합, 특수 그룹
                 self._ins = InsightFeatures().fit(df)
                 self.columns += list(self._ins.transform(df).columns)
-            if self.kind in ("v4", "v5"):                      # 지식 피처: BLOSUM62·아미노산 특성 변화 (3. docs/10 해석)
+            if self.kind in ("v4", "v5", "a2"):        # 지식 피처: BLOSUM62·아미노산 특성 변화 (3. docs/10 해석)
                 self._kf = KnowledgeFeatures().fit(df)
                 self.columns += list(self._kf.transform(df).columns)
-            if self.kind == "v5":                      # 접근 4: 문헌 driver·경로·역할 피처
+            if self.kind in ("v5", "a4"):              # 접근 4: 문헌 driver·경로·역할 피처 (a4 = 기본 피처 + 문헌 피처만, 단독 평가)
                 self._lit = LiteratureFeatures().fit(df)
                 self.columns += list(self._lit.transform(df).columns)
         else:
@@ -151,11 +151,11 @@ class FeatureMaker:
         X = build_features(df, self.genes)
         if self.kind in ("v2", "v3", "v4", "v5"):
             X = pd.concat([X, self._cw.transform(df)], axis=1)
-        if self.kind in ("v3", "v4", "v5"):
+        if self.kind in ("v3", "v4", "v5", "a2"):
             X = pd.concat([X, self._ins.transform(df)], axis=1)
-        if self.kind in ("v4", "v5"):
+        if self.kind in ("v4", "v5", "a2"):
             X = pd.concat([X, self._kf.transform(df)], axis=1)
-        if self.kind == "v5":
+        if self.kind in ("v5", "a4"):
             X = pd.concat([X, self._lit.transform(df)], axis=1)
         X = X.reindex(columns=self.columns, fill_value=0)
         X.columns = _safe_names(X.columns)
@@ -238,7 +238,7 @@ def fit_full_and_submit(train: pd.DataFrame, kind: str, params: dict, tag: str,
 
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--features", default="v1", choices=["official", "v1", "v2", "v3", "v4", "v5"])
+    ap.add_argument("--features", default="v1", choices=["official", "v1", "v2", "v3", "v4", "v5", "a2", "a4"])
     ap.add_argument("--cv", action="store_true", help="Stratified 5-Fold 평가")
     ap.add_argument("--submit", action="store_true", help="전체 학습 후 test 추론 및 제출 파일 생성")
     ap.add_argument("--twin-rule", action="store_true", help="추론 시 쌍둥이 규칙 적용 (3. docs/07 참고, 기본 꺼짐)")

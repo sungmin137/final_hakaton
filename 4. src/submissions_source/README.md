@@ -1,6 +1,6 @@
 # 4. src/submissions — 제출 재현 스크립트
 
-`5. submissions/<이름>.csv` 하나마다 같은 이름의 `4. src/submissions/<이름>.py`가 있다. 스크립트를 실행하면 그 csv가 다시 만들어진다.
+`5. submissions/<이름>.csv` 하나마다 같은 이름의 `4. src/submissions_source/<이름>.py`가 있다. 스크립트를 실행하면 그 csv가 다시 만들어진다.
 
 | 스크립트 | 접근법 문서 | 만든 제출 |
 |---|---|---|
@@ -11,4 +11,4 @@
 | approach3_v2_20260909_1715.py | 2. team/approaches/approach3.md | 5. submissions/approach3_v2_20260909_1715.csv |
 | approach3_v3_20260909_1807.py | 2. team/approaches/approach3.md | 5. submissions/approach3_v3_20260909_1807.csv (LB 0.417) |
 
-실행: `python3 "4. src/submissions/approach2_v2_20260909_1653.py"` (루트에서). 작성 규칙은 `2. team/file_rules.md` 3절.
+실행: `python3 "4. src/submissions_source/approach2_v2_20260909_1653.py"` (루트에서). 작성 규칙은 `2. team/file_rules.md` 3절.
