@@ -46,8 +46,9 @@ def load_train() -> pd.DataFrame:
 
 
 def load_test() -> pd.DataFrame:
-    """⚠️ Inference 단계 외에서는 호출 금지 (프로젝트 규칙)."""
-    return pd.read_csv(DATA / "test.csv")
+    """⚠️ Inference 단계 외에서는 호출 금지 (프로젝트 규칙).
+    test.csv에는 train에 없던 결측 셀이 있다 → WT(변이 없음)로 간주."""
+    return pd.read_csv(DATA / "test.csv").fillna("WT")
 
 
 # ---------------------------------------------------------------- 2. Preprocessing
