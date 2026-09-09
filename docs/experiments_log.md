@@ -25,3 +25,4 @@
 | 2026-09-09 | v4_xgb + 클래스 배율 3차 제출 | make_submission.py --features v4 --class-scale (train OOF 기반) | 정직 CV 0.4691 (+후처리 약 0.012) | (제출 후 기록) | submission.csv 갱신. STES 과잉 예측 21%→15% (train OOF 배율의 부수 효과) |
 | 2026-09-09 | 접근3 v1: 전문가(driver/burden) + LR 스태킹 (정직 CV) | driver 0.3801, burden 0.3767, stack 0.4455 | full(v4) 0.4691 | - | 스태킹이 full보다 낮음. 암종별로는 LGG/THCA/OV/SARC→driver, CESC/KIRC→burden 우세 |
 | 2026-09-09 | 접근3 v2: 로그 가중 블렌딩 full+0.5·driver+0.2·burden | OOF 0.486 (낙관), 절반 교차확인 heldout +0.012~0.015 | - | - | 자유도 2로 줄이니 일반화됨 |
+| 2026-09-09 | 4차 제출: v4 + 접근3 v2 블렌딩(0.5,0.2) + 클래스 배율(블렌드 OOF) | make_submission.py --features v4 --approach3-blend 0.5,0.2 --class-scale experiments/approach3_class_feature_compare_v2 | 정직 CV 기준 약 0.49 (0.469 + 블렌딩 0.013 + 배율 0.01) | (제출 후 기록) | submission.csv 갱신 |
