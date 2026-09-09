@@ -15,3 +15,4 @@
 | approach4_v1_20260909_2135.py | 2. team/approaches/approach4.md | 5. submissions/approach4_v1_20260909_2135.csv |
 | approach2_v3_20260909_2135.py | 2. team/approaches/approach2.md | 5. submissions/approach2_v3_20260909_2135.csv |
 | approach5_v1_20260909_2135.py | 2. team/approaches/approach5.md | 5. submissions/approach5_v1_20260909_2135.csv |
+| approach5_v2_20260909_2322.py | 2. team/approaches/approach5.md | 5. submissions/approach5_v2_20260909_2322.csv |
