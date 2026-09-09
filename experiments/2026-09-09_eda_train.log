@@ -1,0 +1,110 @@
+shape (6201, 4386)
+
+[SUBCLASS 분포]
+ SUBCLASS
+BRCA      786
+KIPAN     515
+GBMLGG    461
+STES      379
+KIRC      334
+THCA      324
+SKCM      276
+PRAD      266
+OV        253
+LGG       229
+HNSC      223
+COAD      223
+SARC      198
+UCEC      198
+LUAD      184
+LUSC      178
+LIHC      158
+LAML      158
+CESC      155
+PCPG      147
+TGCT      124
+PAAD      120
+BLCA      104
+THYM       98
+ACC        72
+DLBC       38
+
+WT 비율 0.9919
+전부 WT인 유전자 수 154
+
+[샘플당 변이 유전자 수]
+ count    6201.000000
+mean       35.299629
+std       100.776379
+min         0.000000
+25%         7.000000
+50%        14.000000
+75%        27.000000
+max      2393.000000
+
+다중 변이 셀 비율 0.1006
+
+[개별 변이 유형]
+ missense      164740
+synonymous     66883
+nonsense       13428
+frameshift      9911
+other            199
+deletion           3
+
+[클래스별 변이수 중앙값]
+ SUBCLASS
+THYM       2.0
+LAML       3.0
+THCA       4.0
+PCPG       4.0
+PRAD       6.0
+LGG        8.0
+BRCA       9.0
+SARC       9.0
+GBMLGG    11.0
+OV        12.0
+KIRC      13.0
+PAAD      14.0
+KIPAN     15.0
+TGCT      16.0
+UCEC      18.0
+CESC      20.0
+COAD      23.0
+ACC       24.0
+LIHC      25.0
+DLBC      30.0
+HNSC      31.0
+LUAD      40.5
+STES      41.0
+BLCA      54.0
+LUSC      57.0
+SKCM      85.5
+
+[클래스별 변이 빈도 상위 5 유전자]
+ACC {'PLEC': 0.53, 'LRIG1': 0.35, 'SOWAHC': 0.33, 'CMPK2': 0.28, 'NFKB2': 0.25}
+BLCA {'TP53': 0.53, 'KMT2D': 0.3, 'PIK3CA': 0.22, 'SYNE1': 0.21, 'SPTAN1': 0.18}
+BRCA {'PIK3CA': 0.32, 'TP53': 0.28, 'CDH1': 0.09, 'GATA3': 0.07, 'MAP3K1': 0.07}
+CESC {'PIK3CA': 0.23, 'SYNE1': 0.15, 'DST': 0.15, 'RYR2': 0.14, 'KMT2D': 0.11}
+COAD {'APC': 0.72, 'TP53': 0.52, 'SYNE1': 0.28, 'FBXW7': 0.17, 'DMD': 0.16}
+DLBC {'KMT2D': 0.39, 'BTG2': 0.32, 'SYNE1': 0.26, 'BTG1': 0.26, 'PIM1': 0.24}
+GBMLGG {'IDH1': 0.41, 'TP53': 0.37, 'ATRX': 0.21, 'PTEN': 0.16, 'EGFR': 0.15}
+HNSC {'TP53': 0.66, 'CDKN2A': 0.22, 'PIK3CA': 0.21, 'SYNE1': 0.19, 'NOTCH1': 0.19}
+KIPAN {'VHL': 0.3, 'DST': 0.05, 'KMT2D': 0.05, 'MTOR': 0.05, 'TP53': 0.05}
+KIRC {'VHL': 0.45, 'DST': 0.06, 'MTOR': 0.06, 'KMT2D': 0.05, 'PABPC1': 0.05}
+LAML {'NPM1': 0.26, 'IDH1': 0.11, 'IDH2': 0.11, 'RUNX1': 0.08, 'TP53': 0.07}
+LGG {'IDH1': 0.79, 'TP53': 0.51, 'ATRX': 0.36, 'NOTCH1': 0.07, 'PIK3CA': 0.07}
+LIHC {'TP53': 0.26, 'CTNNB1': 0.24, 'RYR2': 0.16, 'DST': 0.12, 'PCLO': 0.11}
+LUAD {'TP53': 0.42, 'RYR2': 0.39, 'SPTA1': 0.26, 'PCLO': 0.23, 'RYR1': 0.19}
+LUSC {'TP53': 0.71, 'RYR2': 0.43, 'SYNE1': 0.34, 'SPTA1': 0.28, 'PKHD1': 0.23}
+OV {'TP53': 0.75, 'RYR2': 0.05, 'COL6A3': 0.04, 'AHNAK': 0.04, 'EGFR': 0.04}
+PAAD {'TP53': 0.66, 'CDKN2A': 0.16, 'RYR1': 0.1, 'GNAS': 0.07, 'PLEC': 0.07}
+PCPG {'HRAS': 0.1, 'NF1': 0.07, 'CHEK2': 0.05, 'COL12A1': 0.03, 'ATRX': 0.03}
+PRAD {'SPOP': 0.11, 'TP53': 0.05, 'SPTA1': 0.04, 'SYNE1': 0.04, 'KMT2D': 0.03}
+SARC {'TP53': 0.26, 'ATRX': 0.13, 'PCLO': 0.07, 'RB1': 0.07, 'RYR1': 0.05}
+SKCM {'BRAF': 0.5, 'PCLO': 0.48, 'MXRA5': 0.38, 'MYH1': 0.33, 'RYR1': 0.33}
+STES {'TP53': 0.56, 'SYNE1': 0.31, 'PCLO': 0.24, 'RYR2': 0.23, 'SPTA1': 0.21}
+TGCT {'KIT': 0.15, 'NCOR2': 0.1, 'CELSR1': 0.1, 'PLEC': 0.08, 'PKD1': 0.07}
+THCA {'BRAF': 0.57, 'HRAS': 0.04, 'TG': 0.04, 'RYR1': 0.02, 'PKHD1': 0.02}
+THYM {'HRAS': 0.08, 'TP53': 0.04, 'PLXNB2': 0.03, 'PCLO': 0.03, 'NF1': 0.03}
+UCEC {'PTEN': 0.62, 'PIK3CA': 0.49, 'CTNNB1': 0.31, 'TP53': 0.25, 'RYR2': 0.19}
