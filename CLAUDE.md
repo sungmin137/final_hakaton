@@ -10,7 +10,7 @@
 - **브랜치: 사용자(성민) 작업은 `sungmin` 브랜치에서 한다.** main에 직접 커밋하지 않는다. main 반영은 PR로. 팀원은 각자 이름 브랜치.
 - 데이터(`data/`)와 모델(`models/`)은 git에 올리지 않는다. 제출 csv만 `submissions/`에 보관.
 - 실험은 `experiments/`에 날짜_이름 형식으로 기록하고, 결과 요약은 `docs/experiments_log.md`에 누적.
-- 검증은 반드시 Stratified K-Fold(클래스 26개, 불균형 가능성 큼). 리더보드 점수와 CV 점수를 함께 기록.
+- 검증은 반드시 **`--group-twins` 정직 CV**(StratifiedGroupKFold, 완전 동일 행을 같은 fold에). 일반 CV는 쌍둥이 때문에 +0.05 부풀려짐(docs/07). 리더보드 점수와 CV 점수를 함께 기록.
 - 재사용 코드는 `src/`에, 탐색은 `notebooks/`에. 노트북 → src 승격 시 함수화.
 - Python: `uv` 사용. 시스템 python3.14 + 기존 설치 패키지 사용 가능(pandas/sklearn/lgbm/xgb/catboost/optuna 확인됨).
 

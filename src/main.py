@@ -22,7 +22,7 @@ import numpy as np
 import pandas as pd
 import xgboost as xgb
 from sklearn.metrics import accuracy_score, confusion_matrix, f1_score
-from sklearn.model_selection import StratifiedKFold
+from sklearn.model_selection import StratifiedKFold, StratifiedGroupKFold
 from sklearn.preprocessing import LabelEncoder, OrdinalEncoder
 
 from features import ID, TARGET, build_features, gene_columns
@@ -38,6 +38,20 @@ XGB_PARAMS = dict(
     n_estimators=100, learning_rate=0.1, max_depth=6, random_state=SEED,
     eval_metric="mlogloss", tree_method="hist", n_jobs=8,
 )
+# 조정안: 트리 수↑ 학습률↓, 피처 서브샘플링(희소 4,000+ 컬럼), 정규화
+XGB_TUNED = dict(
+    n_estimators=600, learning_rate=0.05, max_depth=6, subsample=0.8, colsample_bytree=0.3,
+    min_child_weight=2, reg_lambda=2.0, random_state=SEED, eval_metric="mlogloss",
+    tree_method="hist", n_jobs=8,
+)
+PARAM_SETS = {"official": XGB_PARAMS, "tuned": XGB_TUNED}
+
+
+def class_weights(y: np.ndarray) -> np.ndarray:
+    """클래스 빈도의 역수(제곱근 완화)로 샘플 가중치. Macro F1 대응."""
+    cnt = np.bincount(y)
+    w = (cnt.max() / cnt) ** 0.5
+    return w[y]
 
 
 # ---------------------------------------------------------------- 1. Load
@@ -88,19 +102,29 @@ class FeatureMaker:
 
 
 # ---------------------------------------------------------------- 3. Model Train (CV)
+def twin_groups(train: pd.DataFrame) -> np.ndarray:
+    """완전 동일 프로필(쌍둥이)을 같은 그룹으로. docs/07 참고."""
+    from twin_rule import _hash_rows
+    genes = gene_columns(train)
+    return pd.factorize(_hash_rows(train, genes))[0]
+
+
 def cross_validate(train: pd.DataFrame, kind: str, params: dict, n_splits: int = 5,
-                   out_dir: Path | None = None) -> dict:
+                   out_dir: Path | None = None, group_twins: bool = False, balanced: bool = False) -> dict:
     le = LabelEncoder()
     y = le.fit_transform(train[TARGET])
-    skf = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=SEED)
+    if group_twins:   # 쌍둥이를 같은 fold에 묶어 중복 학습 효과를 제거한 '정직한' CV
+        splits = StratifiedGroupKFold(n_splits=n_splits, shuffle=True, random_state=SEED).split(train, y, twin_groups(train))
+    else:
+        splits = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=SEED).split(train, y)
     oof = np.zeros((len(train), len(le.classes_)))
     folds = []
     t0 = time.time()
-    for k, (tri, vai) in enumerate(skf.split(train, y)):
+    for k, (tri, vai) in enumerate(splits):
         fm = FeatureMaker(kind).fit(train.iloc[tri])
         Xtr, Xva = fm.transform(train.iloc[tri]), fm.transform(train.iloc[vai])
         model = xgb.XGBClassifier(**params)
-        model.fit(Xtr, y[tri])
+        model.fit(Xtr, y[tri], sample_weight=class_weights(y[tri]) if balanced else None)
         oof[vai] = model.predict_proba(Xva)
         pred = oof[vai].argmax(1)
         f1, acc = f1_score(y[vai], pred, average="macro"), accuracy_score(y[vai], pred)
@@ -109,7 +133,7 @@ def cross_validate(train: pd.DataFrame, kind: str, params: dict, n_splits: int =
 
     pred = oof.argmax(1)
     res = dict(
-        features=kind, model="xgb", params=params, folds=folds,
+        features=kind, model="xgb", params=params, folds=folds, group_twins=group_twins, balanced=balanced,
         oof_macro_f1=round(f1_score(y, pred, average="macro"), 4),
         oof_acc=round(accuracy_score(y, pred), 4),
         per_class_f1=dict(zip(le.classes_, f1_score(y, pred, average=None).round(4).tolist())),
@@ -127,11 +151,12 @@ def cross_validate(train: pd.DataFrame, kind: str, params: dict, n_splits: int =
 
 # ---------------------------------------------------------------- 4~5. Inference & Submission
 def fit_full_and_submit(train: pd.DataFrame, kind: str, params: dict, tag: str,
-                        twin_rule: bool = False) -> Path:
+                        twin_rule: bool = False, balanced: bool = False) -> Path:
     le = LabelEncoder()
     y = le.fit_transform(train[TARGET])
     fm = FeatureMaker(kind).fit(train)
-    model = xgb.XGBClassifier(**params).fit(fm.transform(train), y)
+    model = xgb.XGBClassifier(**params).fit(fm.transform(train), y,
+                                            sample_weight=class_weights(y) if balanced else None)
 
     test = load_test()                      # ← test.csv는 여기서 처음 읽힌다
     pred = le.inverse_transform(model.predict(fm.transform(test)))
@@ -155,15 +180,21 @@ def main() -> None:
     ap.add_argument("--cv", action="store_true", help="Stratified 5-Fold 평가")
     ap.add_argument("--submit", action="store_true", help="전체 학습 후 test 추론 및 제출 파일 생성")
     ap.add_argument("--twin-rule", action="store_true", help="추론 시 쌍둥이 규칙 적용 (docs/07 참고, 기본 꺼짐)")
+    ap.add_argument("--group-twins", action="store_true", help="CV에서 쌍둥이를 같은 fold에 묶음 (정직한 CV)")
+    ap.add_argument("--params", default="official", choices=list(PARAM_SETS), help="XGB 파라미터 세트")
+    ap.add_argument("--balanced", action="store_true", help="클래스 빈도 역수 샘플 가중치")
     a = ap.parse_args()
 
-    tag = f"{date.today().isoformat()}_{a.features}_xgb"
+    params = PARAM_SETS[a.params]
+    tag = (f"{date.today().isoformat()}_{a.features}_xgb" + ("" if a.params == "official" else f"_{a.params}")
+           + ("_bal" if a.balanced else "") + ("_grp" if a.group_twins else ""))
     train = load_train()
     print("train", train.shape, "| features:", a.features)
     if a.cv:
-        cross_validate(train, a.features, XGB_PARAMS, out_dir=ROOT / "experiments" / tag)
+        cross_validate(train, a.features, params, out_dir=ROOT / "experiments" / tag,
+                       group_twins=a.group_twins, balanced=a.balanced)
     if a.submit:
-        fit_full_and_submit(train, a.features, XGB_PARAMS, tag, twin_rule=a.twin_rule)
+        fit_full_and_submit(train, a.features, params, tag, twin_rule=a.twin_rule, balanced=a.balanced)
 
 
 if __name__ == "__main__":
