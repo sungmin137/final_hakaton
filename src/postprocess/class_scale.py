@@ -1,4 +1,4 @@
-"""Macro F1용 후처리: 클래스별 확률 배율(class scale)을 train OOF에서 최적화.
+"""(구 postprocess.py) Macro F1용 후처리: 클래스별 확률 배율(class scale)을 train OOF에서 최적화.
 
 Macro F1은 소수 클래스 recall에 민감하므로, argmax 전에 클래스별 배율 s_c 를 곱해
 소수 클래스가 조금 더 자주 선택되게 하면 점수가 오르는 경우가 많다.

@@ -21,7 +21,8 @@
 ## 메인 파이프라인
 - 공식 베이스라인(`notebooks/00_official_baseline_xgb.ipynb`, XGBoost)의 5단계 구조를 따른다: Load → Preprocessing → Train → Inference → Submission.
 - 구현체는 `src/main.py` (스크립트) 와 `notebooks/main.ipynb` (동일 로직을 셀로 나눈 것). 로직은 src에만 두고 노트북은 호출만 한다.
-- 피처는 `src/features.py` + `FeatureMaker(kind)`. 새 피처 버전은 kind를 추가(v2, v3…)하고 `--features`로 선택.
+- src는 접근법별 하위 폴더로 분류 (README 구조 참고). `main.py`(베이스라인)와 `make_submission.py`만 최상위. 새 접근법은 `src/<접근법이름>/` 폴더 + `docs/NN_<이름>.md`로 추가.
+- 피처는 `src/features/features.py` + `FeatureMaker(kind)`. 새 피처 버전은 kind를 추가(v2, v3…)하고 `--features`로 선택. import는 `PYTHONPATH=src` 기준 패키지 경로(`features.features`, `approach1_count_weight.count_weights` …).
 - 실행: `PYTHONPATH=src python3 src/main.py --features v1 --cv [--submit]`. `--submit`이 test.csv를 읽는 유일한 경로.
 
 ## 스타일

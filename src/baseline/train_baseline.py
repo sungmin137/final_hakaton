@@ -12,7 +12,7 @@ from sklearn.metrics import accuracy_score, f1_score, confusion_matrix
 from sklearn.model_selection import StratifiedKFold
 from sklearn.preprocessing import LabelEncoder
 
-from features import build_features, gene_columns, TARGET
+from features.features import build_features, gene_columns, TARGET
 
 EXP = "2026-09-09_baseline_lgbm_v1"
 OUT = Path("experiments") / EXP

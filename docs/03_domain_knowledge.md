@@ -101,7 +101,7 @@
 | 4 | 클래스 판별력 기준 상위 유전자만 선택 (fold 내 카이제곱) | 차원 축소 |
 | 4 | 유전자 세트/경로 단위 집계 (예: PI3K 경로, RTK 경로, DNA 복구) | 외부 지식 필요, 후순위 |
 
-## 8. 변이 카탈로그 결과 (`src/mutation_catalog.py`, 2026-09-09)
+## 8. 변이 카탈로그 결과 (`src/analysis/mutation_catalog.py`, 2026-09-09)
 train의 고유 변이 226,795개를 (유전자, 변이) 단위로 분류. 산출물: `experiments/mutation_catalog/{variants,genes}.csv` (git 제외, 재실행으로 생성).
 
 - **oncogene형 (같은 위치 반복 missense)**: IDH1 R132H 345명, BRAF V600E 332명, PIK3CA E545K/H1047R 155·154명, HRAS Q61R, PTEN R130Q, IDH2 R140Q.

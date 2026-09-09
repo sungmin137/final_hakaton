@@ -7,7 +7,7 @@
   4) 유형 프로필   : 샘플당 변이수, LoF 비율, 동의 변이 비율, 초과변이 비율, 무변이 비율
   5) 표지 커버리지 : 상위 표지 유전자 중 하나라도 변이가 있는 샘플 비율
 
-실행: python3 src/subclass_profiles.py
+실행: python3 src/analysis/subclass_profiles.py
 출력: experiments/subclass_profiles/*.csv, docs/04_subclass_profiles.md
 """
 import re
@@ -19,7 +19,7 @@ import numpy as np
 import pandas as pd
 from scipy.stats import fisher_exact
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / "experiments" / "subclass_profiles"
 DOC = ROOT / "docs" / "04_subclass_profiles.md"
 

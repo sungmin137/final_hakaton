@@ -1,7 +1,7 @@
 # 접근 1 — 클래스별 변이 개수 기반 가중치 (브랜치 sungmin, 2026-09-09)
 
 회의안: 같은 클래스끼리 묶어 변이를 개수 순으로 정리하고, 많이 나온 변이일수록 큰 가중치를 준다.
-구현: `src/count_weights.py`. train.csv만 사용, 검증은 Stratified 5-Fold.
+구현: `src/approach1_count_weight/count_weights.py`. train.csv만 사용, 검증은 Stratified 5-Fold.
 
 ## 1단계 — 가중치 합산만으로 분류 (단독 분류기)
 샘플의 변이마다 클래스별 가중치를 더해 가장 큰 클래스로 예측.

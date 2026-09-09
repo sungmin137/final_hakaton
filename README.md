@@ -8,7 +8,17 @@ final_hakaton/
 ├── data/raw/        # train.csv, test.csv, sample_submission.csv (git 제외)
 ├── docs/            # 배경, 계획, 실험 기록, 발표자료
 ├── notebooks/       # EDA 및 실험 노트북
-├── src/             # 재사용 코드 (전처리, 피처, 학습, 추론)
+├── src/
+│   ├── main.py                    # 베이스라인 파이프라인 (공식 XGB 구조 + 정직 CV) — 최상위 유지
+│   ├── make_submission.py         # 제출 파일 생성 (test.csv를 읽는 유일한 진입점)
+│   ├── baseline/                  # 초기 LightGBM 베이스라인
+│   ├── analysis/                  # EDA, 변이 카탈로그, 암종별 프로필
+│   ├── features/                  # v1 이진화·카운트, v3 인사이트 피처
+│   ├── approach1_count_weight/    # 접근 1: 클래스별 변이 개수 가중치 (v2 점수 피처)
+│   ├── approach2_knowledge/       # 접근 2: 지식 기반 변이 특성 (BLOSUM62, v4)
+│   ├── class_feature_compare/     # 각 클래스 특징별 비교 v1 (전문가 + 스태킹)
+│   ├── postprocess/               # 쌍둥이 규칙, 클래스 배율 후처리
+│   └── models/                    # GPU MLP
 ├── experiments/     # 실험 설정/결과 로그
 ├── models/          # 학습된 모델 (git 제외)
 └── submissions/     # 제출 파일

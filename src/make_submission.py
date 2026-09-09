@@ -15,8 +15,8 @@ import xgboost as xgb
 from sklearn.preprocessing import LabelEncoder
 
 from main import DATA, ID, PARAM_SETS, ROOT, TARGET, FeatureMaker, class_weights, load_test, load_train
-from twin_rule import TwinRule
-from postprocess import fit_class_scales
+from postprocess.twin_rule import TwinRule
+from postprocess.class_scale import fit_class_scales
 
 
 def validate(sub: pd.DataFrame, sample: pd.DataFrame, train_labels: set) -> None:

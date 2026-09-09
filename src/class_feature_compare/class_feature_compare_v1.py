@@ -6,7 +6,7 @@
   full   : v4 전체 (기존 OOF 재사용: experiments/…_v4_xgb_grp)
 메타   : 세 전문가의 OOF 확률(로그)을 입력으로 다항 로지스틱 회귀. 같은 정직 fold로 cross_val_predict.
 산출   : 정직 CV Macro F1 (전문가별 / 스태킹), 암종별 "어느 전문가가 가장 잘 맞히나" 표.
-train.csv만 사용. 실행: PYTHONPATH=src python3 src/class_feature_compare_v1.py
+train.csv만 사용. 실행: PYTHONPATH=src python3 src/class_feature_compare/class_feature_compare_v1.py
 산출물: experiments/class_feature_compare_v1/ (oof_*.npy, per_class_f1.csv, result.json)
 문서  : docs/11_class_feature_compare.md
 """

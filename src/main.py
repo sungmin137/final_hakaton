@@ -27,10 +27,10 @@ from sklearn.preprocessing import LabelEncoder, OrdinalEncoder
 
 import re
 
-from features import ID, TARGET, InsightFeatures, build_features, gene_columns
-from count_weights import CountWeightFeatures
-from twin_rule import TwinRule
-from knowledge_features import KnowledgeFeatures
+from features.features import ID, TARGET, InsightFeatures, build_features, gene_columns
+from approach1_count_weight.count_weights import CountWeightFeatures
+from postprocess.twin_rule import TwinRule
+from approach2_knowledge.knowledge_features import KnowledgeFeatures
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "data" / "raw"
@@ -67,7 +67,7 @@ def make_model(name: str, params: dict):
         from catboost import CatBoostClassifier
         return CatBoostClassifier(**CAT_PARAMS)
     if name == "mlp":                                  # GPU(MPS/CUDA) 신경망
-        from nn_model import MLPClassifier
+        from models.nn_model import MLPClassifier
         return MLPClassifier()
     raise ValueError(name)
 
@@ -154,7 +154,7 @@ class FeatureMaker:
 # ---------------------------------------------------------------- 3. Model Train (CV)
 def twin_groups(train: pd.DataFrame) -> np.ndarray:
     """완전 동일 프로필(쌍둥이)을 같은 그룹으로. docs/07 참고."""
-    from twin_rule import _hash_rows
+    from postprocess.twin_rule import _hash_rows
     genes = gene_columns(train)
     return pd.factorize(_hash_rows(train, genes))[0]
 

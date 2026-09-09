@@ -6,7 +6,7 @@
 ## 버전
 | 버전 | 구성 | 정직 CV Macro F1 | 비고 |
 |---|---|---|---|
-| v1 | 전문가 3개(driver / burden / full) + 로지스틱 회귀 스태킹 | (실행 중) | `src/class_feature_compare_v1.py`, 산출물 `experiments/class_feature_compare_v1/` |
+| v1 | 전문가 3개(driver / burden / full) + 로지스틱 회귀 스태킹 | (실행 중) | `src/class_feature_compare/class_feature_compare_v1.py`, 산출물 `experiments/class_feature_compare_v1/` |
 
 ## v1 설계
 | 전문가 | 피처 | 역할 |

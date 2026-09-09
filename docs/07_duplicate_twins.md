@@ -42,7 +42,7 @@ test.csv는 열지 않았으므로 확인 불가. 다만 train 안에서 상위/
 3. 쓴다면 `src/main.py --twin-rule` 로 추론 시 적용 (기본 꺼짐).
 
 ## 구현
-- `src/twin_rule.py`: 학습 행 해시 테이블 → 추론 행이 완전 동일하면 라벨 뒤집기 규칙 적용. 변이 0개 행은 제외.
+- `src/postprocess/twin_rule.py`: 학습 행 해시 테이블 → 추론 행이 완전 동일하면 라벨 뒤집기 규칙 적용. 변이 0개 행은 제외.
 
 ## 추가 (리더보드 0.41 이후): 정직한 CV 도입
 `--group-twins` 옵션: 완전 동일 행을 같은 fold에 묶는 StratifiedGroupKFold. 쌍둥이 학습 효과가 사라진 "실력" 점수.
