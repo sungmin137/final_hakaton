@@ -100,3 +100,13 @@
 | 3 | 초과변이 플래그, 변이 0개 플래그 | 특수 그룹 |
 | 4 | 클래스 판별력 기준 상위 유전자만 선택 (fold 내 카이제곱) | 차원 축소 |
 | 4 | 유전자 세트/경로 단위 집계 (예: PI3K 경로, RTK 경로, DNA 복구) | 외부 지식 필요, 후순위 |
+
+## 8. 변이 카탈로그 결과 (`src/mutation_catalog.py`, 2026-09-09)
+train의 고유 변이 226,795개를 (유전자, 변이) 단위로 분류. 산출물: `experiments/mutation_catalog/{variants,genes}.csv` (git 제외, 재실행으로 생성).
+
+- **oncogene형 (같은 위치 반복 missense)**: IDH1 R132H 345명, BRAF V600E 332명, PIK3CA E545K/H1047R 155·154명, HRAS Q61R, PTEN R130Q, IDH2 R140Q.
+- **tumor-suppressor형 (종결·프레임시프트로 잘림, LoF 비율 ≥30%)**: APC 54%, RB1 61%, CDKN2A 56%, PTEN 51%, VHL 50%, NF1 47%, ATRX 46%. 대표 stop 변이: APC R1450*(COAD 86%), PTEN R233*(UCEC 65%), CDKN2A R80*/W110*/R58*(HNSC 45~56%).
+- **TP53은 양쪽 성질을 다 가짐**: 1,963명 변이, LoF 27% + missense hotspot 92개 분산(R273C, R175H, R248Q…). 단순 규칙으로는 passenger형으로 분류되니 수동으로 driver 취급.
+- **한 클래스에만 나오는 반복 변이 93개**: ACC 39개(LRIG1 L24V 25명, SOWAHC L42L 24명, CMPK2 C153C…), SKCM 20개, STES 18개, LAML 3개(NPM1 WQ288fs, IDH2 R140Q).
+  - ACC 전용 변이 다수가 **동의 변이**다. 생물학적으로는 germline 다형성/배치 아티팩트일 가능성이 크지만, 이 대회에서는 ACC를 거의 100% 맞히는 표지다.
+  - → "동의 변이 = 노이즈" 가설은 절반만 맞다. **기능성 변이 이진화**와 **반복 변이(동의 포함) one-hot**을 둘 다 만들어야 한다.
