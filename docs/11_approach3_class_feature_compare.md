@@ -42,6 +42,22 @@ log p = log p_full + w_d·log p_driver + w_b·log p_burden. 가중치 2개만 �
 - 절반 교차확인: fit 절반에서 찾은 가중치를 나머지 절반에 적용 → **+0.0147 / +0.0124**. 일반화되는 이득.
 - 해석: 전문가는 "다른 관점의 의견"으로 소수 의견 정도(가중치 0.2~0.5)로 섞을 때 가장 좋다.
 
+## v3 결과 — CatBoost 전문가 + 4-모델 앙상블
+| 모델 (정직 CV) | Macro F1 |
+|---|---|
+| full (v4 XGB) | 0.4691 |
+| driver | 0.3801 |
+| burden | 0.3767 |
+| **cat** (CatBoost, 요약 피처 ~1,800개, 유전자 이진화 제외) | **0.4593** |
+| v2 블렌드 (full+0.5·driver+0.2·burden) | 0.4863 |
+| v3 앙상블 (OOF 최적 가중 driver 0.8, burden 0.2, cat 1.0) | 0.4905 (낙관) |
+
+- CatBoost는 유전자 이진화 4,230개를 빼고 요약 피처만 써도 0.459로 단독 2위. 학습은 fold당 약 100초.
+- 절반 교차확인: 앙상블 heldout 이득 vs full **+0.020 / +0.014**, vs v2 **+0.005 / −0.005** → CatBoost 추가는 v2 대비 확실한 이득이 없다(가중치도 불안정).
+- 제출에는 세 해의 중간값에 가까운 안정 가중치 (driver 0.7, burden 0.4, cat 0.8) 사용, OOF 0.4879.
+- 5차 제출: `make_submission.py --features v4 --approach3-blend 0.7,0.4,0.8 --class-scale experiments/approach3_class_feature_compare_v3`
+  → test 예측 확신도 중앙값 0.70(앙상블이 더 뾰족해짐), STES 예측 22.9%(train 6.1%). STES 과잉은 여전하며 test 분포로 보정하지 않음(규칙).
+
 ## 다음 버전 후보
 - v2: 전문가 추가 — hotspot 전용(변이 위치만), 접근1 개수가중치 점수 전용(`cw_*`)
 - v3: 메타 모델을 XGB로 교체, 또는 암종별 가중치를 직접 최적화(Macro F1 목표)

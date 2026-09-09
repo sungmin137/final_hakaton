@@ -34,8 +34,8 @@ def main() -> None:
     ap.add_argument("--params", default="official", choices=list(PARAM_SETS))
     ap.add_argument("--balanced", action="store_true")
     ap.add_argument("--tag", default=None, help="파일명 태그 (기본: 날짜_피처_xgb[_params][_bal])")
-    ap.add_argument("--approach3-blend", default=None, metavar="WD,WB",
-                    help="접근 3 v2: driver/burden 전문가를 train 전체로 학습해 test 확률을 로그 가중 블렌딩 (예: 0.5,0.2)")
+    ap.add_argument("--approach3-blend", default=None, metavar="WD,WB[,WC]",
+                    help="접근 3: driver/burden(/cat) 전문가를 train 전체로 학습해 test 확률을 로그 가중 블렌딩 (v2: 0.5,0.2 / v3: 0.5,0.2,0.4)")
     ap.add_argument("--class-scale", default=None, metavar="OOF_DIR",
                     help="정직 CV OOF 디렉토리(experiments/…_grp). 그 OOF와 train 라벨로 클래스 배율을 맞춰 test 확률에 곱함")
     a = ap.parse_args()
@@ -57,14 +57,21 @@ def main() -> None:
     Xte = fm.transform(test)
     proba = model.predict_proba(Xte)
     if a.approach3_blend:                               # 접근 3 v2 — 전문가 블렌딩 (train 전체로 학습)
-        w_d, w_b = map(float, a.approach3_blend.split(","))
+        ws = [float(v) for v in a.approach3_blend.split(",")]; w_d, w_b = ws[0], ws[1]; w_c = ws[2] if len(ws) > 2 else 0.0
         Xtr_full = fm.transform(train); experts = {}
         for name, sel in EXPERT_COLS.items():
             cols = [c for c in Xtr_full.columns if sel(c)]
             experts[name] = xgb.XGBClassifier(**params).fit(Xtr_full[cols], y).predict_proba(Xte[cols])
             print(f"[approach3] {name} expert: {len(cols)} cols")
         proba = blend(proba, experts["driver"], experts["burden"], w_d, w_b)
-        tag += f"_a3blend"
+        if w_c > 0:                                     # v3: CatBoost 전문가 (요약 피처만)
+            from approach3_class_feature_compare.approach3_class_feature_compare_v3 import CAT_COLS, CAT_PARAMS
+            from catboost import CatBoostClassifier
+            cols = [c for c in Xtr_full.columns if CAT_COLS(c)]
+            p_cat = CatBoostClassifier(**CAT_PARAMS).fit(Xtr_full[cols], y).predict_proba(Xte[cols])
+            print(f"[approach3] cat expert: {len(cols)} cols")
+            z = np.log(proba + 1e-6) + w_c * np.log(p_cat + 1e-6); z = np.exp(z - z.max(1, keepdims=True)); proba = z / z.sum(1, keepdims=True)
+        tag += "_a3blend" + ("3" if w_c > 0 else "")
     if a.class_scale:                                   # Macro F1용 클래스 배율 — train OOF로만 결정 (docs/10)
         oof = np.load(ROOT / a.class_scale / "oof_proba.npy")
         scales = fit_class_scales(oof, y)
