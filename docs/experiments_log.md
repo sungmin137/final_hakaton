@@ -22,3 +22,4 @@
 | 2026-09-09 | v3_cat (정직 CV) | CatBoost 300 iter rsm0.3 | 중단 | - | fold0에 11분+ 소요, 앙상블 효과 미미(lgbm 기준)라 중단 |
 | 2026-09-09 | v4_xgb (정직 CV) | v3 + BLOSUM62·아미노산 특성 지식 피처 68개 | MacroF1 0.4691 / Acc 0.4698 | - | v3 0.4663 대비 +0.003 (미미) |
 | 2026-09-09 | 시각화 | train 전용 연관성 대시보드 8종 (docs/viz/mutation_associations.html, 아티팩트 공유) | - | - | 암종×표지유전자, 암종 유사도, 변이수, 유형구성, 동시변이 lift, hotspot→암종, driver 조합, 동일 프로필 쌍 |
+| 2026-09-09 | v4_xgb + 클래스 배율 3차 제출 | make_submission.py --features v4 --class-scale (train OOF 기반) | 정직 CV 0.4691 (+후처리 약 0.012) | (제출 후 기록) | submission.csv 갱신. STES 과잉 예측 21%→15% (train OOF 배율의 부수 효과) |
