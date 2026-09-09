@@ -99,7 +99,7 @@ def main() -> None:
     sub.to_csv(out_dir / f"{tag}{stamp}.csv", index=False, encoding="UTF-8-sig")
     sub.to_csv(out_dir / "submission.csv", index=False, encoding="UTF-8-sig")
 
-    # 4. 저장 — 쌍둥이 규칙 적용본 (docs/07 참고, 팀 판단 후 선택)
+    # 4. 저장 — 쌍둥이 규칙 적용본 (docs/04_duplicate_twins.md 참고, 팀 판단 후 선택)
     pred_tw, n_hit = TwinRule().fit(train).apply(test, pred)
     sub_tw = sample.copy(); sub_tw[TARGET] = pred_tw
     validate(sub_tw, sample, labels)

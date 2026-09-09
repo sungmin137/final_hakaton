@@ -14,13 +14,12 @@
 - **브랜치: 사용자(성민) 작업은 `sungmin` 브랜치에서 한다.** main에 직접 커밋하지 않는다. main 반영은 PR로. 팀원은 각자 이름 브랜치.
 - 데이터(`info/data/*.csv`)와 모델(`models/`)은 git에 올리지 않는다. 제출 csv는 `submissions/`에 보관.
 - 실험은 `experiments/`에 날짜_이름 형식으로 기록하고, 결과 요약은 `docs/experiments_log.md`에 누적.
-- 검증은 반드시 **`--group-twins` 정직 CV**. 일반 CV는 쌍둥이 때문에 +0.05 부풀려짐(docs/07). CV 개선이 LB로 거의 안 옮겨지므로(docs/08) 제출 기준선은 접근2 v2(LB 0.43). 팀 결정은 `team/decisions.md`.
-- 재사용 코드는 `src/`에, 탐색은 `notebooks/`에. 노트북 → src 승격 시 함수화.
+- 검증은 반드시 **`--group-twins` 정직 CV**. 일반 CV는 쌍둥이 때문에 +0.05 부풀려짐(docs/04_duplicate_twins.md). CV 개선이 LB로 거의 안 옮겨지므로(docs/05_test_inference.md) 제출 기준선은 접근2 v2(LB 0.43). 팀 결정은 `team/decisions.md`.
 - Python: `uv` 사용. 시스템 python3.14 + 기존 설치 패키지 사용 가능(pandas/sklearn/lgbm/xgb/catboost/optuna 확인됨).
 
 ## 메인 파이프라인
-- 공식 베이스라인(`info/baseline.py`, `notebooks/00_official_baseline_xgb.ipynb`)의 5단계 구조를 따른다: Load → Preprocessing → Train → Inference → Submission.
-- 구현체는 `src/common/main.py` 와 `notebooks/main.ipynb` (동일 로직을 셀로 나눈 것). 로직은 src에만 두고 노트북은 호출만 한다.
+- 공식 베이스라인(`info/baseline.py`, `info/baseline.py`)의 5단계 구조를 따른다: Load → Preprocessing → Train → Inference → Submission.
+- 구현체는 `src/common/main.py` .
 - **파일 규칙은 `team/file_rules.md`가 기준.** 제출 진입 스크립트 `src/approachN_vK_YYYYMMDD_HHMM.py` = 같은 이름의 `submissions/….csv`. 공용 로직은 `src/common/`. 접근법 설명은 `team/approaches/approachN.md`에 버전별로 상세 기록.
 - 피처는 `src/common/features/features.py` + `FeatureMaker(kind)`. import는 `PYTHONPATH=src/common` 기준(`features.features`, `approach1_count_weight.count_weights` …).
 - 실행: `PYTHONPATH=src/common python3 src/common/main.py --features v4 --cv --group-twins`. test.csv는 `make_submission.py`(진입 스크립트 경유)에서만 읽는다.

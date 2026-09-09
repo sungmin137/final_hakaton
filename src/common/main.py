@@ -211,7 +211,7 @@ def fit_full_and_submit(train: pd.DataFrame, kind: str, params: dict, tag: str,
 
     test = load_test()                      # ← test.csv는 여기서 처음 읽힌다
     pred = le.inverse_transform(model.predict(fm.transform(test)))
-    if twin_rule:                           # docs/07_duplicate_twins.md — 선택 적용
+    if twin_rule:                           # docs/04_duplicate_twins.md — 선택 적용
         pred, n_hit = TwinRule().fit(train).apply(test, pred)
         print(f"twin rule 적용: test {len(test)}행 중 {n_hit}행이 train 행과 완전 동일")
         tag += "_twin"

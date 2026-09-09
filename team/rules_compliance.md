@@ -11,7 +11,7 @@
 | get_dummies를 test에 적용 금지 | 사용 안 함. 이진화는 `!= "WT"` 행 단위 연산 | `features.build_features` | ✅ |
 | 외부 데이터 금지 | 사용 안 함. 유전자 역할·hotspot·조합은 전부 train에서 계산 | `docs/03`, `docs/04`, `src/common/analysis/mutation_catalog.py` | ✅ |
 | CV/피처 선택에 test 미사용 | 정직 CV·내부 OOF 모두 train만 | `cross_validate`, `CountWeightFeatures.fit` | ✅ |
-| 추론 후 test 관찰(분포·결측 수) | 관찰만 기록, **모델·피처·후처리 조정에 사용하지 않음** | `docs/08` | ✅ (유지 필요) |
+| 추론 후 test 관찰(분포·결측 수) | 관찰만 기록, **모델·피처·후처리 조정에 사용하지 않음** | `docs/05_test_inference.md` | ✅ (유지 필요) |
 | 쌍둥이 규칙(`--twin-rule`) | train 행과 test 행의 완전 일치를 찾아 라벨 뒤집기. test로 학습하지 않는 1-NN 성격의 추론 규칙 | `src/common/postprocess/twin_rule.py` | ⚠️ 규칙 위반은 아니나 회색지대. 팀 판단·설명 가능해야 함. 기본 꺼짐 |
 
 | 클래스 배율 후처리(`--class-scale`) | train의 정직 CV OOF 확률 + train 라벨로만 배율 결정. test 확률·분포 미사용 | `src/common/postprocess/class_scale.py` | ✅ |

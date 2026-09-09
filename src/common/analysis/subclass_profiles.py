@@ -8,7 +8,7 @@
   5) 표지 커버리지 : 상위 표지 유전자 중 하나라도 변이가 있는 샘플 비율
 
 실행: python3 src/common/analysis/subclass_profiles.py
-출력: experiments/subclass_profiles/*.csv, docs/04_subclass_profiles.md
+출력: experiments/subclass_profiles/*.csv, docs/03_subclass_profiles.md
 """
 import re
 from collections import Counter, defaultdict

@@ -13,7 +13,6 @@ final_hakaton/
 ├── submissions/          # approachN_vK_YYYYMMDD_HHMM.csv (+ _twin_rule), README.md(제출 색인), submission.csv(최신)
 ├── docs/                 # 분석 문서: EDA, 도메인 지식, 암종별 프로필, 중복 발견, test 관찰, 실험 로그, 시각화
 ├── experiments/          # 실험 산출물(OOF 확률, 결과 json, 로그)
-└── notebooks/            # 공식 베이스라인 원본, main.ipynb
 ```
 
 ## 시작
