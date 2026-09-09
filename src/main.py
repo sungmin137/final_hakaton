@@ -26,6 +26,7 @@ from sklearn.model_selection import StratifiedKFold
 from sklearn.preprocessing import LabelEncoder, OrdinalEncoder
 
 from features import ID, TARGET, build_features, gene_columns
+from count_weights import CountWeightFeatures
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "data" / "raw"
@@ -64,10 +65,13 @@ class FeatureMaker:
             self._enc = OrdinalEncoder(handle_unknown="use_encoded_value", unknown_value=-1)
             self._enc.fit(df[self.genes])
             self.columns = list(self.genes)
-        elif self.kind == "v1":
+        elif self.kind in ("v1", "v2"):
             X = build_features(df, self.genes)
             # 전부 WT인 유전자 컬럼 제거 (train 부분 기준)
             self.columns = [c for c in X.columns if not (c.startswith("g_") and X[c].sum() == 0)]
+            if self.kind == "v2":                      # 접근 1: 클래스별 개수 가중치 점수 피처
+                self._cw = CountWeightFeatures().fit(df)
+                self.columns += list(self._cw.transform(df).columns)
         else:
             raise ValueError(f"unknown features: {self.kind}")
         return self
@@ -76,6 +80,8 @@ class FeatureMaker:
         if self.kind == "official":
             return pd.DataFrame(self._enc.transform(df[self.genes]), columns=self.genes, index=df.index)
         X = build_features(df, self.genes)
+        if self.kind == "v2":
+            X = pd.concat([X, self._cw.transform(df)], axis=1)
         return X.reindex(columns=self.columns, fill_value=0)
 
 
@@ -138,7 +144,7 @@ def fit_full_and_submit(train: pd.DataFrame, kind: str, params: dict, tag: str) 
 
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--features", default="v1", choices=["official", "v1"])
+    ap.add_argument("--features", default="v1", choices=["official", "v1", "v2"])
     ap.add_argument("--cv", action="store_true", help="Stratified 5-Fold 평가")
     ap.add_argument("--submit", action="store_true", help="전체 학습 후 test 추론 및 제출 파일 생성")
     a = ap.parse_args()
