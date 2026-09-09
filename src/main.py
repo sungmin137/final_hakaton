@@ -25,6 +25,8 @@ from sklearn.metrics import accuracy_score, confusion_matrix, f1_score
 from sklearn.model_selection import StratifiedKFold, StratifiedGroupKFold
 from sklearn.preprocessing import LabelEncoder, OrdinalEncoder
 
+import re
+
 from features import ID, TARGET, InsightFeatures, build_features, gene_columns
 from count_weights import CountWeightFeatures
 from twin_rule import TwinRule
@@ -84,6 +86,19 @@ def load_test() -> pd.DataFrame:
     return pd.read_csv(DATA / "test.csv").fillna("WT")
 
 
+def _safe_names(cols) -> list[str]:
+    """LightGBM 등이 거부하는 특수문자(: * > 등)를 _로 치환. 중복 시 번호 부여."""
+    out, seen = [], {}
+    for c in cols:
+        n = re.sub(r"[^0-9a-zA-Z_]", "_", str(c))
+        if n in seen:
+            seen[n] += 1; n = f"{n}__{seen[n]}"
+        else:
+            seen[n] = 0
+        out.append(n)
+    return out
+
+
 # ---------------------------------------------------------------- 2. Preprocessing
 class FeatureMaker:
     """fit(train 부분) → transform(valid/test). fit 통계는 train 부분에서만 나온다."""
@@ -122,7 +137,9 @@ class FeatureMaker:
             X = pd.concat([X, self._cw.transform(df)], axis=1)
         if self.kind == "v3":
             X = pd.concat([X, self._ins.transform(df)], axis=1)
-        return X.reindex(columns=self.columns, fill_value=0)
+        X = X.reindex(columns=self.columns, fill_value=0)
+        X.columns = _safe_names(X.columns)
+        return X
 
 
 # ---------------------------------------------------------------- 3. Model Train (CV)
