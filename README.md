@@ -19,6 +19,12 @@ final_hakaton/
 PYTHONPATH=src python3 src/main.py --features v2 --cv        # Stratified 5-Fold 평가
 PYTHONPATH=src python3 src/main.py --features v1 --cv --submit  # + 전체 학습 → test 추론 → submissions/
 ```
+제출 파일 생성 (test.csv는 여기서만 읽힘):
+```bash
+PYTHONPATH=src python3 src/make_submission.py --features v2   # → submissions/submission.csv (+ _twin.csv)
+```
+피처 버전: `v1` 이진화+카운트 · `v2` = v1 + 접근1 개수가중치 점수 · `v3` = v2 + hotspot 위치·LoF 유전자·조합·특수그룹
+
 노트북 버전: `notebooks/main.ipynb` (커널: Python 3.14 (final_hakaton))
 
 | 실험 | OOF Macro F1 | OOF Acc |
