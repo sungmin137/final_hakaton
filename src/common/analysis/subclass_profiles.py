@@ -21,7 +21,7 @@ from scipy.stats import fisher_exact
 
 ROOT = Path(__file__).resolve().parents[3]
 OUT = ROOT / "experiments" / "subclass_profiles"
-DOC = ROOT / "docs" / "04_subclass_profiles.md"
+DOC = ROOT / "docs" / "03_subclass_profiles.md"   # --write-doc 일 때만 덮어씀 (문서에 수동 추가 절이 있음)
 
 TOP_GENES, TOP_VARS, TOP_PAIRS = 12, 10, 8
 MIN_RATE, MIN_COUNT = 0.05, 4
@@ -141,9 +141,12 @@ def main() -> None:
     pd.concat(var_rows).to_csv(OUT / "variants.csv", index=False)
     pd.concat([p for p in pair_rows if len(p)]).to_csv(OUT / "pairs.csv", index=False)
     pd.DataFrame(prof_rows).to_csv(OUT / "profile.csv", index=False)
-    DOC.write_text("\n".join(md), encoding="utf-8")
+    import sys
+    if "--write-doc" in sys.argv:
+        DOC.write_text("\n".join(md), encoding="utf-8"); print("\nwritten", DOC)
+    else:
+        (OUT / "profiles_generated.md").write_text("\n".join(md), encoding="utf-8"); print("\nwritten", OUT / "profiles_generated.md", "(docs 문서는 --write-doc 으로만 갱신)")
     print("\n".join(summary_rows))
-    print("\nwritten", DOC)
 
 
 if __name__ == "__main__":
