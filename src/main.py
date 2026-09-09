@@ -66,6 +66,9 @@ def make_model(name: str, params: dict):
     if name == "cat":
         from catboost import CatBoostClassifier
         return CatBoostClassifier(**CAT_PARAMS)
+    if name == "mlp":                                  # GPU(MPS/CUDA) 신경망
+        from nn_model import MLPClassifier
+        return MLPClassifier()
     raise ValueError(name)
 
 
@@ -231,7 +234,7 @@ def main() -> None:
     ap.add_argument("--group-twins", action="store_true", help="CV에서 쌍둥이를 같은 fold에 묶음 (정직한 CV)")
     ap.add_argument("--params", default="official", choices=list(PARAM_SETS), help="XGB 파라미터 세트")
     ap.add_argument("--balanced", action="store_true", help="클래스 빈도 역수 샘플 가중치")
-    ap.add_argument("--model", default="xgb", choices=["xgb", "lgbm", "cat"], help="부스팅 모델 (CV 전용)")
+    ap.add_argument("--model", default="xgb", choices=["xgb", "lgbm", "cat", "mlp"], help="부스팅 모델 (CV 전용)")
     a = ap.parse_args()
 
     params = PARAM_SETS[a.params]

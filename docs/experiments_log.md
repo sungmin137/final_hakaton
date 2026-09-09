@@ -15,3 +15,4 @@
 | 2026-09-09 | v3_xgb (정직 CV) | v2 + hotspot 위치 one-hot·LoF 유전자·조합·특수그룹 플래그, 공식 파라미터 | MacroF1 0.4663 / Acc 0.4685 | - | v2 0.4486 대비 +0.018 |
 | 2026-09-09 | v3_xgb tuned (정직 CV) | v3 + 600트리 lr0.05 colsample0.3 | MacroF1 0.4576 / Acc 0.4717 | - | v3 공식(0.4663)보다 낮음 → 공식 파라미터 채택 |
 | 2026-09-09 | v3_xgb 2차 제출 | make_submission.py --features v3, 공식 파라미터 | 정직 CV 0.4663 | (제출 후 기록) | submission.csv 갱신. STES 21% 과잉 예측은 여전 |
+| 2026-09-09 | v3_lgbm (정직 CV) | LightGBM 300트리 lr0.05 ff0.3 | MacroF1 0.4516 / Acc 0.4720 | - | XGB v3 0.4663보다 낮음. 앙상블 재료 |
