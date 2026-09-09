@@ -16,6 +16,7 @@ from sklearn.preprocessing import LabelEncoder
 
 from main import DATA, ID, PARAM_SETS, ROOT, TARGET, FeatureMaker, class_weights, load_test, load_train
 from twin_rule import TwinRule
+from postprocess import fit_class_scales
 
 
 def validate(sub: pd.DataFrame, sample: pd.DataFrame, train_labels: set) -> None:
@@ -32,6 +33,8 @@ def main() -> None:
     ap.add_argument("--params", default="official", choices=list(PARAM_SETS))
     ap.add_argument("--balanced", action="store_true")
     ap.add_argument("--tag", default=None, help="파일명 태그 (기본: 날짜_피처_xgb[_params][_bal])")
+    ap.add_argument("--class-scale", default=None, metavar="OOF_DIR",
+                    help="정직 CV OOF 디렉토리(experiments/…_grp). 그 OOF와 train 라벨로 클래스 배율을 맞춰 test 확률에 곱함")
     a = ap.parse_args()
     params = PARAM_SETS[a.params]
     tag = a.tag or (f"{date.today().isoformat()}_{a.features}_xgb"
@@ -49,6 +52,12 @@ def main() -> None:
     # 2. test 로드 (이 스크립트에서 test.csv를 읽는 유일한 지점)
     test = load_test()
     proba = model.predict_proba(fm.transform(test))
+    if a.class_scale:                                   # Macro F1용 클래스 배율 — train OOF로만 결정 (docs/10)
+        oof = np.load(ROOT / a.class_scale / "oof_proba.npy")
+        scales = fit_class_scales(oof, y)
+        print("[post] class scales:", {c: float(v) for c, v in zip(le.classes_, scales) if v != 1.0})
+        proba = proba * scales
+        tag += "_cs"
     pred = le.inverse_transform(proba.argmax(1))
     sample = pd.read_csv(DATA / "sample_submission.csv")
     labels = set(train[TARGET])
