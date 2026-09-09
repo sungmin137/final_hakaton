@@ -1,10 +1,10 @@
 """train.csv만 사용하는 EDA 스크립트. test.csv는 절대 읽지 않는다.
-실행: python3 src/common/analysis/eda_train.py
+실행: python3 "4. src/common/analysis/eda_train.py"
 """
 import re
 import pandas as pd
 
-TRAIN = "info/data/train.csv"
+TRAIN = "1. info/data/train.csv"
 
 
 def mut_type(s: str) -> str:

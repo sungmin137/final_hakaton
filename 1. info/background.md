@@ -14,4 +14,4 @@
 
 
 ## 데이터·규칙
-- 데이터 구조: `info/data/README.md` · 규칙: `info/README.md`
+- 데이터 구조: `1. info/data/README.md` · 규칙: `1. info/README.md`

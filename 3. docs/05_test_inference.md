@@ -5,10 +5,10 @@ test.csv는 이 단계에서 처음 열었다. 모델·피처·가중치는 모�
 ## 제출 파일
 | 파일 | 내용 |
 |---|---|
-| `submissions/approach1_count_weight_v2_20260909-1442.csv` | v1 피처 + 접근1 점수(v2), XGB 공식 파라미터, 전체 train 학습 |
-| `submissions/approach1_count_weight_v2_twin_rule_20260909-1442.csv` | 위 + 쌍둥이 규칙 후처리 (10행 변경) |
+| `5. submissions/approach1_count_weight_v2_20260909-1442.csv` | v1 피처 + 접근1 점수(v2), XGB 공식 파라미터, 전체 train 학습 |
+| `5. submissions/approach1_count_weight_v2_twin_rule_20260909-1442.csv` | 위 + 쌍둥이 규칙 후처리 (10행 변경) |
 
-CV 기준 예상: Macro F1 약 0.49 / Acc 약 0.53 (5-Fold OOF). 리더보드 점수는 제출 후 `docs/experiments_log.md`에 기록.
+CV 기준 예상: Macro F1 약 0.49 / Acc 약 0.53 (5-Fold OOF). 리더보드 점수는 제출 후 `3. docs/experiments_log.md`에 기록.
 
 ## test 단계에서 관찰한 것 (추론 시점의 피처 관찰, 라벨 없음)
 1. **결측 셀 237개(128행, 25열)** — train에는 없음. WT로 간주 (`load_test`에서 fillna). CNOT2 77개, TNFAIP6 65개에 집중.

@@ -1,8 +1,8 @@
 # 데이터 (대회 데이터는 git에 올리지 않음)
-info/data/
-models/
+1. info/data/
+/models/
 *.csv
-!submissions/*.csv
+!5. submissions/*.csv
 
 # Python
 __pycache__/
@@ -13,11 +13,11 @@ venv/
 *.egg-info/
 
 # 실험 로그
-experiments/*.log
-!experiments/*_eda_*.log
-!experiments/**/per_class_f1.csv
-!experiments/**/cv_results.csv
-!experiments/**/confusion_matrix.csv
+6. experiments/*.log
+!6. experiments/*_eda_*.log
+!6. experiments/**/per_class_f1.csv
+!6. experiments/**/cv_results.csv
+!6. experiments/**/confusion_matrix.csv
 optuna.db
 catboost_info/
 lightning_logs/

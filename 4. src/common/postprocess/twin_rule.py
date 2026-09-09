@@ -1,4 +1,4 @@
-"""쌍둥이(완전 동일 프로필) 규칙. docs/04_duplicate_twins.md 참고.
+"""쌍둥이(완전 동일 프로필) 규칙. 3. docs/04_duplicate_twins.md 참고.
 
 fit(train)  : 변이가 1개 이상인 학습 행의 프로필 해시 → 라벨 목록
 apply(df, pred): df 행이 학습 행과 완전히 같으면 FLIP 규칙으로 pred를 덮어쓴다.

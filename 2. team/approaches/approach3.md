@@ -6,7 +6,7 @@
 ## 버전
 | 버전 | 파일 (src / submissions) | 구성 | 정직 CV Macro F1 | LB |
 |---|---|---|---|---|
-| v1 | (제출 없음) `src/common/approach3_class_feature_compare/…_v1.py` | 전문가 3개(driver / burden / full) + 로지스틱 회귀 스태킹 | **0.4455** (full 0.4691보다 낮음, 과적합) | - |
+| v1 | (제출 없음) `4. src/common/approach3_class_feature_compare/…_v1.py` | 전문가 3개(driver / burden / full) + 로지스틱 회귀 스태킹 | **0.4455** (full 0.4691보다 낮음, 과적합) | - |
 | v2 | `approach3_v2_20260909_1715` | 로그 확률 가중 블렌딩 full+0.5·driver+0.2·burden + 클래스 배율 | heldout **+0.012~0.015** | 미제출 |
 | v3 | `approach3_v3_20260909_1807` | + CatBoost 전문가(요약 피처) 4-모델 앙상블(0.7,0.4,0.8) + 클래스 배율 | 약 0.49 (낙관) | 0.417 (접근2 v2보다 낮음) |
 | v4 | (코드 삭제) | 변이 31~300개 구간 전용 전문가 | 구간 내 0.341 (기존 0.398) | 폐기 |
@@ -57,7 +57,7 @@ log p = log p_full + w_d·log p_driver + w_b·log p_burden. 가중치 2개만 �
 - CatBoost는 유전자 이진화 4,230개를 빼고 요약 피처만 써도 0.459로 단독 2위. 학습은 fold당 약 100초.
 - 절반 교차확인: 앙상블 heldout 이득 vs full **+0.020 / +0.014**, vs v2 **+0.005 / −0.005** → CatBoost 추가는 v2 대비 확실한 이득이 없다(가중치도 불안정).
 - 제출에는 세 해의 중간값에 가까운 안정 가중치 (driver 0.7, burden 0.4, cat 0.8) 사용, OOF 0.4879.
-- 5차 제출: `make_submission.py --features v4 --approach3-blend 0.7,0.4,0.8 --class-scale experiments/approach3_class_feature_compare_v3`
+- 5차 제출: `make_submission.py --features v4 --approach3-blend 0.7,0.4,0.8 --class-scale 6. experiments/approach3_class_feature_compare_v3`
   → test 예측 확신도 중앙값 0.70(앙상블이 더 뾰족해짐), STES 예측 22.9%(train 6.1%). STES 과잉은 여전하며 test 분포로 보정하지 않음(규칙).
 
 ## v4 결과 — 중간 부담(31~300개) 구간 전용 전문가 → 폐기

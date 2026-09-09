@@ -12,7 +12,7 @@ scheme : count = 클래스 내 등장 개수 그대로 (회의안 그대로)
          nb    = Bernoulli Naive Bayes 로그 우도비 (개수 기반의 확률적 정식화)
 agg    : sum  = 가중치 합 / mean = 샘플 변이 수로 나눔 (초과변이 샘플 보정)
 
-실행: PYTHONPATH=src/common python3 src/common/count_weights.py   → 모든 조합 5-Fold 평가
+실행: PYTHONPATH="4. src/common" python3 "4. src/common/count_weights.py"   → 모든 조합 5-Fold 평가
 """
 from __future__ import annotations
 
@@ -136,13 +136,13 @@ def cv_eval(train: pd.DataFrame, level: str, scheme: str, agg: str, n_splits=5, 
 
 
 def main() -> None:
-    train = pd.read_csv(ROOT / "info/data/train.csv")
+    train = pd.read_csv(ROOT / "1. info/data/train.csv")
     res = []
     for level, scheme, agg in itertools.product(["gene", "variant"], ["count", "rate", "spec", "nb"], ["sum", "mean"]):
         t = time.time(); r = cv_eval(train, level, scheme, agg); r["sec"] = round(time.time() - t)
         res.append(r); print(r)
     df = pd.DataFrame(res).sort_values("macro_f1", ascending=False)
-    out = ROOT / "experiments" / "2026-09-09_approach1_count_weight"; out.mkdir(parents=True, exist_ok=True)
+    out = ROOT / "6. experiments" / "2026-09-09_approach1_count_weight"; out.mkdir(parents=True, exist_ok=True)
     df.to_csv(out / "cv_results.csv", index=False)
     print("\n", df.to_string(index=False))
 

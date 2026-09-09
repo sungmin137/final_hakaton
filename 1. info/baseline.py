@@ -1,8 +1,8 @@
 """주최측 공식 베이스라인 ([Baseline]_XGB를 활용한 암종 분류 AI 모델 개발.ipynb) 을 그대로 옮긴 스크립트.
-데이터 경로만 이 저장소 구조(info/data)에 맞췄다. 검증 없이 학습 → test 예측 → 제출 파일.
-정직 5-Fold로 측정한 이 방식의 Macro F1은 약 0.30 (docs/experiments_log.md).
+데이터 경로만 이 저장소 구조(1. info/data)에 맞췄다. 검증 없이 학습 → test 예측 → 제출 파일.
+정직 5-Fold로 측정한 이 방식의 Macro F1은 약 0.30 (3. docs/experiments_log.md).
 
-실행: python3 info/baseline.py   → submissions/baseline_submission.csv
+실행: python3 "1. info/baseline.py"   → 5. submissions/baseline_submission.csv
 """
 from pathlib import Path
 import pandas as pd
@@ -10,7 +10,7 @@ from sklearn.preprocessing import LabelEncoder, OrdinalEncoder
 import xgboost as xgb
 
 ROOT = Path(__file__).resolve().parents[1]
-DATA = ROOT / "info" / "data"
+DATA = ROOT / "1. info" / "data"
 
 # Load Data
 train = pd.read_csv(DATA / "train.csv")
@@ -40,6 +40,6 @@ original_labels = le_subclass.inverse_transform(predictions)
 # Submission
 submission = pd.read_csv(DATA / "sample_submission.csv")
 submission["SUBCLASS"] = original_labels
-out = ROOT / "submissions" / "baseline_submission.csv"
+out = ROOT / "5. submissions" / "baseline_submission.csv"
 submission.to_csv(out, encoding="UTF-8-sig", index=False)
 print("saved", out)

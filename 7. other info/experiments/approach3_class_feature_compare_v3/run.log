@@ -1,7 +1,0 @@
-[cat] fold0 ncols=1758 f1=0.4390 (161s)
-[cat] fold1 ncols=1809 f1=0.4683 (319s)
-[cat] fold2 ncols=1800 f1=0.4489 (477s)
-[cat] fold3 ncols=1816 f1=0.4615 (636s)
-[cat] fold4 ncols=1772 f1=0.4818 (790s)
-{"single": {"full": 0.4691, "driver": 0.3801, "burden": 0.3767, "cat": 0.4593}, "weights": {"driver": 0.8, "burden": 0.2, "cat": 1.0}, "ensemble_oof_f1": 0.4905, "ensemble_oof_acc": 0.4901, "v2_oof_f1": 0.4863, "cross_check": [{"weights": [0.8, 0.4, 0.6], "heldout_gain_vs_full": 0.0199, "heldout_gain_vs_v2": 0.0052}, {"weights": [0.6, 0.8, 0.8], "heldout_gain_vs_full": 0.0138, "heldout_gain_vs_v2": -0.0048}]}
-DONE

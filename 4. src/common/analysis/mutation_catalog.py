@@ -8,8 +8,8 @@
   - hotspot   : count >= HOTSPOT_MIN 인 반복 변이 (driver 후보)
 유전자 단위로도 집계해 oncogene형(반복 missense 집중) / tumor-suppressor형(LoF 비율 높음)을 구분한다.
 
-실행: python3 src/common/analysis/mutation_catalog.py
-출력: experiments/mutation_catalog/variants.csv, genes.csv
+실행: python3 "4. src/common/analysis/mutation_catalog.py"
+출력: 6. experiments/mutation_catalog/variants.csv, genes.csv
 """
 import re
 from collections import Counter, defaultdict
@@ -18,7 +18,7 @@ from pathlib import Path
 import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[3]
-OUT = ROOT / "experiments" / "mutation_catalog"
+OUT = ROOT / "6. experiments" / "mutation_catalog"
 HOTSPOT_MIN = 5
 
 
@@ -36,7 +36,7 @@ def mut_type(tok: str) -> str:
 
 
 def main() -> None:
-    tr = pd.read_csv(ROOT / "info/data/train.csv")
+    tr = pd.read_csv(ROOT / "1. info/data/train.csv")
     genes = [c for c in tr.columns if c not in ("ID", "SUBCLASS")]
     labels = tr["SUBCLASS"].to_numpy()
 

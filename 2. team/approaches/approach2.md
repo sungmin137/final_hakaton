@@ -1,8 +1,8 @@
 # 접근 2 — 인사이트·지식 기반 피처 (Insight & Knowledge Features)
 
 ## 개요
-train 분석(docs/03, 04)에서 나온 인사이트를 피처로 옮기고, 논문·교과서 수준의 도메인 지식(아미노산 치환 심각도)을 더한다.
-회의의 접근 2("변이 특성 가중치")와 맞닿아 있으며, 환자 단위 외부 데이터는 쓰지 않는다(team/rules_compliance.md).
+train 분석(3. docs/03, 04)에서 나온 인사이트를 피처로 옮기고, 논문·교과서 수준의 도메인 지식(아미노산 치환 심각도)을 더한다.
+회의의 접근 2("변이 특성 가중치")와 맞닿아 있으며, 환자 단위 외부 데이터는 쓰지 않는다(2. team/rules_compliance.md).
 모델은 공식 베이스라인과 같은 XGBoost(100트리, depth 6, lr 0.1). 검증은 정직 CV.
 
 ## 버전
@@ -11,15 +11,15 @@ train 분석(docs/03, 04)에서 나온 인사이트를 피처로 옮기고, 논�
 | v1 | `approach2_v1_20260909_1553` | 인사이트 피처 추가 (`--features v3`) | 0.4663 | 미제출 |
 | v2 | `approach2_v2_20260909_1653` | + BLOSUM62·아미노산 특성 지식 피처 (`--features v4`) + 클래스 배율 후처리 | 0.4691 (+배율 0.012) | **0.43 (최고)** |
 
-### v1 — 인사이트 피처 (`src/common/features/features.py` InsightFeatures)
+### v1 — 인사이트 피처 (`4. src/common/features/features.py` InsightFeatures)
 접근 1 v2 피처(이진화 4,230 + 카운트 + 개수 가중치 점수 140) 위에 다음을 추가:
 - **hotspot 변이 위치 one-hot**: 학습 fold에서 5명 이상 반복되는 (유전자, 변이) 조합 (약 700개). "유전자보다 위치가 특이적"이라는 발견.
 - **기능상실(LoF) 유전자 플래그**: 종결(`*`)·프레임시프트(`fs`) 변이가 5명 이상인 유전자별 0/1 + LoF 유전자 수·비율. 종양억제유전자(APC, PTEN, VHL, RB1)가 망가지는 패턴.
-- **동반 조합 14개**: IDH1+ATRX, IDH1+TP53, APC+TP53, PTEN+PIK3CA, TP53+CDKN2A 등 (docs/04 lift 상위).
+- **동반 조합 14개**: IDH1+ATRX, IDH1+TP53, APC+TP53, PTEN+PIK3CA, TP53+CDKN2A 등 (3. docs/04 lift 상위).
 - **특수 그룹 플래그**: 무변이, 초과변이(>300), 변이 수 구간(6단계), hotspot 보유 수.
 결과: 접근 1 v2(0.4486) → 0.4663 (+0.018). 튜닝 파라미터는 오히려 0.4576으로 낮아 공식 파라미터 유지. 클래스 가중치 효과 없음.
 
-### v2 — 지식 피처 + 클래스 배율 (`src/common/approach2_knowledge/knowledge_features.py`, `postprocess/class_scale.py`)
+### v2 — 지식 피처 + 클래스 배율 (`4. src/common/approach2_knowledge/knowledge_features.py`, `postprocess/class_scale.py`)
 - missense 변이마다 BLOSUM62 치환 허용도, Δ소수성(Kyte-Doolittle), Δ부피(Zamyatnin), Δ전하를 계산. 종결·프레임시프트는 최대 심각도, 동의 변이는 0.
 - 샘플 단위 집계(심각 변이 수, 평균·최소 BLOSUM, 최대 변화량, 심각 비율) + 변이율 상위 60개 유전자별 최소 BLOSUM (68개 피처).
 - **클래스 배율 후처리**: train의 정직 CV OOF 확률과 train 라벨만으로 클래스별 배율을 좌표 상승으로 찾아 test 확률에 곱함. 절반 교차확인 heldout +0.012. test 분포는 보지 않음.
@@ -29,7 +29,7 @@ train 분석(docs/03, 04)에서 나온 인사이트를 피처로 옮기고, 논�
 `approach2_v2_20260909_1653.csv`(LB 0.43)는 재현성 수정 전에 만든 파일이다. 당시 접근 1 점수 피처(`cw_variant_nb_*`)가 float32 행렬곱 때문에 실행마다 1e-6 수준으로 달라 XGB 분기가 바뀌었고, 같은 스크립트를 다시 돌리면 약 9% 행이 달랐다.
 수정(점수를 float64로 계산 후 소수점 4자리 반올림) 이후로는 같은 스크립트 → 같은 csv (2회 실행 완전 일치 확인). 원본 csv는 리더보드 기록으로 보존하고, 같은 설정의 재현 가능 버전을 `approach2_v2_20260909_1943` 쌍으로 등록했다(원본과 522행 차이, 미제출).
 
-### 폐기한 시도 (docs/experiments_log.md)
+### 폐기한 시도 (3. docs/experiments_log.md)
 - 시드 배깅: 공식 파라미터에 subsample/colsample이 없어 시드가 결과를 안 바꿈. 중단.
 - LightGBM(0.4516), MLP GPU(0.3416): 단독으로 XGB보다 낮고 앙상블 이득 +0.004 수준.
 

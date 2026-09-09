@@ -42,4 +42,4 @@
 2. **피처 v2**: 동의 변이 제외 이진화, 유형별 유전자 카운트(missense/nonsense/fs), hotspot 변이 one-hot(빈도 ≥ N).
 3. **모델 비교**: LightGBM / CatBoost / XGBoost / 로지스틱(희소 행렬) / 간단 MLP → 확률 앙상블.
 4. **난제 대응**: LGG↔GBMLGG, KIRC↔KIPAN 혼동 분석 후 계층 분류 또는 클래스 가중치 조정.
-5. **최종**: 전체 train 재학습 → test.csv 최초 로드 → 추론 → submissions/.
+5. **최종**: 전체 train 재학습 → test.csv 최초 로드 → 추론 → 5. submissions/.

@@ -6,8 +6,8 @@
   cat            : CatBoost, 요약 피처만 사용 (cw_*, n_*, kf_*, hs_*, combo_*, lof_*, is_*, 구간) → 전체 유전자 4,230개 제외로 속도 확보
 앙상블: log p = log p_full + w_d·log p_driver + w_b·log p_burden + w_c·log p_cat, 격자 탐색 + 절반 교차확인.
 
-실행: PYTHONPATH=src/common python3 src/common/approach3_class_feature_compare/approach3_class_feature_compare_v3.py
-산출: experiments/approach3_class_feature_compare_v3/{oof_cat.npy, oof_proba.npy(앙상블), result.json, per_class_f1.csv}
+실행: PYTHONPATH="4. src/common" python3 "4. src/common/approach3_class_feature_compare/approach3_class_feature_compare_v3.py"
+산출: 6. experiments/approach3_class_feature_compare_v3/{oof_cat.npy, oof_proba.npy(앙상블), result.json, per_class_f1.csv}
 """
 from __future__ import annotations
 
@@ -20,8 +20,8 @@ from sklearn.model_selection import StratifiedGroupKFold
 from sklearn.preprocessing import LabelEncoder
 from main import ROOT, SEED, TARGET, FeatureMaker, load_train, twin_groups
 
-V1 = ROOT / "experiments" / "approach3_class_feature_compare_v1"
-OUT = ROOT / "experiments" / "approach3_class_feature_compare_v3"
+V1 = ROOT / "6. experiments" / "approach3_class_feature_compare_v1"
+OUT = ROOT / "6. experiments" / "approach3_class_feature_compare_v3"
 CAT_COLS = lambda c: not c.startswith("g_")           # 요약 피처만 (유전자 이진화 제외)
 CAT_PARAMS = dict(iterations=500, learning_rate=0.08, depth=6, l2_leaf_reg=3, random_seed=SEED,
                   loss_function="MultiClass", thread_count=8, verbose=0)
@@ -37,7 +37,7 @@ def main():
     t0 = time.time(); OUT.mkdir(parents=True, exist_ok=True)
     train = load_train(); le = LabelEncoder(); y = le.fit_transform(train[TARGET]); K = len(le.classes_)
     folds = list(StratifiedGroupKFold(5, shuffle=True, random_state=SEED).split(train, y, twin_groups(train)))
-    P = {"full": np.load(ROOT / "experiments/2026-09-09_v4_xgb_grp/oof_proba.npy"),
+    P = {"full": np.load(ROOT / "6. experiments/2026-09-09_v4_xgb_grp/oof_proba.npy"),
          "driver": np.load(V1 / "oof_driver.npy"), "burden": np.load(V1 / "oof_burden.npy")}
     cat = np.zeros((len(train), K))
     for k, (tri, vai) in enumerate(folds):

@@ -101,8 +101,8 @@
 | 4 | 클래스 판별력 기준 상위 유전자만 선택 (fold 내 카이제곱) | 차원 축소 |
 | 4 | 유전자 세트/경로 단위 집계 (예: PI3K 경로, RTK 경로, DNA 복구) | 외부 지식 필요, 후순위 |
 
-## 8. 변이 카탈로그 결과 (`src/common/analysis/mutation_catalog.py`, 2026-09-09)
-train의 고유 변이 226,795개를 (유전자, 변이) 단위로 분류. 산출물: `experiments/mutation_catalog/{variants,genes}.csv` (git 제외, 재실행으로 생성).
+## 8. 변이 카탈로그 결과 (`4. src/common/analysis/mutation_catalog.py`, 2026-09-09)
+train의 고유 변이 226,795개를 (유전자, 변이) 단위로 분류. 산출물: `6. experiments/mutation_catalog/{variants,genes}.csv` (git 제외, 재실행으로 생성).
 
 - **oncogene형 (같은 위치 반복 missense)**: IDH1 R132H 345명, BRAF V600E 332명, PIK3CA E545K/H1047R 155·154명, HRAS Q61R, PTEN R130Q, IDH2 R140Q.
 - **tumor-suppressor형 (종결·프레임시프트로 잘림, LoF 비율 ≥30%)**: APC 54%, RB1 61%, CDKN2A 56%, PTEN 51%, VHL 50%, NF1 47%, ATRX 46%. 대표 stop 변이: APC R1450*(COAD 86%), PTEN R233*(UCEC 65%), CDKN2A R80*/W110*/R58*(HNSC 45~56%).

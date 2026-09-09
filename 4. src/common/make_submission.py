@@ -1,10 +1,10 @@
 """제출 파일 생성 스크립트 — 2026-09-09 1차 제출(submission.csv)을 만든 코드를 재현 가능하게 정리한 것.
 
-흐름: train 전체 학습 → (여기서 처음) test.csv 로드 → 예측 → 형식 검증 → submissions/ 저장
+흐름: train 전체 학습 → (여기서 처음) test.csv 로드 → 예측 → 형식 검증 → 5. submissions/ 저장
       쌍둥이 규칙 적용본(_twin)도 함께 생성. 기본 submission.csv는 규칙 미적용본.
 
-실행: PYTHONPATH=src/common python3 src/common/make_submission.py --features v4 --class-scale … --tag approach2_v2_YYYYMMDD_HHMM
-      (보통은 src/approachN_vK_일자_시간.py 진입 스크립트가 이 main()을 호출한다)
+실행: PYTHONPATH="4. src/common" python3 "4. src/common/make_submission.py" --features v4 --class-scale … --tag approach2_v2_YYYYMMDD_HHMM
+      (보통은 4. src/approachN_vK_일자_시간.py 진입 스크립트가 이 main()을 호출한다)
 """
 import argparse
 import time
@@ -38,7 +38,7 @@ def main() -> None:
     ap.add_argument("--approach3-blend", default=None, metavar="WD,WB[,WC]",
                     help="접근 3: driver/burden(/cat) 전문가를 train 전체로 학습해 test 확률을 로그 가중 블렌딩 (v2: 0.5,0.2 / v3: 0.5,0.2,0.4)")
     ap.add_argument("--class-scale", default=None, metavar="OOF_DIR",
-                    help="정직 CV OOF 디렉토리(experiments/…_grp). 그 OOF와 train 라벨로 클래스 배율을 맞춰 test 확률에 곱함")
+                    help="정직 CV OOF 디렉토리(6. experiments/…_grp). 그 OOF와 train 라벨로 클래스 배율을 맞춰 test 확률에 곱함")
     a = ap.parse_args()
     params = PARAM_SETS[a.params]
     # 파일명 규칙: 어느 src 모듈(접근법)에서 나온 결과인지 + 버전 + 옵션 + 제작 시각
@@ -48,7 +48,7 @@ def main() -> None:
     if a.approach3_blend:
         tag = "approach3_class_feature_compare_" + ("v3" if len(a.approach3_blend.split(",")) > 2 else "v2")
     tag += ("" if a.params == "official" else f"_{a.params}") + ("_balanced" if a.balanced else "")
-    fixed_name = bool(a.tag)          # 진입 스크립트가 이름을 지정한 경우: team/file_rules.md 규칙 그대로
+    fixed_name = bool(a.tag)          # 진입 스크립트가 이름을 지정한 경우: 2. team/file_rules.md 규칙 그대로
     tag = a.tag or tag
 
     # 1. train 전체 학습
@@ -80,7 +80,7 @@ def main() -> None:
             print(f"[approach3] cat expert: {len(cols)} cols")
             z = np.log(proba + 1e-6) + w_c * np.log(p_cat + 1e-6); z = np.exp(z - z.max(1, keepdims=True)); proba = z / z.sum(1, keepdims=True)
         pass  # 이름은 위 MODULE 규칙에서 이미 approach3_…_v2/v3 로 결정
-    if a.class_scale:                                   # Macro F1용 클래스 배율 — train OOF로만 결정 (docs/10)
+    if a.class_scale:                                   # Macro F1용 클래스 배율 — train OOF로만 결정 (3. docs/10)
         oof = np.load(ROOT / a.class_scale / "oof_proba.npy")
         scales = fit_class_scales(oof, y)
         print("[post] class scales:", {c: float(v) for c, v in zip(le.classes_, scales) if v != 1.0})
@@ -92,20 +92,20 @@ def main() -> None:
     labels = set(train[TARGET])
 
     # 3. 저장 — 기본본
-    out_dir = ROOT / "submissions"; out_dir.mkdir(exist_ok=True)
+    out_dir = ROOT / "5. submissions"; out_dir.mkdir(exist_ok=True)
     stamp = "" if fixed_name else "_" + datetime.now().strftime("%Y%m%d_%H%M")
     sub = sample.copy(); sub[TARGET] = pred
     validate(sub, sample, labels)
     sub.to_csv(out_dir / f"{tag}{stamp}.csv", index=False, encoding="UTF-8-sig")
     sub.to_csv(out_dir / "submission.csv", index=False, encoding="UTF-8-sig")
 
-    # 4. 저장 — 쌍둥이 규칙 적용본 (docs/04_duplicate_twins.md 참고, 팀 판단 후 선택)
+    # 4. 저장 — 쌍둥이 규칙 적용본 (3. docs/04_duplicate_twins.md 참고, 팀 판단 후 선택)
     pred_tw, n_hit = TwinRule().fit(train).apply(test, pred)
     sub_tw = sample.copy(); sub_tw[TARGET] = pred_tw
     validate(sub_tw, sample, labels)
     sub_tw.to_csv(out_dir / f"{tag}{stamp}_twin_rule.csv", index=False, encoding="UTF-8-sig")
 
-    exp = ROOT / "experiments" / "submissions" / f"{tag}{stamp}"; exp.mkdir(parents=True, exist_ok=True)
+    exp = ROOT / "6. experiments" / "submissions" / f"{tag}{stamp}"; exp.mkdir(parents=True, exist_ok=True)
     np.save(exp / "test_proba.npy", proba)
 
     # 5. 요약
@@ -115,7 +115,7 @@ def main() -> None:
                          "pred": pd.Series(pred).value_counts(normalize=True)}).fillna(0)
     dist["diff"] = dist.pred - dist.train
     print("[test] train 비율과 가장 다른 예측 클래스:\n", dist.sort_values("diff", key=abs, ascending=False).head(5).round(3).to_string())
-    print(f"saved: submissions/submission.csv, {tag}{stamp}.csv, {tag}{stamp}_twin_rule.csv")
+    print(f"saved: 5. submissions/submission.csv, {tag}{stamp}.csv, {tag}{stamp}_twin_rule.csv")
 
 
 if __name__ == "__main__":

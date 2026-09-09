@@ -5,7 +5,7 @@
 | 주제 | 유전자 변이 정보 기반 암 아형(SUBCLASS) 예측 — 26클래스 다중 분류 |
 | 평가 | **Macro F1**, Public = test 100% (리더보드 = 최종) |
 | 제출 | 1일 최대 4회, `ID,SUBCLASS` csv |
-| 외부 데이터 | **불가** (논문·교과서 지식은 가능으로 해석 → `team/rules_compliance.md`) |
+| 외부 데이터 | **불가** (논문·교과서 지식은 가능으로 해석 → `2. team/rules_compliance.md`) |
 | 사전학습 모델 | 가능 |
 | Data leakage | test를 학습·인코딩·스케일링·결측 통계에 쓰면 수상 제외 |
 | 참여 | 팀 (성민 외), GitHub `sungmin137/final_hakaton` |

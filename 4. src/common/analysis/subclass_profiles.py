@@ -7,8 +7,8 @@
   4) 유형 프로필   : 샘플당 변이수, LoF 비율, 동의 변이 비율, 초과변이 비율, 무변이 비율
   5) 표지 커버리지 : 상위 표지 유전자 중 하나라도 변이가 있는 샘플 비율
 
-실행: python3 src/common/analysis/subclass_profiles.py
-출력: experiments/subclass_profiles/*.csv, docs/03_subclass_profiles.md
+실행: python3 "4. src/common/analysis/subclass_profiles.py"
+출력: 6. experiments/subclass_profiles/*.csv, 3. docs/03_subclass_profiles.md
 """
 import re
 from collections import Counter, defaultdict
@@ -20,8 +20,8 @@ import pandas as pd
 from scipy.stats import fisher_exact
 
 ROOT = Path(__file__).resolve().parents[3]
-OUT = ROOT / "experiments" / "subclass_profiles"
-DOC = ROOT / "docs" / "03_subclass_profiles.md"   # --write-doc 일 때만 덮어씀 (문서에 수동 추가 절이 있음)
+OUT = ROOT / "6. experiments" / "subclass_profiles"
+DOC = ROOT / "3. docs" / "03_subclass_profiles.md"   # --write-doc 일 때만 덮어씀 (문서에 수동 추가 절이 있음)
 
 TOP_GENES, TOP_VARS, TOP_PAIRS = 12, 10, 8
 MIN_RATE, MIN_COUNT = 0.05, 4
@@ -39,7 +39,7 @@ def mut_type(tok: str) -> str:
 
 
 def main() -> None:
-    tr = pd.read_csv(ROOT / "info/data/train.csv")
+    tr = pd.read_csv(ROOT / "1. info/data/train.csv")
     genes = [c for c in tr.columns if c not in ("ID", "SUBCLASS")]
     y = tr["SUBCLASS"].to_numpy()
     M = (tr[genes] != "WT").to_numpy(dtype=np.uint8)          # any mutation

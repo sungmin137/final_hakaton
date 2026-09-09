@@ -3,12 +3,12 @@
 전문가:
   driver : 유전자 변이 유무(g_*), hotspot 위치(hs_*), LoF 유전자(lof_*), 조합(combo_*)      ← "driver 비율이 높은 암종"
   burden : 변이 개수·유형 비율·구간·플래그(n_*, log_*, syn_ratio, is_*, kf_* 집계)          ← "변이 개수로 갈리는 암종"
-  full   : v4 전체 (기존 OOF 재사용: experiments/…_v4_xgb_grp)
+  full   : v4 전체 (기존 OOF 재사용: 6. experiments/…_v4_xgb_grp)
 메타   : 세 전문가의 OOF 확률(로그)을 입력으로 다항 로지스틱 회귀. 같은 정직 fold로 cross_val_predict.
 산출   : 정직 CV Macro F1 (전문가별 / 스태킹), 암종별 "어느 전문가가 가장 잘 맞히나" 표.
-train.csv만 사용. 실행: PYTHONPATH=src/common python3 src/common/approach3_class_feature_compare/approach3_class_feature_compare_v1.py
-산출물: experiments/approach3_class_feature_compare_v1/ (oof_*.npy, per_class_f1.csv, result.json)
-문서  : docs/11_approach3_class_feature_compare.md
+train.csv만 사용. 실행: PYTHONPATH="4. src/common" python3 "4. src/common/approach3_class_feature_compare/approach3_class_feature_compare_v1.py"
+산출물: 6. experiments/approach3_class_feature_compare_v1/ (oof_*.npy, per_class_f1.csv, result.json)
+문서  : 3. docs/11_approach3_class_feature_compare.md
 """
 import json, time
 from pathlib import Path
@@ -19,7 +19,7 @@ from sklearn.model_selection import StratifiedGroupKFold
 from sklearn.preprocessing import LabelEncoder
 from main import ROOT, SEED, TARGET, XGB_PARAMS, FeatureMaker, load_train, twin_groups
 
-OUT = ROOT / "experiments" / "approach3_class_feature_compare_v1"; OUT.mkdir(parents=True, exist_ok=True)
+OUT = ROOT / "6. experiments" / "approach3_class_feature_compare_v1"; OUT.mkdir(parents=True, exist_ok=True)
 EXPERTS = {
     "driver": lambda c: c.startswith(("g_", "hs_", "lof_", "combo_")),
     "burden": lambda c: c.startswith(("n_", "log_", "syn_ratio", "is_", "kf_", "lof_gene_ratio")) and not c.startswith("lof_") or c in ("n_lof_genes",),
@@ -30,7 +30,7 @@ def main():
     t0 = time.time()
     train = load_train(); le = LabelEncoder(); y = le.fit_transform(train[TARGET]); K = len(le.classes_)
     folds = list(StratifiedGroupKFold(5, shuffle=True, random_state=SEED).split(train, y, twin_groups(train)))
-    oof = {"full": np.load(ROOT / "experiments/2026-09-09_v4_xgb_grp/oof_proba.npy")}
+    oof = {"full": np.load(ROOT / "6. experiments/2026-09-09_v4_xgb_grp/oof_proba.npy")}
     for name, sel in EXPERTS.items():
         P = np.zeros((len(train), K))
         for k, (tri, vai) in enumerate(folds):

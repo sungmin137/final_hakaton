@@ -4,11 +4,11 @@
   2. Preprocessing    : 라벨 인코딩 + 피처 생성 (official | v1 | ...)
   3. Model Train      : XGBoost, Stratified 5-Fold로 OOF Macro F1 / Accuracy 측정
   4. Inference        : 전체 train 재학습 → 이 단계에서만 test.csv 로드 → 예측
-  5. Submission       : submissions/{날짜}_{피처}_xgb.csv
+  5. Submission       : 5. submissions/{날짜}_{피처}_xgb.csv
 
 실행 예)
-  PYTHONPATH=src/common python3 src/common/main.py --features v4 --cv --group-twins
-  (제출은 src/approachN_vK_일자_시간.py 진입 스크립트로)
+  PYTHONPATH="4. src/common" python3 "4. src/common/main.py" --features v4 --cv --group-twins
+  (제출은 4. src/approachN_vK_일자_시간.py 진입 스크립트로)
 """
 from __future__ import annotations
 
@@ -33,7 +33,7 @@ from postprocess.twin_rule import TwinRule
 from approach2_knowledge.knowledge_features import KnowledgeFeatures
 
 ROOT = Path(__file__).resolve().parents[2]
-DATA = ROOT / "info" / "data"          # 원본 데이터 (git 제외)
+DATA = ROOT / "1. info" / "data"          # 원본 데이터 (git 제외)
 SEED = 42
 
 # 공식 베이스라인과 동일한 하이퍼파라미터 (tree_method만 hist로 고정: 속도)
@@ -129,7 +129,7 @@ class FeatureMaker:
             if self.kind in ("v3", "v4"):              # 인사이트 피처: hotspot 위치, LoF 유전자, 조합, 특수 그룹
                 self._ins = InsightFeatures().fit(df)
                 self.columns += list(self._ins.transform(df).columns)
-            if self.kind == "v4":                      # 지식 피처: BLOSUM62·아미노산 특성 변화 (docs/10 해석)
+            if self.kind == "v4":                      # 지식 피처: BLOSUM62·아미노산 특성 변화 (3. docs/10 해석)
                 self._kf = KnowledgeFeatures().fit(df)
                 self.columns += list(self._kf.transform(df).columns)
         else:
@@ -153,7 +153,7 @@ class FeatureMaker:
 
 # ---------------------------------------------------------------- 3. Model Train (CV)
 def twin_groups(train: pd.DataFrame) -> np.ndarray:
-    """완전 동일 프로필(쌍둥이)을 같은 그룹으로. docs/07 참고."""
+    """완전 동일 프로필(쌍둥이)을 같은 그룹으로. 3. docs/07 참고."""
     from postprocess.twin_rule import _hash_rows
     genes = gene_columns(train)
     return pd.factorize(_hash_rows(train, genes))[0]
@@ -211,7 +211,7 @@ def fit_full_and_submit(train: pd.DataFrame, kind: str, params: dict, tag: str,
 
     test = load_test()                      # ← test.csv는 여기서 처음 읽힌다
     pred = le.inverse_transform(model.predict(fm.transform(test)))
-    if twin_rule:                           # docs/04_duplicate_twins.md — 선택 적용
+    if twin_rule:                           # 3. docs/04_duplicate_twins.md — 선택 적용
         pred, n_hit = TwinRule().fit(train).apply(test, pred)
         print(f"twin rule 적용: test {len(test)}행 중 {n_hit}행이 train 행과 완전 동일")
         tag += "_twin"
@@ -219,7 +219,7 @@ def fit_full_and_submit(train: pd.DataFrame, kind: str, params: dict, tag: str,
     assert (sub[ID] == test[ID]).all(), "ID 순서 불일치"
     sub[TARGET] = pred
 
-    out = ROOT / "submissions" / f"{tag}.csv"
+    out = ROOT / "5. submissions" / f"{tag}.csv"
     sub.to_csv(out, index=False, encoding="UTF-8-sig")
     print("saved", out, "\n", sub[TARGET].value_counts().head(8).to_string())
     return out
@@ -230,7 +230,7 @@ def main() -> None:
     ap.add_argument("--features", default="v1", choices=["official", "v1", "v2", "v3", "v4"])
     ap.add_argument("--cv", action="store_true", help="Stratified 5-Fold 평가")
     ap.add_argument("--submit", action="store_true", help="전체 학습 후 test 추론 및 제출 파일 생성")
-    ap.add_argument("--twin-rule", action="store_true", help="추론 시 쌍둥이 규칙 적용 (docs/07 참고, 기본 꺼짐)")
+    ap.add_argument("--twin-rule", action="store_true", help="추론 시 쌍둥이 규칙 적용 (3. docs/07 참고, 기본 꺼짐)")
     ap.add_argument("--group-twins", action="store_true", help="CV에서 쌍둥이를 같은 fold에 묶음 (정직한 CV)")
     ap.add_argument("--params", default="official", choices=list(PARAM_SETS), help="XGB 파라미터 세트")
     ap.add_argument("--balanced", action="store_true", help="클래스 빈도 역수 샘플 가중치")
@@ -243,7 +243,7 @@ def main() -> None:
     train = load_train()
     print("train", train.shape, "| features:", a.features)
     if a.cv:
-        cross_validate(train, a.features, params, out_dir=ROOT / "experiments" / tag,
+        cross_validate(train, a.features, params, out_dir=ROOT / "6. experiments" / tag,
                        group_twins=a.group_twins, balanced=a.balanced, model_name=a.model)
     if a.submit:
         fit_full_and_submit(train, a.features, params, tag, twin_rule=a.twin_rule, balanced=a.balanced)
