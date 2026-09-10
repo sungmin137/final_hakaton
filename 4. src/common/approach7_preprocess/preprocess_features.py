@@ -74,7 +74,16 @@ class PreprocessFeatures:
         M = (df[self.genes] != "WT"); cnt = M.sum(0)
         self.type_genes = [g for g in self.genes if cnt[g] >= MIN_N]
         G = df[self.genes].to_numpy(); tokc: Counter = Counter()
-        for i, j in zip(*np.nonzero(M.to_numpy())):
+        # 완전 동일 프로필(쌍둥이)은 하나로만 센다 — 쌍둥이 행의 모든 변이가 'singleton 공유'로 잡혀 라벨 누수처럼 작동하는 것을 방지
+        import hashlib
+        seen = set(); self._dup_row = np.zeros(len(df), bool)
+        for i in range(len(df)):
+            h = hashlib.md5("|".join(G[i]).encode()).hexdigest()
+            if h in seen: self._dup_row[i] = True
+            else: seen.add(h)
+        Mn = M.to_numpy()
+        for i, j in zip(*np.nonzero(Mn)):
+            if self._dup_row[i]: continue
             for t in G[i, j].split(" "): tokc[(self.genes[j], t)] += 1
         self.tok_count = tokc
         self.n_mut_sorted = np.sort(M.sum(1).to_numpy())
@@ -85,7 +94,8 @@ class PreprocessFeatures:
 
     def transform(self, df: pd.DataFrame) -> pd.DataFrame:
         G = df[self.genes].to_numpy(); n = len(df); gi = {g: k for k, g in enumerate(self.genes)}
-        loo = 1 if (self._fit_index is not None and df.index.equals(self._fit_index)) else 0   # 학습 행이면 자기 자신 제외
+        is_fit = self._fit_index is not None and df.index.equals(self._fit_index)
+        loo_row = (lambda i: 0 if self._dup_row[i] else 1) if is_fit else (lambda i: 0)   # 학습 행이면 자기 자신 제외(중복 행은 이미 안 세었음)
         ti = {g: k for k, g in enumerate(self.type_genes)}
         T = np.zeros((n, len(self.type_genes), 3), np.uint8)             # mis, lof, syn
         di = {(g, d): k for k, (g, d, _, _) in enumerate(self.dom)}; D = np.zeros((n, len(self.dom)), np.uint8)
@@ -101,7 +111,7 @@ class PreprocessFeatures:
                 if k != "syn": n_fun[i] += 1
                 if k == "lof": n_lof[i] += 1
                 if k == "syn": n_syn[i] += 1
-                c = self.tok_count.get((g, t), 0) - loo
+                c = self.tok_count.get((g, t), 0) - loo_row(i)
                 if c <= 0: n_priv[i] += 1
                 elif c == 1: n_single[i] += 1
                 if g in ti and k in ("mis", "lof", "syn"): T[i, ti[g], {"mis": 0, "lof": 1, "syn": 2}[k]] = 1
