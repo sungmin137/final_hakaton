@@ -16,3 +16,5 @@
 | approach2_v3_20260909_2135.py | 2. team/approaches/approach2.md | 5. submissions/approach2_v3_20260909_2135.csv |
 | approach5_v1_20260909_2135.py | 2. team/approaches/approach5.md | 5. submissions/approach5_v1_20260909_2135.csv |
 | approach5_v2_20260909_2322.py | 2. team/approaches/approach5.md | 5. submissions/approach5_v2_20260909_2322.csv |
+| approach2_v4_20260910_1451.py | 2. team/approaches/approach2.md | 5. submissions/approach2_v4_20260910_1451.csv (fold 배깅) |
+| approach2_v5_20260910_1453.py | 2. team/approaches/approach2.md | 5. submissions/approach2_v5_20260910_1453.csv (16모델 배깅 + 배율 안정화) |
