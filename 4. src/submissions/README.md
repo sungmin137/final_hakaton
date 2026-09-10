@@ -10,5 +10,6 @@
 | approach2_v2_20260909_1943.py | 2. team/approaches/approach2.md | 5. submissions/approach2_v2_20260909_1943.csv (같은 설정의 재현 가능 버전, 미제출) |
 | approach3_v2_20260909_1715.py | 2. team/approaches/approach3.md | 5. submissions/approach3_v2_20260909_1715.csv |
 | approach3_v3_20260909_1807.py | 2. team/approaches/approach3.md | 5. submissions/approach3_v3_20260909_1807.csv (LB 0.417) |
+| approach10_v1_20260910.py | 2. team/approaches/approach10.md | 5. submissions/approach10_pair_referee_v1_20260910.csv (+ _twin_rule 변형본) |
 
 실행: `python3 "4. src/submissions/approach2_v2_20260909_1653.py"` (루트에서). 작성 규칙은 `2. team/file_rules.md` 3절.

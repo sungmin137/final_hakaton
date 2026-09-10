@@ -1,0 +1,154 @@
+{
+  "description": "V4 상위 2개가 고정 혼동 쌍이고 확률 차이가 작을 때만 pairwise LR로 재판",
+  "pairs": [
+    [
+      "BRCA",
+      "OV"
+    ],
+    [
+      "BRCA",
+      "PRAD"
+    ],
+    [
+      "HNSC",
+      "STES"
+    ],
+    [
+      "LIHC",
+      "STES"
+    ],
+    [
+      "LUAD",
+      "STES"
+    ],
+    [
+      "LUSC",
+      "STES"
+    ],
+    [
+      "OV",
+      "PAAD"
+    ]
+  ],
+  "excluded_twin_conflicts": [
+    [
+      "KIRC",
+      "KIPAN"
+    ],
+    [
+      "LGG",
+      "GBMLGG"
+    ]
+  ],
+  "base": {
+    "macro_f1": 0.46827270569457596,
+    "accuracy": 0.47331075632962427
+  },
+  "fixed_gap_results": [
+    {
+      "gap_threshold": 0.05,
+      "macro_f1": 0.4712002681597744,
+      "accuracy": 0.47524592807611676,
+      "routed_patients": 115,
+      "helped": 35,
+      "hurt": 23
+    },
+    {
+      "gap_threshold": 0.1,
+      "macro_f1": 0.4720012121194678,
+      "accuracy": 0.4763747782615707,
+      "routed_patients": 202,
+      "helped": 55,
+      "hurt": 36
+    },
+    {
+      "gap_threshold": 0.15,
+      "macro_f1": 0.4735159647533711,
+      "accuracy": 0.4783099500080632,
+      "routed_patients": 283,
+      "helped": 78,
+      "hurt": 47
+    },
+    {
+      "gap_threshold": 0.2,
+      "macro_f1": 0.4734176833838927,
+      "accuracy": 0.4783099500080632,
+      "routed_patients": 342,
+      "helped": 92,
+      "hurt": 61
+    },
+    {
+      "gap_threshold": 0.3,
+      "macro_f1": 0.47490475260556486,
+      "accuracy": 0.4796000645057249,
+      "routed_patients": 408,
+      "helped": 115,
+      "hurt": 76
+    }
+  ],
+  "heldout_gap_selection": {
+    "macro_f1": 0.47490475260556486,
+    "accuracy": 0.4796000645057249,
+    "chosen_by_fold": [
+      {
+        "fold": 1,
+        "chosen_gap": 0.3,
+        "fit_macro_f1": 0.4658985549193684
+      },
+      {
+        "fold": 2,
+        "chosen_gap": 0.3,
+        "fit_macro_f1": 0.4734416746271164
+      },
+      {
+        "fold": 3,
+        "chosen_gap": 0.3,
+        "fit_macro_f1": 0.4769653227931369
+      },
+      {
+        "fold": 4,
+        "chosen_gap": 0.3,
+        "fit_macro_f1": 0.4770636432507566
+      },
+      {
+        "fold": 5,
+        "chosen_gap": 0.3,
+        "fit_macro_f1": 0.4772385521954414
+      }
+    ],
+    "changed_patients": 408
+  },
+  "folds": [
+    {
+      "fold": 1,
+      "base_macro_f1": 0.47157164672647345,
+      "base_accuracy": 0.47622884770346496,
+      "seconds_elapsed": 93.94034695625305
+    },
+    {
+      "fold": 2,
+      "base_macro_f1": 0.4748227899145101,
+      "base_accuracy": 0.4806451612903226,
+      "seconds_elapsed": 190.19271206855774
+    },
+    {
+      "fold": 3,
+      "base_macro_f1": 0.45451589116877644,
+      "base_accuracy": 0.45044319097502017,
+      "seconds_elapsed": 284.61426401138306
+    },
+    {
+      "fold": 4,
+      "base_macro_f1": 0.45414880379499567,
+      "base_accuracy": 0.4907183212267958,
+      "seconds_elapsed": 377.9066309928894
+    },
+    {
+      "fold": 5,
+      "base_macro_f1": 0.45373461460904946,
+      "base_accuracy": 0.4685483870967742,
+      "seconds_elapsed": 473.86976504325867
+    }
+  ],
+  "elapsed_seconds": 473.90414094924927
+}
