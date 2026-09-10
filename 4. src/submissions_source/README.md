@@ -17,3 +17,4 @@
 | approach5_v1_20260909_2135.py | 2. team/approaches/approach5.md | 5. submissions/approach5_v1_20260909_2135.csv |
 | approach5_v2_20260909_2322.py | 2. team/approaches/approach5.md | 5. submissions/approach5_v2_20260909_2322.csv |
 | approach8_v1_20260910_1029.py | 2. team/approaches/approach8.md | 5. submissions/approach8_v1_20260910_1029.csv (LB 0.3972671492) |
+| approach9_v1_20260909_1827.py | 2. team/approaches/approach9.md | 5. submissions/approach9_v1_20260909_1827.csv (LB 0.4031845152, 코드는 참고용 — 재실행 결과 재현 안 됨) |
