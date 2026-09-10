@@ -42,6 +42,8 @@ def main() -> None:
                     help="정직 CV의 fold별 학습 모델(80%% 데이터) 5개 + 전체 모델 1개의 확률 평균 (분산 감소, 피처 변경 없음)")
     ap.add_argument("--bag-seeds", default="42", help="fold 분할 시드 목록 (예: 42,7,123 → 15개 fold 모델 + 전체 모델)")
     ap.add_argument("--scale-avg", action="store_true", help="클래스 배율을 OOF 절반 분할 여러 번에서 맞춰 기하평균 (배율 안정화)")
+    ap.add_argument("--class-scale-file", default=None, metavar="JSON",
+                    help="클래스 배율을 파일에서 그대로 읽어 적용 (예: 3차 복원 배율 6. experiments/2026-09-09_v4_xgb_cs/class_scales_recovered.json)")
     ap.add_argument("--class-scale", default=None, metavar="OOF_DIR",
                     help="정직 CV OOF 디렉토리(6. experiments/…_grp). 그 OOF와 train 라벨로 클래스 배율을 맞춰 test 확률에 곱함")
     a = ap.parse_args()
