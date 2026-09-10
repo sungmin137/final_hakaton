@@ -16,3 +16,4 @@
 | approach2_v3_20260909_2135.py | 2. team/approaches/approach2.md | 5. submissions/approach2_v3_20260909_2135.csv |
 | approach5_v1_20260909_2135.py | 2. team/approaches/approach5.md | 5. submissions/approach5_v1_20260909_2135.csv |
 | approach5_v2_20260909_2322.py | 2. team/approaches/approach5.md | 5. submissions/approach5_v2_20260909_2322.csv |
+| approach8_v1_20260910_1029.py | 2. team/approaches/approach8.md | 5. submissions/approach8_v1_20260910_1029.csv (LB 0.3972671492) |
