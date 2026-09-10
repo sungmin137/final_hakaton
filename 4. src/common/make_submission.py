@@ -101,6 +101,12 @@ def main() -> None:
             print(f"[approach3] cat expert: {len(cols)} cols")
             z = np.log(proba + 1e-6) + w_c * np.log(p_cat + 1e-6); z = np.exp(z - z.max(1, keepdims=True)); proba = z / z.sum(1, keepdims=True)
         pass  # 이름은 위 MODULE 규칙에서 이미 approach3_…_v2/v3 로 결정
+    if a.class_scale_file:                              # 배율을 파일에서 그대로 적용 (예: 3차 복원 배율)
+        import json
+        _sc = json.load(open(ROOT / a.class_scale_file))
+        scales = np.array([float(_sc[c]) for c in le.classes_])
+        print("[post] class scales (file):", {c: round(float(v), 2) for c, v in zip(le.classes_, scales) if abs(v - 1) > 1e-9})
+        proba = proba * scales
     if a.class_scale:                                   # Macro F1용 클래스 배율 — train OOF로만 결정 (3. docs/10)
         oof = np.load(ROOT / a.class_scale / "oof_proba.npy")
         if a.scale_avg:                                 # 절반 분할 6회에서 맞춘 배율의 기하평균 → 과적합 완화
