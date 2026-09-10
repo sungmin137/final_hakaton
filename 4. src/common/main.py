@@ -49,7 +49,10 @@ XGB_TUNED = dict(
     min_child_weight=2, reg_lambda=2.0, random_state=SEED, eval_metric="mlogloss",
     tree_method="hist", n_jobs=8,
 )
-PARAM_SETS = {"official": XGB_PARAMS, "tuned": XGB_TUNED}
+# mild 변형 (2026-09-10): 3차 구성에서 한 요소만 살짝 바꿈
+XGB_MILD_COL = {**XGB_PARAMS, "colsample_bytree": 0.7}
+XGB_MILD_REG = {**XGB_PARAMS, "min_child_weight": 3, "reg_lambda": 3.0}
+PARAM_SETS = {"official": XGB_PARAMS, "tuned": XGB_TUNED, "mild_col": XGB_MILD_COL, "mild_reg": XGB_MILD_REG}
 
 # 앙상블용 다른 부스팅 모델
 LGBM_PARAMS = dict(n_estimators=300, learning_rate=0.05, num_leaves=31, feature_fraction=0.3,

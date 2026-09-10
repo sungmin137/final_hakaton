@@ -44,6 +44,7 @@ def main() -> None:
     ap.add_argument("--scale-avg", action="store_true", help="클래스 배율을 OOF 절반 분할 여러 번에서 맞춰 기하평균 (배율 안정화)")
     ap.add_argument("--class-scale-file", default=None, metavar="JSON",
                     help="클래스 배율을 파일에서 그대로 읽어 적용 (예: 3차 복원 배율 6. experiments/2026-09-09_v4_xgb_cs/class_scales_recovered.json)")
+    ap.add_argument("--drop-cols-prefix", default=None, help="이 접두사로 시작하는 피처 열 제거 (쉼표 구분, 예: cw_variant)")
     ap.add_argument("--class-scale", default=None, metavar="OOF_DIR",
                     help="정직 CV OOF 디렉토리(6. experiments/…_grp). 그 OOF와 train 라벨로 클래스 배율을 맞춰 test 확률에 곱함")
     a = ap.parse_args()

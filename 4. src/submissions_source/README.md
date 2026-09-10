@@ -19,3 +19,6 @@
 | approach2_v4_20260910_1451.py | 2. team/approaches/approach2.md | 5. submissions/approach2_v4_20260910_1451.csv (fold 배깅) |
 | approach2_v5_20260910_1453.py | 2. team/approaches/approach2.md | 5. submissions/approach2_v5_20260910_1453.csv (16모델 배깅 + 배율 안정화) |
 | approach2_v6_20260910_1505.py | 2. team/approaches/approach2.md | 5. submissions/approach2_v6_20260910_1505.csv (후처리 전용: v5 원시 확률 × 3차 복원 배율) |
+| approach2_v7_20260910_1651.py | 2. team/approaches/approach2.md | 5. submissions/approach2_v7_20260910_1651.csv (mild colsample 0.7) |
+| approach2_v8_20260910_1651.py | 2. team/approaches/approach2.md | 5. submissions/approach2_v8_20260910_1651.csv (mild cw_variant 제거) |
+| approach2_v9_20260910_1651.py | 2. team/approaches/approach2.md | 5. submissions/approach2_v9_20260910_1651.csv (mild mcw3·lambda3) |
