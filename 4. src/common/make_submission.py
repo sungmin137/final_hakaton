@@ -38,6 +38,13 @@ def main() -> None:
     ap.add_argument("--approach3-blend", default=None, metavar="WD,WB[,WC]",
                     help="접근 3: driver/burden(/cat) 전문가를 train 전체로 학습해 test 확률을 로그 가중 블렌딩 (v2: 0.5,0.2 / v3: 0.5,0.2,0.4)")
     ap.add_argument("--drop-genes", default=None, metavar="FILE", help="제거할 유전자 열 목록 파일 (결측 분석 결과)")
+    ap.add_argument("--fold-bag", action="store_true",
+                    help="정직 CV의 fold별 학습 모델(80%% 데이터) 5개 + 전체 모델 1개의 확률 평균 (분산 감소, 피처 변경 없음)")
+    ap.add_argument("--bag-seeds", default="42", help="fold 분할 시드 목록 (예: 42,7,123 → 15개 fold 모델 + 전체 모델)")
+    ap.add_argument("--scale-avg", action="store_true", help="클래스 배율을 OOF 절반 분할 여러 번에서 맞춰 기하평균 (배율 안정화)")
+    ap.add_argument("--class-scale-file", default=None, metavar="JSON",
+                    help="클래스 배율을 파일에서 그대로 읽어 적용 (예: 3차 복원 배율 6. experiments/2026-09-09_v4_xgb_cs/class_scales_recovered.json)")
+    ap.add_argument("--drop-cols-prefix", default=None, help="이 접두사로 시작하는 피처 열 제거 (쉼표 구분, 예: cw_variant)")
     ap.add_argument("--class-scale", default=None, metavar="OOF_DIR",
                     help="정직 CV OOF 디렉토리(6. experiments/…_grp). 그 OOF와 train 라벨로 클래스 배율을 맞춰 test 확률에 곱함")
     a = ap.parse_args()
@@ -45,7 +52,7 @@ def main() -> None:
     # 파일명 규칙: 어느 src 모듈(접근법)에서 나온 결과인지 + 버전 + 옵션 + 제작 시각
     MODULE = {"official": "main_official", "v1": "features_v1", "v2": "approach1_count_weight_v2",
               "v3": "features_v3", "v4": "approach2_knowledge_v4"}
-    tag = MODULE[a.features]
+    tag = MODULE.get(a.features, f"features_{a.features}")
     if a.approach3_blend:
         tag = "approach3_class_feature_compare_" + ("v3" if len(a.approach3_blend.split(",")) > 2 else "v2")
     tag += ("" if a.params == "official" else f"_{a.params}") + ("_balanced" if a.balanced else "")
@@ -66,6 +73,18 @@ def main() -> None:
     test = load_test()
     Xte = fm.transform(test)
     proba = model.predict_proba(Xte)
+    if a.fold_bag:                                      # fold 모델 평균 (train만 사용, 정직 CV와 같은 fold 분할)
+        from sklearn.model_selection import StratifiedGroupKFold
+        from main import twin_groups, SEED
+        probs = [proba]
+        for sd in [int(v) for v in a.bag_seeds.split(",")]:
+            for k, (tri, _) in enumerate(StratifiedGroupKFold(5, shuffle=True, random_state=sd).split(train, y, twin_groups(train))):
+                fm_k = FeatureMaker(a.features).fit(train.iloc[tri])
+                m_k = xgb.XGBClassifier(**params).fit(fm_k.transform(train.iloc[tri]), y[tri],
+                                                      sample_weight=class_weights(y[tri]) if a.balanced else None)
+                probs.append(m_k.predict_proba(fm_k.transform(test))); print(f"[bag] seed{sd} fold{k} 모델 완료 ({time.time()-t0:.0f}s)")
+        proba = np.mean(probs, 0)
+        if not fixed_name: tag += "_foldbag"
     if a.approach3_blend:                               # 접근 3 v2 — 전문가 블렌딩 (train 전체로 학습)
         ws = [float(v) for v in a.approach3_blend.split(",")]; w_d, w_b = ws[0], ws[1]; w_c = ws[2] if len(ws) > 2 else 0.0
         Xtr_full = fm.transform(train); experts = {}
@@ -82,9 +101,22 @@ def main() -> None:
             print(f"[approach3] cat expert: {len(cols)} cols")
             z = np.log(proba + 1e-6) + w_c * np.log(p_cat + 1e-6); z = np.exp(z - z.max(1, keepdims=True)); proba = z / z.sum(1, keepdims=True)
         pass  # 이름은 위 MODULE 규칙에서 이미 approach3_…_v2/v3 로 결정
+    if a.class_scale_file:                              # 배율을 파일에서 그대로 적용 (예: 3차 복원 배율)
+        import json
+        _sc = json.load(open(ROOT / a.class_scale_file))
+        scales = np.array([float(_sc[c]) for c in le.classes_])
+        print("[post] class scales (file):", {c: round(float(v), 2) for c, v in zip(le.classes_, scales) if abs(v - 1) > 1e-9})
+        proba = proba * scales
     if a.class_scale:                                   # Macro F1용 클래스 배율 — train OOF로만 결정 (3. docs/10)
         oof = np.load(ROOT / a.class_scale / "oof_proba.npy")
-        scales = fit_class_scales(oof, y)
+        if a.scale_avg:                                 # 절반 분할 6회에서 맞춘 배율의 기하평균 → 과적합 완화
+            rng = np.random.RandomState(0); logs = []
+            for _ in range(6):
+                idx = rng.permutation(len(y)); half = idx[: len(y) // 2]
+                logs.append(np.log(fit_class_scales(oof[half], y[half])))
+            scales = np.exp(np.mean(logs, 0))
+        else:
+            scales = fit_class_scales(oof, y)
         print("[post] class scales:", {c: float(v) for c, v in zip(le.classes_, scales) if v != 1.0})
         proba = proba * scales
         if not fixed_name:

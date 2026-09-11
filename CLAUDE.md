@@ -14,13 +14,13 @@
 - **브랜치: 사용자(성민) 작업은 `sungmin` 브랜치에서 한다.** main에 직접 커밋하지 않는다. main 반영은 PR로. 팀원은 각자 이름 브랜치.
 - 데이터(`1. info/data/*.csv`)와 모델(`models/`)은 git에 올리지 않는다. 제출 csv는 `5. submissions/`에 보관.
 - 실험은 `6. experiments/`에 날짜_이름 형식으로 기록하고, 결과 요약은 `3. docs/experiments_log.md`에 누적.
-- 검증은 반드시 **`--group-twins` 정직 CV**. 일반 CV는 쌍둥이 때문에 +0.05 부풀려짐(3. docs/04_duplicate_twins.md). CV 개선이 LB로 거의 안 옮겨지므로(3. docs/05_test_inference.md) 제출 기준선은 접근2 v2(LB 0.43). 팀 결정은 `2. team/decisions.md`.
+- 검증은 반드시 **`--group-twins` 정직 CV**. 일반 CV는 쌍둥이 때문에 +0.05 부풀려짐(3. docs/04_duplicate_twins.md). CV는 LB 순위를 예측하지 못한다(5개 제출로 확인, 상관 0). **제출 선택은 LB로**, CV는 버그·큰 회귀 감지용. 최종 선택 파일 = 접근2 v2 + 배율 + 쌍둥이 규칙 (LB 0.4369). 팀 결정은 `2. team/decisions.md`.
 - Python: `uv` 사용. 시스템 python3.14 + 기존 설치 패키지 사용 가능(pandas/sklearn/lgbm/xgb/catboost/optuna 확인됨).
 
 ## 메인 파이프라인
 - 공식 베이스라인(`1. info/baseline.py`, `1. info/baseline.py`)의 5단계 구조를 따른다: Load → Preprocessing → Train → Inference → Submission.
 - 구현체는 `4. src/common/main.py` .
-- **파일 규칙은 `2. team/file_rules.md`가 기준.** 제출 재현 스크립트 `4. src/submissions/approachN_vK_YYYYMMDD_HHMM.py` = 같은 이름의 `5. submissions/….csv`. 공용 로직은 `4. src/common/`. 접근법 설명은 `2. team/approaches/approachN.md`에 버전별로 상세 기록.
+- **파일 규칙은 `2. team/file_rules.md`가 기준.** 제출 재현 스크립트 `4. src/submissions_source/approachN_vK_YYYYMMDD_HHMM.py` = 같은 이름의 `5. submissions/….csv`. 공용 로직은 `4. src/common/`. 접근법 설명은 `2. team/approaches/approachN.md`에 버전별로 상세 기록.
 - 피처는 `4. src/common/features/features.py` + `FeatureMaker(kind)`. import는 `PYTHONPATH="4. src/common"` 기준(`features.features`, `approach1_count_weight.count_weights` …).
 - 실행: `PYTHONPATH="4. src/common" python3 "4. src/common/main.py" --features v4 --cv --group-twins`. test.csv는 `make_submission.py`(진입 스크립트 경유)에서만 읽는다.
 
