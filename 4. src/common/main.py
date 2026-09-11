@@ -54,8 +54,9 @@ XGB_MILD_COL = {**XGB_PARAMS, "colsample_bytree": 0.7}
 XGB_MILD_REG = {**XGB_PARAMS, "min_child_weight": 3, "reg_lambda": 3.0}
 XGB_MILD_COL5 = {**XGB_PARAMS, "colsample_bytree": 0.5}
 XGB_MILD_COL_REG = {**XGB_PARAMS, "colsample_bytree": 0.7, "min_child_weight": 3, "reg_lambda": 3.0}
+XGB_MILD_COL5_REG = {**XGB_PARAMS, "colsample_bytree": 0.5, "min_child_weight": 3, "reg_lambda": 3.0}
 PARAM_SETS = {"official": XGB_PARAMS, "tuned": XGB_TUNED, "mild_col": XGB_MILD_COL, "mild_reg": XGB_MILD_REG,
-              "mild_col5": XGB_MILD_COL5, "mild_col_reg": XGB_MILD_COL_REG}
+              "mild_col5": XGB_MILD_COL5, "mild_col_reg": XGB_MILD_COL_REG, "mild_col5_reg": XGB_MILD_COL5_REG}
 
 # 앙상블용 다른 부스팅 모델
 LGBM_PARAMS = dict(n_estimators=300, learning_rate=0.05, num_leaves=31, feature_fraction=0.3,

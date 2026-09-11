@@ -24,3 +24,4 @@
 | approach2_v9_20260910_1651.py | 2. team/approaches/approach2.md | 5. submissions/approach2_v9_20260910_1651.csv (mild mcw3·lambda3) |
 | approach2_v10_20260911_1014.py | 2. team/approaches/approach2.md | 5. submissions/approach2_v10_20260911_1014.csv (colsample 0.5) |
 | approach2_v11_20260911_1014.py | 2. team/approaches/approach2.md | 5. submissions/approach2_v11_20260911_1014.csv (colsample 0.7 + mcw3·lambda3) |
+| approach2_v12_20260911_1129.py | 2. team/approaches/approach2.md | 5. submissions/approach2_v12_20260911_1129.csv (colsample 0.5 + mcw3·lambda3) |
