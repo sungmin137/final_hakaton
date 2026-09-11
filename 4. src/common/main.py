@@ -150,6 +150,15 @@ class FeatureMaker:
             if self.kind in ("v6", "a7"):              # 접근 7: 전처리 확장 (유형 분리 이진화, 도메인 구간, 부담 정규화·희귀 변이)
                 self._pp = PreprocessFeatures().fit(df)
                 self.columns += list(self._pp.transform(df).columns)
+        elif self.kind == "a8":                        # 접근 8: v5 피처를 중요도 상위 500개로 압축 (2. team/approaches/approach8.md)
+            K = 500
+            fm5 = FeatureMaker("v5").fit(df)
+            X5 = fm5.transform(df)
+            y5 = LabelEncoder().fit_transform(df[TARGET])
+            ranker = xgb.XGBClassifier(**XGB_PARAMS).fit(X5, y5)
+            ranked = pd.Series(ranker.feature_importances_, index=X5.columns).sort_values(ascending=False)
+            self._fm5 = fm5
+            self.columns = list(ranked.head(K).index)
         else:
             raise ValueError(f"unknown features: {self.kind}")
         return self
@@ -159,6 +168,9 @@ class FeatureMaker:
             df = df.drop(columns=[g for g in self.drop_genes if g in df.columns])
         if self.kind == "official":
             return pd.DataFrame(self._enc.transform(df[self.genes]), columns=self.genes, index=df.index)
+        if self.kind == "a8":
+            X = self._fm5.transform(df)
+            return X.reindex(columns=self.columns, fill_value=0)
         X = build_features(df, self.genes)
         if self.kind in ("v2", "v3", "v4", "v5", "v6"):
             X = pd.concat([X, self._cw.transform(df)], axis=1)
@@ -251,7 +263,7 @@ def fit_full_and_submit(train: pd.DataFrame, kind: str, params: dict, tag: str,
 
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--features", default="v1", choices=["official", "v1", "v2", "v3", "v4", "v5", "v6", "a2", "a4", "a7"])
+    ap.add_argument("--features", default="v1", choices=["official", "v1", "v2", "v3", "v4", "v5", "v6", "a2", "a4", "a7", "a8"])
     ap.add_argument("--cv", action="store_true", help="Stratified 5-Fold 평가")
     ap.add_argument("--submit", action="store_true", help="전체 학습 후 test 추론 및 제출 파일 생성")
     ap.add_argument("--twin-rule", action="store_true", help="추론 시 쌍둥이 규칙 적용 (3. docs/07 참고, 기본 꺼짐)")
