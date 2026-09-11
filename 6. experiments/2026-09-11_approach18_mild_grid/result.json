@@ -1,0 +1,254 @@
+{
+  "description": "V4 피처 고정, v7 주변 단일축 마일드 규제 grid; test 미사용",
+  "group_twins": true,
+  "configs": {
+    "v7_ref_col0.7": {
+      "colsample_bytree": 0.7
+    },
+    "A_col0.8": {
+      "colsample_bytree": 0.8
+    },
+    "B_col0.6": {
+      "colsample_bytree": 0.6
+    },
+    "C_leaf_mild": {
+      "colsample_bytree": 0.7,
+      "min_child_weight": 2,
+      "reg_lambda": 2.0
+    },
+    "D_depth5": {
+      "colsample_bytree": 0.7,
+      "max_depth": 5
+    },
+    "E_subsample0.9": {
+      "colsample_bytree": 0.7,
+      "subsample": 0.9
+    }
+  },
+  "summary": [
+    {
+      "config": "D_depth5",
+      "changes": {
+        "colsample_bytree": 0.7,
+        "max_depth": 5
+      },
+      "macro_f1": 0.47156130678262487,
+      "accuracy": 0.4797613288179326,
+      "delta_vs_v7": 0.004622107957304722
+    },
+    {
+      "config": "C_leaf_mild",
+      "changes": {
+        "colsample_bytree": 0.7,
+        "min_child_weight": 2,
+        "reg_lambda": 2.0
+      },
+      "macro_f1": 0.4687048962208653,
+      "accuracy": 0.480083857442348,
+      "delta_vs_v7": 0.0017656973955451627
+    },
+    {
+      "config": "E_subsample0.9",
+      "changes": {
+        "colsample_bytree": 0.7,
+        "subsample": 0.9
+      },
+      "macro_f1": 0.46844479805742706,
+      "accuracy": 0.47701983551040156,
+      "delta_vs_v7": 0.0015055992321069134
+    },
+    {
+      "config": "v7_ref_col0.7",
+      "changes": {
+        "colsample_bytree": 0.7
+      },
+      "macro_f1": 0.46693919882532015,
+      "accuracy": 0.47540719238832446,
+      "delta_vs_v7": 0.0
+    },
+    {
+      "config": "A_col0.8",
+      "changes": {
+        "colsample_bytree": 0.8
+      },
+      "macro_f1": 0.4655405108861101,
+      "accuracy": 0.4729882277052088,
+      "delta_vs_v7": -0.0013986879392100526
+    },
+    {
+      "config": "B_col0.6",
+      "changes": {
+        "colsample_bytree": 0.6
+      },
+      "macro_f1": 0.4650349527485082,
+      "accuracy": 0.4758909853249476,
+      "delta_vs_v7": -0.001904246076811944
+    }
+  ],
+  "folds": {
+    "v7_ref_col0.7": [
+      {
+        "fold": 1,
+        "macro_f1": 0.4507990147255532,
+        "accuracy": 0.4520547945205479
+      },
+      {
+        "fold": 2,
+        "macro_f1": 0.48202016288979077,
+        "accuracy": 0.4838709677419355
+      },
+      {
+        "fold": 3,
+        "macro_f1": 0.4654754573087088,
+        "accuracy": 0.46333601933924257
+      },
+      {
+        "fold": 4,
+        "macro_f1": 0.4703060057972577,
+        "accuracy": 0.4995964487489911
+      },
+      {
+        "fold": 5,
+        "macro_f1": 0.46871060955816224,
+        "accuracy": 0.4782258064516129
+      }
+    ],
+    "A_col0.8": [
+      {
+        "fold": 1,
+        "macro_f1": 0.4538214432015818,
+        "accuracy": 0.45688960515713134
+      },
+      {
+        "fold": 2,
+        "macro_f1": 0.47534581625521216,
+        "accuracy": 0.4830645161290323
+      },
+      {
+        "fold": 3,
+        "macro_f1": 0.4600369279205828,
+        "accuracy": 0.44802578565672846
+      },
+      {
+        "fold": 4,
+        "macro_f1": 0.4630255699694923,
+        "accuracy": 0.48991121872477805
+      },
+      {
+        "fold": 5,
+        "macro_f1": 0.4790775954772541,
+        "accuracy": 0.4870967741935484
+      }
+    ],
+    "B_col0.6": [
+      {
+        "fold": 1,
+        "macro_f1": 0.44051211964622633,
+        "accuracy": 0.45608380338436744
+      },
+      {
+        "fold": 2,
+        "macro_f1": 0.47602964010074955,
+        "accuracy": 0.4838709677419355
+      },
+      {
+        "fold": 3,
+        "macro_f1": 0.47253914746106257,
+        "accuracy": 0.46253021756647866
+      },
+      {
+        "fold": 4,
+        "macro_f1": 0.4691729801447716,
+        "accuracy": 0.4915254237288136
+      },
+      {
+        "fold": 5,
+        "macro_f1": 0.4717276267703336,
+        "accuracy": 0.4854838709677419
+      }
+    ],
+    "C_leaf_mild": [
+      {
+        "fold": 1,
+        "macro_f1": 0.4532802003069809,
+        "accuracy": 0.4665592264302981
+      },
+      {
+        "fold": 2,
+        "macro_f1": 0.480130624668563,
+        "accuracy": 0.4879032258064516
+      },
+      {
+        "fold": 3,
+        "macro_f1": 0.47104979331860614,
+        "accuracy": 0.4649476228847704
+      },
+      {
+        "fold": 4,
+        "macro_f1": 0.4674301962174272,
+        "accuracy": 0.49556093623890235
+      },
+      {
+        "fold": 5,
+        "macro_f1": 0.47246854324675963,
+        "accuracy": 0.4854838709677419
+      }
+    ],
+    "D_depth5": [
+      {
+        "fold": 1,
+        "macro_f1": 0.4627231886805209,
+        "accuracy": 0.4649476228847704
+      },
+      {
+        "fold": 2,
+        "macro_f1": 0.484573504106223,
+        "accuracy": 0.4879032258064516
+      },
+      {
+        "fold": 3,
+        "macro_f1": 0.47236140336572663,
+        "accuracy": 0.4665592264302981
+      },
+      {
+        "fold": 4,
+        "macro_f1": 0.46451763035850097,
+        "accuracy": 0.4947538337368846
+      },
+      {
+        "fold": 5,
+        "macro_f1": 0.4748541650366586,
+        "accuracy": 0.4846774193548387
+      }
+    ],
+    "E_subsample0.9": [
+      {
+        "fold": 1,
+        "macro_f1": 0.44417367141920777,
+        "accuracy": 0.45688960515713134
+      },
+      {
+        "fold": 2,
+        "macro_f1": 0.47509048468605025,
+        "accuracy": 0.4782258064516129
+      },
+      {
+        "fold": 3,
+        "macro_f1": 0.48389204298715616,
+        "accuracy": 0.47542304593070106
+      },
+      {
+        "fold": 4,
+        "macro_f1": 0.46311912437950487,
+        "accuracy": 0.49313962873284906
+      },
+      {
+        "fold": 5,
+        "macro_f1": 0.4768322938771091,
+        "accuracy": 0.4814516129032258
+      }
+    ]
+  },
+  "elapsed_seconds": 1463.3,
+  "warning": "CV는 제출 후보를 거르는 용도이며 LB 점수를 예측하지 않는다."
+}
