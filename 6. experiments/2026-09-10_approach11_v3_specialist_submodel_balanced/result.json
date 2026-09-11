@@ -1,0 +1,30 @@
+{
+  "features": "v4",
+  "weighted": true,
+  "per_class": {
+    "KIRC": {
+      "nontwin_acc": 0.2069,
+      "twin_acc": 0.2971,
+      "n_nontwin": 58,
+      "main_model_f1": 0.2811
+    },
+    "KIPAN": {
+      "nontwin_acc": 0.8487,
+      "twin_acc": 0.704,
+      "n_nontwin": 238,
+      "main_model_f1": 0.4432
+    },
+    "GBMLGG": {
+      "nontwin_acc": 0.9091,
+      "twin_acc": 0.4857,
+      "n_nontwin": 286,
+      "main_model_f1": 0.5052
+    },
+    "LGG": {
+      "nontwin_acc": 0.3269,
+      "twin_acc": 0.5085,
+      "n_nontwin": 52,
+      "main_model_f1": 0.4348
+    }
+  }
+}
