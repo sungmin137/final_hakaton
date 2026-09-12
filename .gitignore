@@ -3,6 +3,8 @@
 /models/
 *.csv
 !5. submissions/*.csv
+# submission.csv는 "마지막으로 실행한 사람"이 계속 덮어쓰는 개인 임시 사본이라 브랜치마다 내용이 달라짐 → merge 충돌 반복 유발, 추적 제외
+5. submissions/submission.csv
 
 # Python
 __pycache__/
