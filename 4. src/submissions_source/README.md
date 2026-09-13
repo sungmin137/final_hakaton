@@ -32,3 +32,4 @@
 | approach14_v4_20260913_2150.py | 2. team/approaches/approach14.md | 5. submissions/approach14_v4_20260913_2150.csv (v3 + HNSC/STES 라우터) |
 | approach14_v5_20260913_2150.py | 2. team/approaches/approach14.md | 5. submissions/approach14_v5_20260913_2150.csv (w=0.3) |
 | approach14_v6_20260913_2150.py | 2. team/approaches/approach14.md | 5. submissions/approach14_v6_20260913_2150.csv (w=0.7) |
+| approach14_v9_20260914_0010.py | 2. team/approaches/approach14.md | 5. submissions/approach14_v9_20260914_0010.csv (16차 + 이진 유전자 LR w3=0.2) |

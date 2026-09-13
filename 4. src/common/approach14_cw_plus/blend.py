@@ -38,12 +38,27 @@ def hnsc_stes_router(train, test, le, pred_id, pair=("HNSC", "STES"), C=0.1, con
     return out, int(use.sum()), int((out != pred_id).sum())
 
 
-def run(name: str, w: float, router: bool = False, ref_name: str = "approach14_v3_20260913_2132") -> None:
+def third_lr_binary(train, test, C: float = 1.0):
+    """세 번째 모델(v9~): 이진 유전자 행렬(변이 유무) 다항 로지스틱 회귀. 트리와 귀납 편향이 다른 블렌드 파트너. 정직 CV 단독 0.32, 블렌드 w3=0.2에서 +0.007."""
+    from scipy import sparse
+    from sklearn.linear_model import LogisticRegression
+    genes = [c for c in train.columns if c not in (ID, TARGET)]
+    Xtr = sparse.csr_matrix((train[genes].to_numpy() != "WT").astype(np.float32)); Xte = sparse.csr_matrix((test[genes].to_numpy() != "WT").astype(np.float32))
+    y = LabelEncoder().fit_transform(train[TARGET])
+    return LogisticRegression(C=C, max_iter=500, n_jobs=8).fit(Xtr, y).predict_proba(Xte)
+
+
+def run(name: str, w: float, router: bool = False, ref_name: str = "approach14_v3_20260913_2132", third=None, w3: float = 0.0) -> None:
     train = load_train(); le = LabelEncoder().fit(train[TARGET]); classes = list(le.classes_)
     s3 = np.array([json.load(open(SCALE_PATH))[c] for c in classes])
     p7 = np.load(P7_PATH) / s3; p7 = p7 / p7.sum(1, keepdims=True); p2 = np.load(P2_PATH)
-    test = load_test(); proba = log_blend(p7, p2, w); pred_id = (proba * s3).argmax(1)
-    msg = ""
+    test = load_test(); proba = log_blend(p7, p2, w)
+    if third is not None:                      # 세 번째 모델: 2모델 블렌드(1-w3)와 로그 결합. third는 (train, test)->(n,26) 함수
+        p3 = third(train, test); z = np.log(proba + EPS) * (1 - w3) + np.log(p3 + EPS) * w3
+        proba = np.exp(z - z.max(1, keepdims=True)); proba /= proba.sum(1, keepdims=True)
+        out = ROOT / "6. experiments/submissions" / name; out.mkdir(parents=True, exist_ok=True); np.save(out / "test_proba_third.npy", p3)
+    pred_id = (proba * s3).argmax(1)
+    msg = "" if third is None else f" | w3={w3}"
     if router:
         pred_id, n_cand, n_chg = hnsc_stes_router(train, test, le, pred_id); msg = f" | 라우터 후보 {n_cand}, 변경 {n_chg}행"
     pred = le.inverse_transform(pred_id)
