@@ -41,7 +41,8 @@ def tok_bucket(genes, row):            # gene:pos//25 (기능성 변이만)
         for t in row[j].split(" "):
             if _kind(t) in ("mis", "lof", "oth") and _pos(t) >= 0: out.add(f"{genes[j]}:b{_pos(t)//25}")
     return list(out)
-TOKENIZERS = {"tgene": tok_type_gene, "tvar_mis": tok_type_variant_mis, "bucket": tok_bucket}
+TOKENIZERS_ALL = {"tgene": tok_type_gene, "tvar_mis": tok_type_variant_mis, "bucket": tok_bucket}
+TOKENIZERS = {"tgene": tok_type_gene}          # v2: 유전자 단위 유형 분리만 (v1의 희소 토큰 계열은 저변이 클래스에 해로웠음)
 
 
 class TokenNB:
@@ -68,8 +69,11 @@ class TokenNB:
         W = np.log((n_cf + a) / (n_c + 2 * a)) - np.log((n_f - n_cf + a) / (n - n_c + 2 * a)); W[:, ~keepf] = 0
         self.W = W; self.b = np.log(n_c.ravel() / n); return self
     def scores(self, df):
-        X = self._mat(df, fit=False); S = np.round(np.asarray(X @ self.W.T) / np.maximum(np.asarray(X.sum(1)).ravel(), 1)[:, None], 4)
-        return S + self.b
+        X = self._mat(df, fit=False); n_tok = np.asarray(X.sum(1)).ravel()
+        S = np.round(np.asarray(X @ self.W.T) / np.maximum(n_tok, 1)[:, None], 4)
+        S = S + self.b
+        S[n_tok == 0] = 0.0                      # v2: 토큰 없는 행은 사전확률 상수 대신 0 (저변이 클래스 붕괴 방지)
+        return S
 
 
 def _cols(S, classes, tag):
@@ -93,7 +97,7 @@ class CWPlusFeatures:
     def _finish(self, X):
         # (iii) 군집 상대 점수: tvar_mis 점수를 군집 안에서 log-softmax
         for name, cl in [("lowmut", LOWMUT), ("epi", EPI)]:
-            cols = [f"cwp_tvar_mis_{c}" for c in cl if f"cwp_tvar_mis_{c}" in X.columns]
+            cols = [f"cwp_tgene_{c}" for c in cl if f"cwp_tgene_{c}" in X.columns]
             S = X[cols].to_numpy(); S = S - S.max(1, keepdims=True); L = S - np.log(np.exp(S).sum(1, keepdims=True))
             for c, j in zip(cl, range(len(cols))): X[f"cwp_{name}_{c}"] = L[:, j]
             X[f"cwp_{name}_margin"] = np.sort(L, 1)[:, -1] - np.sort(L, 1)[:, -2]
