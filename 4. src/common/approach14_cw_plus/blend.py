@@ -48,6 +48,15 @@ def third_lr_binary(train, test, C: float = 1.0):
     return LogisticRegression(C=C, max_iter=500, n_jobs=8).fit(Xtr, y).predict_proba(Xte)
 
 
+def third_a7(train, test):
+    """세 번째 모델(v10~): 접근 7 전처리 확장 피처(a7 = 기본 + 유형 분리 이진화·도메인 구간·부담 정규화·희귀 변이) XGB colsample 0.7.
+    단독 정직 CV 0.4231로 약하지만 9차·v2와 정보가 달라, 9차 .4 / v2 .3 / a7 .3 로그 결합에서 0.4941 → 0.5049 (+0.0108, 절반 교차 +0.009/+0.013, 31~100 0.436→0.449, STES 예측 292→281)."""
+    import xgboost as xgb
+    from main import FeatureMaker, PARAM_SETS
+    y = LabelEncoder().fit_transform(train[TARGET]); fm = FeatureMaker("a7").fit(train)
+    return xgb.XGBClassifier(**PARAM_SETS["mild_col"]).fit(fm.transform(train), y).predict_proba(fm.transform(test))
+
+
 def run(name: str, w: float, router: bool = False, ref_name: str = "approach14_v3_20260913_2132", third=None, w3: float = 0.0) -> None:
     train = load_train(); le = LabelEncoder().fit(train[TARGET]); classes = list(le.classes_)
     s3 = np.array([json.load(open(SCALE_PATH))[c] for c in classes])
