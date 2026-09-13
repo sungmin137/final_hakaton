@@ -269,7 +269,7 @@ def fit_full_and_submit(train: pd.DataFrame, kind: str, params: dict, tag: str,
 
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--features", default="v1", choices=["official", "v1", "v2", "v3", "v4", "v5", "v6", "a2", "a4", "a7", "a8"])
+    ap.add_argument("--features", default="v1", choices=["official", "v1", "v2", "v3", "v4", "v5", "v6", "a2", "a4", "a7", "a8", "v4p"])
     ap.add_argument("--cv", action="store_true", help="Stratified 5-Fold 평가")
     ap.add_argument("--submit", action="store_true", help="전체 학습 후 test 추론 및 제출 파일 생성")
     ap.add_argument("--twin-rule", action="store_true", help="추론 시 쌍둥이 규칙 적용 (3. docs/07 참고, 기본 꺼짐)")
