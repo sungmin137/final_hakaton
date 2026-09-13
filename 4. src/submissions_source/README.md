@@ -29,3 +29,6 @@
 | approach12_v9_20260911_1129.py | 2. team/approaches/approach2.md | 5. submissions/approach12_v9_20260911_1129.csv (colsample 0.5 + mcw3·lambda3) |
 | approach13_v1_20260911_1602.py | 2. team/approaches/approach13.md | 5. submissions/approach13_v1_20260911_1602.csv (개선판 라우팅) |
 | approach14_v3_20260913_2132.py | 2. team/approaches/approach14.md | 5. submissions/approach14_v3_20260913_2132.csv (두 모델 로그평균) |
+| approach14_v4_20260913_2150.py | 2. team/approaches/approach14.md | 5. submissions/approach14_v4_20260913_2150.csv (v3 + HNSC/STES 라우터) |
+| approach14_v5_20260913_2150.py | 2. team/approaches/approach14.md | 5. submissions/approach14_v5_20260913_2150.csv (w=0.3) |
+| approach14_v6_20260913_2150.py | 2. team/approaches/approach14.md | 5. submissions/approach14_v6_20260913_2150.csv (w=0.7) |
