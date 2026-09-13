@@ -41,14 +41,17 @@ def tok_bucket(genes, row):            # gene:pos//25 (기능성 변이만)
         for t in row[j].split(" "):
             if _kind(t) in ("mis", "lof", "oth") and _pos(t) >= 0: out.add(f"{genes[j]}:b{_pos(t)//25}")
     return list(out)
-TOKENIZERS_ALL = {"tgene": tok_type_gene, "tvar_mis": tok_type_variant_mis, "bucket": tok_bucket}
+HI_MUT = 31                            # v7(2026-09-13): 위치 구간 점수를 변이 31개 이상 행에만 (v1에서 저변이 클래스를 망친 희소 토큰을 고변이 구간에 한정)
+def tok_bucket_hi(genes, row):         # gene:pos//25, 변이 수 >= HI_MUT 인 행만 (그 외 토큰 없음 → 점수 0)
+    return tok_bucket(genes, row) if (row != "WT").sum() >= HI_MUT else []
+TOKENIZERS_ALL = {"tgene": tok_type_gene, "tvar_mis": tok_type_variant_mis, "bucket": tok_bucket, "bucket_hi": tok_bucket_hi}
 TOKENIZERS = {"tgene": tok_type_gene}          # v2: 유전자 단위 유형 분리만 (v1의 희소 토큰 계열은 저변이 클래스에 해로웠음)
 
 
 class TokenNB:
     """토큰 집합 → 클래스별 Bernoulli NB 로그우도비 점수 (train 부분 fit, 쌍둥이 중복 제거)."""
-    def __init__(self, tokenizer, alpha=0.5, min_count=2):
-        self.tok, self.alpha, self.min_count = tokenizer, alpha, min_count
+    def __init__(self, tokenizer, alpha=0.5, min_count=2, fit_tokened_only=False):
+        self.tok, self.alpha, self.min_count, self.fit_tokened_only = tokenizer, alpha, min_count, fit_tokened_only
     def _mat(self, df, fit):
         G = df[self.genes].to_numpy(); rows, cols = [], []
         if fit: self.vocab = {}
@@ -61,13 +64,16 @@ class TokenNB:
         self.genes = [c for c in df.columns if c not in (ID, TARGET)]
         h = pd.util.hash_pandas_object(df[self.genes], index=False).to_numpy(); keep = ~pd.Series(h).duplicated().to_numpy()   # 쌍둥이 1개만
         d = df[keep]; X = self._mat(d, fit=True)
-        le = LabelEncoder(); y = le.fit_transform(d[TARGET]); self.classes_ = le.classes_; K = len(self.classes_)
+        le = LabelEncoder().fit(df[TARGET]); self.classes_ = le.classes_; K = len(self.classes_)   # 클래스 목록은 항상 전체 기준
+        if self.fit_tokened_only:                # 토큰이 있는 행(고변이)만으로 클래스 통계를 낸다 (없는 클래스는 n_c=0 → 스무딩)
+            m = np.asarray(X.sum(1)).ravel() > 0; d, X = d[m], X[m]
+        y = le.transform(d[TARGET])
         Y = sparse.csr_matrix((np.ones(len(y)), (y, np.arange(len(y)))), shape=(K, len(y)))
         n_cf = np.asarray((Y @ X).todense()); n_c = np.asarray(Y.sum(1)).ravel()[:, None]; a = self.alpha
         n_f = n_cf.sum(0, keepdims=True); n = n_c.sum()
         keepf = (n_f.ravel() >= self.min_count)
         W = np.log((n_cf + a) / (n_c + 2 * a)) - np.log((n_f - n_cf + a) / (n - n_c + 2 * a)); W[:, ~keepf] = 0
-        self.W = W; self.b = np.log(n_c.ravel() / n); return self
+        self.W = W; self.b = np.log((n_c.ravel() + a) / (n + K * a)) if self.fit_tokened_only else np.log(n_c.ravel() / n); return self   # 기존 모드는 v2/v3 재현 위해 그대로
     def scores(self, df):
         X = self._mat(df, fit=False); n_tok = np.asarray(X.sum(1)).ravel()
         S = np.round(np.asarray(X @ self.W.T) / np.maximum(n_tok, 1)[:, None], 4)
@@ -83,15 +89,20 @@ def _cols(S, classes, tag):
 
 class CWPlusFeatures:
     """fit(train) → transform(train)은 내부 OOF, transform(other)은 전체 fit 점수. + 군집 상대 점수."""
-    def __init__(self, n_inner=5, seed=42): self.n_inner, self.seed = n_inner, seed
+    def __init__(self, n_inner=5, seed=42, extra=None):
+        self.n_inner, self.seed = n_inner, seed
+        self.toks = dict(TOKENIZERS); self.only = set()
+        if extra:                                # 예: "bucket_hi" → 고변이 한정 위치 구간 점수 추가 (fit도 토큰 있는 행만)
+            self.toks[extra] = TOKENIZERS_ALL[extra]; self.only.add(extra)
+    def _nb(self, k, f): return TokenNB(f, fit_tokened_only=(k in self.only))
     def fit(self, train):
         y = train[TARGET].to_numpy(); skf = StratifiedKFold(self.n_inner, shuffle=True, random_state=self.seed)
-        self.models = {k: TokenNB(f).fit(train) for k, f in TOKENIZERS.items()}; self.classes = list(self.models["tgene"].classes_)
+        self.models = {k: self._nb(k, f).fit(train) for k, f in self.toks.items()}; self.classes = list(self.models["tgene"].classes_)
         parts = []
-        for k, f in TOKENIZERS.items():
+        for k, f in self.toks.items():
             oof = np.zeros((len(train), len(self.classes)))
             for tri, vai in skf.split(train, y):
-                m = TokenNB(f).fit(train.iloc[tri]); oof[vai] = m.scores(train.iloc[vai])
+                m = self._nb(k, f).fit(train.iloc[tri]); oof[vai] = m.scores(train.iloc[vai])
             parts.append(_cols(oof, self.classes, k).set_index(train.index))
         self._train_index = train.index; self._train_oof = self._finish(pd.concat(parts, axis=1)); return self
     def _finish(self, X):
