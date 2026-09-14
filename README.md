@@ -8,7 +8,7 @@ final_hakaton/
 ├── 1. info/                 # 해커톤 정보: 배경·규칙(README), 제공 데이터(data/, csv는 git 제외), 공식 baseline.py, DACON 참고
 ├── 2. team/                 # 팀 규칙·회의·결정: file_rules.md(파일 규칙), decisions.md, meetings/, approaches/approachN.md
 ├── 4. src/
-│   ├── 5. submissions/approachN_vK_YYYYMMDD_HHMM.py   # 제출 재현 스크립트 (5. submissions/ csv와 같은 이름)
+│   ├── submissions_source/approachN_vK_YYYYMMDD_HHMM.py   # 제출 재현 스크립트 (5. submissions/ csv와 같은 이름)
 │   └── common/                          # 공용 라이브러리: main.py(파이프라인·정직 CV), make_submission.py, features/, approach*/, postprocess/, models/, analysis/
 ├── 5. submissions/          # approachN_vK_YYYYMMDD_HHMM.csv (+ _twin_rule), README.md(제출 색인), submission.csv(최신)
 ├── 3. docs/                 # 분석 문서: EDA, 도메인 지식, 암종별 프로필, 중복 발견, test 관찰, 실험 로그, 시각화
@@ -24,4 +24,6 @@ python3 "4. src/submissions_source/approach2_v2_20260909_1653.py"               
 ```
 
 ## 성적·제출 기록
-제출 색인과 리더보드 점수는 `5. submissions/README.md`, 실험 기록은 `3. docs/experiments_log.md`, 접근법별 상세는 `2. team/approaches/`.
+**전체 진행 정리(접근법·방법·이력·교훈): `2. team/PROGRESS_2026-09-14.md`** · 현재 상태 한 장 `2. team/STATUS.md` · 제출 색인과 리더보드 점수 `5. submissions/README.md` · 실험 기록 `3. docs/experiments_log.md` · 접근법별 상세 `2. team/approaches/`.
+
+팀 최고 LB **0.4689** (21차, 2026-09-14): 9차 모델 + 변이 유형 분리 점수 모델 로그평균 + 3차 복원 배율 + 쌍둥이 규칙 + 초과변이 규칙.

@@ -80,3 +80,34 @@ def run(name: str, w: float, router: bool = False, ref_name: str = "approach14_v
     ref_tw = pd.read_csv(ROOT / "6. experiments/submissions/twin_rule" / f"{ref_name}_twin_rule.csv")[TARGET].to_numpy()
     print(f"saved {name} (w={w}, router={router}){msg} | 16차와 다른 행 {(pred != ref).sum()} (규칙본끼리 {(pred_tw != ref_tw).sum()}) "
           f"| STES {(pred == 'STES').mean():.1%} | 규칙 변경 {(pred_tw != pred).sum()}행")
+
+
+def model_proba(kind: str):
+    """피처 종류 kind로 train 전체 학습(XGB mild_col) → test 확률. blend 파트 함수로 사용."""
+    def f(train, test):
+        import xgboost as xgb
+        from main import FeatureMaker, PARAM_SETS
+        y = LabelEncoder().fit_transform(train[TARGET]); fm = FeatureMaker(kind).fit(train)
+        return xgb.XGBClassifier(**PARAM_SETS["mild_col"]).fit(fm.transform(train), y).predict_proba(fm.transform(test))
+    return f
+
+
+def run_multi(name: str, parts) -> None:
+    """parts = [(source, weight), ...]; source는 "p7"(9차 저장 확률) | "p2"(v2 저장 확률) | callable(train, test)->(n,26).
+    로그 가중 결합 → 3차 복원 배율 → argmax → 쌍둥이 규칙. 제출 전 점검은 형식만(행 수·열·라벨 집합)."""
+    train = load_train(); le = LabelEncoder().fit(train[TARGET]); classes = list(le.classes_)
+    s3 = np.array([json.load(open(SCALE_PATH))[c] for c in classes]); test = load_test()
+    out = ROOT / "6. experiments/submissions" / name; out.mkdir(parents=True, exist_ok=True); z = 0
+    for k, (src, w) in enumerate(parts):
+        if src == "p7": p = np.load(P7_PATH) / s3; p = p / p.sum(1, keepdims=True)
+        elif src == "p2": p = np.load(P2_PATH)
+        else: p = src(train, test); np.save(out / f"test_proba_part{k}.npy", p)
+        z = z + np.log(p + EPS) * w
+    proba = np.exp(z - z.max(1, keepdims=True)); proba /= proba.sum(1, keepdims=True); np.save(out / "test_proba_raw_blend.npy", proba)
+    pred = le.inverse_transform((proba * s3).argmax(1))
+    sub = pd.read_csv(DATA / "sample_submission.csv"); assert (sub[ID] == test[ID]).all()
+    sub[TARGET] = pred; sub.to_csv(ROOT / "5. submissions" / f"{name}.csv", index=False, encoding="UTF-8-sig")
+    pred_tw, _ = TwinRule().fit(train).apply(test, pred); sub[TARGET] = pred_tw
+    sub.to_csv(ROOT / "6. experiments/submissions/twin_rule" / f"{name}_twin_rule.csv", index=False, encoding="UTF-8-sig")
+    assert list(sub.columns) == [ID, TARGET] and len(sub) == 2546 and set(sub[TARGET]) <= set(classes)
+    print(f"saved {name} | parts {[(s if isinstance(s, str) else 'model', w) for s, w in parts]} | 형식 OK")
