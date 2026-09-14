@@ -203,3 +203,10 @@
 - 행 단위 분해: 17차와 다른 308행 중 **207행이 상피암 군집(STES·LUSC·HNSC·LUAD·BLCA·COAD·CESC) 안의 재배치**(STES→LUSC 32, STES→COAD 19, COAD→STES 15, STES→LUAD 8…). 19차(−0.0136)도 같은 군집 재배치(UCEC/LUSC/LUAD→STES 41 등)였다. 반대로 17·18차(0 변화)는 이 군집을 거의 안 건드렸다.
 - **가설: 상피 군집은 test 분포 이동(31~100 구간 2.4배)의 핵심이라, train CV로 얻은 어떤 재배치도 test에서는 손해.** 16차 모델의 상피 군집 결정이 test에 대해 국소 최적에 가깝다.
 - **하이브리드 `approach14_v10_20260914_0110_hybrid_epifreeze.csv`**: 상피 7클래스가 관여하는 행(17차 예측 또는 v10 예측이 상피)은 17차를 유지, 나머지만 v10. 정직 CV 0.5013(+0.007; 이득은 DLBC +0.05, KIRC +0.03, BRCA +0.02, UCEC +0.02, PAAD +0.02, TGCT +0.02 / THYM −0.02). 17차와 **101행 차이**(PAAD→OV 6, KIPAN→KIRC 6, PRAD→SARC 6, BRCA→OV 5…), STES 비율 17차와 동일. `_testpair` 변형(+8행)도 생성. LB 피드백으로 군집을 골랐다는 점에서 순수 train 선택은 아님을 명시.
+
+## 초과변이 규칙 (2026-09-14 오전) — test 분포 이동을 직접 겨냥한 첫 규칙
+- **발견**: test에서 변이 888~1,017개인 행 18개가 ACC로 확신도 0.62~0.83으로 예측됨(17차). train에서 변이 396개(ACC 최대) 초과 행 61개의 라벨은 SKCM 17·UCEC 15·STES 12·COAD 9·BRCA 3·CESC 2·DLBC 1·PAAD 1로 **ACC 0**. 이 18행은 ACC의 정확 변이 표지(SOWAHC L42L 등 12개)를 0~2개만 보유(train ACC 평균 2.72, train 초과변이 행 0.0) → ACC 배치가 아니라, 초과변이가 ACC 표지 **유전자**를 다른 위치에서 건드려 유전자 단위 점수가 오작동한 것. test 초과변이 행 119개(4.7%, train 1.0%)는 문서 05의 "초과변이 5.6% vs 1.6%" 분포 이동 그 자체.
+- **규칙** `postprocess/hypermut_rule.py`: n_mut > 396이고 예측 클래스가 train 초과변이 행에 2회 미만인 클래스면, 허용 집합 {BRCA, CESC, COAD, SKCM, STES, UCEC} 안에서 배율 적용 확률 argmax로 교체. 임계·집합 모두 train으로만 결정.
+- **OOF에서는 검증 불가**: train 초과변이 61행은 이미 OOF 정답률 0.77로 잘 맞아 규칙이 2행만 건드림(−0.0009). 현상이 test에만 있으므로 판단 근거는 CV가 아니라 (a) train ACC 0/61, (b) 표지 부재, (c) test ACC 예측 39행 중 18행(46%)이 초과변이라는 생물학적 비현실성(MSI형 ACC는 수 %).
+- **적용 결과**: 17차 → 31행 변경(ACC→STES 9·UCEC 5·CESC 3·BRCA 1, DLBC→STES 2·UCEC 2·BRCA 1, LUSC→BRCA 2·CESC 1, SARC→UCEC 2). 하이브리드 → 30행(CESC 10으로 쏠려 train 빈도와 어긋남 → 17차 기반을 권함). 기대: ACC 정밀도 21/39→21/21 수준이면 ACC F1 단독으로 +0.005~0.008, 옮겨간 행 절반만 맞아도 STES·UCEC 소폭 +. 파일 `twin_rule/approach14_v3_20260913_2132_twin_rule_hypermut.csv` (+`_testpair` 39행).
+- 상피 동결 가설과의 관계: STES로 9행 유입이지만 "군집 내 재배치"가 아니라 "확실히 틀린 ACC에서의 유입"이라 성격이 다름.
