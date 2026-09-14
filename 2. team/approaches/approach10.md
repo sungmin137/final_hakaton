@@ -1,49 +1,28 @@
-# 접근 10 — 혼동 암종 쌍 재판기
+# 접근 10 — KIRC/KIPAN, GBMLGG/LGG 계단식 마커 피처
 
-기존 V4가 만든 상위 두 암종이 미리 정한 혼동 쌍이고 확률 차이가 작을 때만, 해당 두 암종의 학습 환자만으로 학습한 Logistic Regression이 원본 유전자 변이 유무를 다시 판정한다.
+## 개요
+KIRC(신장 투명세포암)/KIPAN(신장암 전체), GBMLGG(교모세포종+저등급 신경교종)/LGG(저등급 신경교종)가 헷갈리는 문제를 VHL·MET·IDH1·EGFR 등 이미 있는 유전자 컬럼의 조합 피처로 풀어보려는 시도임. 배경·데이터 근거는 `04_todo_day2.md` STEP 3-2 참고.
 
-- 1차 모델: V4 XGBoost (기존 공식 파라미터)
-- 2차 모델: 원본 유전자별 WT/변이 여부, pairwise Logistic Regression
-- 고정 후보 쌍: BRCA–OV, BRCA–PRAD, HNSC–STES, LIHC–STES, LUAD–STES, LUSC–STES, OV–PAAD
-- 제외: KIRC–KIPAN, LGG–GBMLGG. 완전 동일한 유전체 프로필에 서로 다른 라벨이 붙은 쌍둥이 충돌이라 일반 재판 학습 대상으로 삼지 않는다.
-- 검증: `StratifiedGroupKFold`로 쌍둥이를 같은 fold에 묶는다. test.csv는 읽지 않는다.
+코드 폴더: `4. src/common/approach10_cascade/`
 
-실행:
+## 버전
+| 버전 | 파일 (approach10_cascade/) | 정직 CV Macro F1 | 결과 | LB |
+|---|---|---|---|---|
+| v1 | approach10_v1_kidney_brain_markers.py | approach1 v2+approach2 v1·v2(코드명 `v4`) 0.4683 → VHL·MET·IDH1·EGFR 조합 컬럼 4개 추가(`--features v7`) 0.4662 | 실패(-0.0021) | 미제출 — CV가 이미 기준(0.4683)보다 나빠져서 제출 근거 없음 |
+| v2 | approach10_v2_paad_combo.py | v4 0.4683 → TP53+CDKN2A 조합 컬럼 1개 추가(`--features v8`) 0.4683 | 무시됨(변화 0) | 미제출 — CV 변화 자체가 없어서(개선 근거 0) 제출 근거 없음 |
 
-```bash
-PYTHONPATH="4. src/common" .venv/bin/python "4. src/common/approach10_pair_referee_cv.py"
-```
+실험 기록: `6. experiments/2026-09-10_v7_xgb_grp/`, `6. experiments/2026-09-10_v8_xgb_grp/`
 
-결과는 `6. experiments/2026-09-10_approach10_pair_referee/result.json`에 저장한다.
+## 상세
 
-## 결과 (2026-09-10)
+### v1 — 신장/뇌종양 계단식 마커 (`approach10_v1_kidney_brain_markers.py`, `CascadeFeatures`)
+approach1 v2+approach2 v1·v2 통합 피처(코드명 `v4`) 위에 VHL·MET·IDH1·EGFR 존재 여부 조합 컬럼 4개(`kidney_kirc_signal` 등)를 추가함. KIRC·KIPAN·GBMLGG 전부 악화됐고 LGG만 소폭 개선됨(자세한 클래스별 수치는 `04_todo_day2.md` STEP 3-2 참고).
 
-| 방식 | 쌍둥이 그룹 OOF Macro F1 | Accuracy |
-|---|---:|---:|
-| V4 기본 | 0.4683 | 0.4733 |
-| 재판기 (확률 차이 0.30 이하) | **0.4749** | **0.4796** |
+### v2 — PAAD 오분류 검증 (`approach10_v2_paad_combo.py`, `PaadComboFeature`)
+PAAD(췌장암)가 OV(난소암)·BRCA(유방암)로 오분류되는 문제 검증용. KRAS(PAAD 핵심 driver, 90%↑)가 패널에 없어서 TP53만으로는 OV/BRCA와 구분 안 됨 → TP53+CDKN2A 동반 변이 컬럼 1개 추가(OV·BRCA엔 이 조합이 전혀 없음을 train.csv에서 확인함). 결과: 완전히 무시됨. PAAD confusion matrix가 v4와 소수점까지 동일함.
 
-- V4의 최종 답을 바꾼 환자: 408명
-- 틀린 답에서 맞는 답으로 바뀜: 115명
-- 맞는 답에서 틀린 답으로 바뀜: 76명
-- 각 fold에서 나머지 4개 fold만 보고 문턱값을 고르는 교차선택도 모두 `0.30`을 선택했고, 같은 0.4749가 나왔다.
-- 위 CV 단계에서는 test.csv를 읽지 않았다. 실제 리더보드 이득 여부는 최종 제출 파일을 업로드한 뒤에만 알 수 있다.
+## 결론 — 채택하지 않음
+두 버전 다 VHL·MET·TP53·CDKN2A가 이미 개별 유전자 원-핫 컬럼(`g_VHL` 등)으로 존재해서, "A 있고 B 없으면" 같은 단순 AND 조합은 XGBoost가 이미 두 번의 분기로 스스로 재현할 수 있는 정보임. 새 컬럼을 얹어도 정보가 아니라 노이즈만 추가돼서 실패한 것으로 판단됨 — approach9의 `ovr_<gene>_any`가 죽었던 것과 같은 원인임.
 
-## 최종 추론 구성
-
-`approach10_v1_20260910.py`는 최종 추론에서만 test를 읽고 다음 순서로 답을 만든다.
-
-1. 전체 train으로 V4를 학습한다.
-2. 기존 V4의 train OOF만으로 클래스 배율을 구해 확률에 적용한다.
-3. **보정 전** V4의 상위 두 답이 접근10의 혼동 쌍이고 차이가 0.30 이하인 test 행만 재판기로 바꾼다. 이 조건은 CV에서 검증한 조건 그대로다.
-4. TwinRule 적용 전/후 파일을 각각 저장한다.
-
-클래스 배율과 재판기를 동시에 적용한 CV는 별도로 측정하지 않았으므로, 이 제출의 예상 LB는 과거 V4+배율+TwinRule 최고점 0.4369를 기준으로 약 0.43~0.44 범위로만 본다. 실제 점수는 업로드 뒤에만 알 수 있다.
-
-### 생성 결과 (2026-09-10)
-
-- 기본본: `5. submissions/approach10_pair_referee_v1_20260910.csv`
-- 권장본: `5. submissions/approach10_pair_referee_v1_20260910_twin_rule.csv`
-- 두 파일 모두 2,546행, `ID` 순서 일치, 26개 라벨, 결측 0개로 검증했다.
-- 클래스 배율 후 재판기가 바꾼 답: 119행. TwinRule이 추가로 바꾼 답: 7행.
-- 업로드는 수행하지 않았다.
+## 공용 코드 처리 (2026-09-10)
+실험 당시 `4. src/common/main.py`의 `FeatureMaker`에 임시로 `v7`/`v8` kind 분기를 추가해서 돌렸으나, 두 버전 다 채택하지 않기로 확정돼서 그 분기를 다시 제거함. 로직 자체는 `4. src/common/approach10_cascade/`에 독립 모듈로 그대로 남겨뒀지만, 팀 공용 파일(`4. src/common/main.py`)에는 실패한 실험의 흔적을 남기지 않음.

@@ -20,7 +20,7 @@ final_hakaton/
 pip3 install -r requirements.txt
 python3 "1. info/baseline.py"                                   # 공식 베이스라인 그대로
 PYTHONPATH="4. src/common" python3 "4. src/common/main.py" --features v4 --cv --group-twins   # 정직 CV
-python3 "4. src/submissions/approach2_v2_20260909_1653.py"                  # 제출 재현 → 5. submissions/approach2_v2_20260909_1653.csv
+python3 "4. src/submissions_source/approach2_v2_20260909_1653.py"                  # 제출 재현 → 5. submissions/approach2_v2_20260909_1653.csv
 ```
 
 ## 성적·제출 기록

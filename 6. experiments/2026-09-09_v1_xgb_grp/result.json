@@ -38,6 +38,7 @@
     }
   ],
   "group_twins": true,
+  "balanced": false,
   "oof_macro_f1": 0.3979,
   "oof_acc": 0.4301,
   "per_class_f1": {
@@ -68,5 +69,5 @@
     "THYM": 0.0305,
     "UCEC": 0.619
   },
-  "elapsed_s": 128.6
+  "elapsed_s": 116.0
 }

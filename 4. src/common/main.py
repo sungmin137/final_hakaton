@@ -32,6 +32,7 @@ from approach1_count_weight.count_weights import CountWeightFeatures
 from postprocess.twin_rule import TwinRule
 from approach2_knowledge.knowledge_features import KnowledgeFeatures
 from approach4_literature.literature_features import LiteratureFeatures
+from approach7_preprocess.preprocess_features import PreprocessFeatures
 
 ROOT = Path(__file__).resolve().parents[2]
 DATA = ROOT / "1. info" / "data"          # 원본 데이터 (git 제외)
@@ -48,7 +49,10 @@ XGB_TUNED = dict(
     min_child_weight=2, reg_lambda=2.0, random_state=SEED, eval_metric="mlogloss",
     tree_method="hist", n_jobs=8,
 )
-PARAM_SETS = {"official": XGB_PARAMS, "tuned": XGB_TUNED}
+# mild 변형 (2026-09-10): 3차 구성에서 한 요소만 살짝 바꿈
+XGB_MILD_COL = {**XGB_PARAMS, "colsample_bytree": 0.7}
+XGB_MILD_REG = {**XGB_PARAMS, "min_child_weight": 3, "reg_lambda": 3.0}
+PARAM_SETS = {"official": XGB_PARAMS, "tuned": XGB_TUNED, "mild_col": XGB_MILD_COL, "mild_reg": XGB_MILD_REG}
 
 # 앙상블용 다른 부스팅 모델
 LGBM_PARAMS = dict(n_estimators=300, learning_rate=0.05, num_leaves=31, feature_fraction=0.3,
@@ -123,22 +127,34 @@ class FeatureMaker:
             self._enc = OrdinalEncoder(handle_unknown="use_encoded_value", unknown_value=-1)
             self._enc.fit(df[self.genes])
             self.columns = list(self.genes)
-        elif self.kind in ("v1", "v2", "v3", "v4", "v5"):
+        elif self.kind in ("v1", "v2", "v3", "v4", "v5", "v6", "a2", "a4", "a7"):
             X = build_features(df, self.genes)
             # 전부 WT인 유전자 컬럼 제거 (train 부분 기준)
             self.columns = [c for c in X.columns if not (c.startswith("g_") and X[c].sum() == 0)]
-            if self.kind in ("v2", "v3", "v4", "v5"):  # 접근 1: 클래스별 개수 가중치 점수 피처
+            if self.kind in ("v2", "v3", "v4", "v5", "v6"):  # 접근 1: 클래스별 개수 가중치 점수 피처
                 self._cw = CountWeightFeatures().fit(df)
                 self.columns += list(self._cw.transform(df).columns)
-            if self.kind in ("v3", "v4", "v5"):        # 인사이트 피처: hotspot 위치, LoF 유전자, 조합, 특수 그룹
+            if self.kind in ("v3", "v4", "v5", "v6", "a2"):  # 인사이트 피처: hotspot 위치, LoF 유전자, 조합, 특수 그룹
                 self._ins = InsightFeatures().fit(df)
                 self.columns += list(self._ins.transform(df).columns)
-            if self.kind in ("v4", "v5"):                      # 지식 피처: BLOSUM62·아미노산 특성 변화 (3. docs/10 해석)
+            if self.kind in ("v4", "v5", "v6", "a2"):  # 지식 피처: BLOSUM62·아미노산 특성 변화 (3. docs/10 해석)
                 self._kf = KnowledgeFeatures().fit(df)
                 self.columns += list(self._kf.transform(df).columns)
-            if self.kind == "v5":                      # 접근 4: 문헌 driver·경로·역할 피처
+            if self.kind in ("v5", "a4"):              # 접근 4: 문헌 driver·경로·역할 피처 (a4 = 기본 피처 + 문헌 피처만, 단독 평가)
                 self._lit = LiteratureFeatures().fit(df)
                 self.columns += list(self._lit.transform(df).columns)
+            if self.kind in ("v6", "a7"):              # 접근 7: 전처리 확장 (유형 분리 이진화, 도메인 구간, 부담 정규화·희귀 변이)
+                self._pp = PreprocessFeatures().fit(df)
+                self.columns += list(self._pp.transform(df).columns)
+        elif self.kind == "a8":                        # 접근 8: v5 피처를 중요도 상위 500개로 압축 (2. team/approaches/approach8.md)
+            K = 500
+            fm5 = FeatureMaker("v5").fit(df)
+            X5 = fm5.transform(df)
+            y5 = LabelEncoder().fit_transform(df[TARGET])
+            ranker = xgb.XGBClassifier(**XGB_PARAMS).fit(X5, y5)
+            ranked = pd.Series(ranker.feature_importances_, index=X5.columns).sort_values(ascending=False)
+            self._fm5 = fm5
+            self.columns = list(ranked.head(K).index)
         else:
             raise ValueError(f"unknown features: {self.kind}")
         return self
@@ -148,15 +164,20 @@ class FeatureMaker:
             df = df.drop(columns=[g for g in self.drop_genes if g in df.columns])
         if self.kind == "official":
             return pd.DataFrame(self._enc.transform(df[self.genes]), columns=self.genes, index=df.index)
+        if self.kind == "a8":
+            X = self._fm5.transform(df)
+            return X.reindex(columns=self.columns, fill_value=0)
         X = build_features(df, self.genes)
-        if self.kind in ("v2", "v3", "v4", "v5"):
+        if self.kind in ("v2", "v3", "v4", "v5", "v6"):
             X = pd.concat([X, self._cw.transform(df)], axis=1)
-        if self.kind in ("v3", "v4", "v5"):
+        if self.kind in ("v3", "v4", "v5", "v6", "a2"):
             X = pd.concat([X, self._ins.transform(df)], axis=1)
-        if self.kind in ("v4", "v5"):
+        if self.kind in ("v4", "v5", "v6", "a2"):
             X = pd.concat([X, self._kf.transform(df)], axis=1)
-        if self.kind == "v5":
+        if self.kind in ("v5", "a4"):
             X = pd.concat([X, self._lit.transform(df)], axis=1)
+        if self.kind in ("v6", "a7"):
+            X = pd.concat([X, self._pp.transform(df)], axis=1)
         X = X.reindex(columns=self.columns, fill_value=0)
         X.columns = _safe_names(X.columns)
         return X
@@ -238,7 +259,7 @@ def fit_full_and_submit(train: pd.DataFrame, kind: str, params: dict, tag: str,
 
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--features", default="v1", choices=["official", "v1", "v2", "v3", "v4", "v5"])
+    ap.add_argument("--features", default="v1", choices=["official", "v1", "v2", "v3", "v4", "v5", "v6", "a2", "a4", "a7", "a8"])
     ap.add_argument("--cv", action="store_true", help="Stratified 5-Fold 평가")
     ap.add_argument("--submit", action="store_true", help="전체 학습 후 test 추론 및 제출 파일 생성")
     ap.add_argument("--twin-rule", action="store_true", help="추론 시 쌍둥이 규칙 적용 (3. docs/07 참고, 기본 꺼짐)")
