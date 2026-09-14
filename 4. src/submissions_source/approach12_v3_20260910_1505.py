@@ -1,9 +1,9 @@
-"""접근 2 v6 (후처리 전용): v5의 16모델 배깅 원시 확률에 **3차(LB 0.4369)의 복원 배율**을 적용하고 쌍둥이 규칙을 얹은 최종 극대화 후보.
-입력: 6. experiments/submissions/approach2_v5_20260910_1453/test_proba.npy (v5가 저장한 '원시 × 평균 배율' 확률; 평균 배율을 되돌려 원시 확률 복원)
+"""접근 12 (구 접근 2 v6) (후처리 전용): v5의 16모델 배깅 원시 확률에 **3차(LB 0.4369)의 복원 배율**을 적용하고 쌍둥이 규칙을 얹은 최종 극대화 후보.
+입력: 6. experiments/submissions/approach12_v2_20260910_1453/test_proba.npy (v5가 저장한 '원시 × 평균 배율' 확률; 평균 배율을 되돌려 원시 확률 복원)
 배율: 6. experiments/2026-09-09_v4_xgb_cs/class_scales_recovered.json (최소제곱 복원, 잔차 1e-7)
 
-재현: python3 "4. src/submissions_source/approach2_v6_20260910_1505.py"  →  5. submissions/approach2_v6_20260910_1505.csv (+ _twin_rule)
-설명 문서: 2. team/approaches/approach2.md
+재현: python3 "4. src/submissions_source/approach12_v3_20260910_1505.py"  →  5. submissions/approach12_v3_20260910_1505.csv (+ _twin_rule)
+설명 문서: 2. team/approaches/approach12.md
 """
 import sys, json
 from pathlib import Path
@@ -13,9 +13,9 @@ from main import ROOT, DATA, load_train, load_test, TARGET, ID
 from postprocess.class_scale import fit_class_scales
 from postprocess.twin_rule import TwinRule
 
-NAME = "approach2_v6_20260910_1505"
+NAME = "approach12_v3_20260910_1505"
 train = load_train(); classes = sorted(train[TARGET].unique()); yi = train[TARGET].map({c: i for i, c in enumerate(classes)}).to_numpy()
-P = np.load(ROOT / "6. experiments/submissions/approach2_v5_20260910_1453/test_proba.npy")
+P = np.load(ROOT / "6. experiments/submissions/approach12_v2_20260910_1453/test_proba.npy")
 # v5가 곱한 '절반 분할 6회 기하평균 배율'을 동일 절차로 재계산해 되돌린다
 oof = np.load(ROOT / "6. experiments/2026-09-09_v4_xgb_grp/oof_proba.npy"); rng = np.random.RandomState(0); logs = []
 for _ in range(6):

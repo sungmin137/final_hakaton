@@ -4,6 +4,7 @@ fit(train)  : 변이가 1개 이상인 학습 행의 프로필 해시 → 라벨
 apply(df, pred): df 행이 학습 행과 완전히 같으면 FLIP 규칙으로 pred를 덮어쓴다.
 """
 import hashlib
+from collections import Counter
 import numpy as np
 import pandas as pd
 
@@ -35,6 +36,9 @@ class TwinRule:
         for i, hh in enumerate(h):
             labs = self.lut.get(hh)
             if labs:
-                twin = max(set(labs), key=labs.count)
+                cnt = Counter(labs); best = cnt.most_common()
+                if len(best) > 1 and best[0][1] == best[1][1]:
+                    n_hit += 1; continue  # 동점(예: train에 KIPAN·KIRC 둘 다): 규칙이 정보를 못 주므로 모델 답 유지 (2026-09-13, 이전엔 set 순서로 무작위)
+                twin = best[0][0]
                 out[i] = FLIP.get(twin, twin); n_hit += 1
         return out, n_hit
