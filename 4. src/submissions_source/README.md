@@ -18,9 +18,19 @@
 | approach5_v2_20260909_2322.py | 2. team/approaches/approach5.md | 5. submissions/approach5_v2_20260909_2322.csv |
 | approach8_v1_20260910_1029.py | 2. team/approaches/approach8.md | 5. submissions/approach8_v1_20260910_1029.csv (LB 0.3972671492) |
 | approach9_v1_20260909_1827.py | 2. team/approaches/approach9.md | 5. submissions/approach9_v1_20260909_1827.csv (LB 0.4031845152, 코드는 참고용 — 재실행 결과 재현 안 됨) |
-| approach2_v4_20260910_1451.py | 2. team/approaches/approach2.md | 5. submissions/approach2_v4_20260910_1451.csv (fold 배깅) |
-| approach2_v5_20260910_1453.py | 2. team/approaches/approach2.md | 5. submissions/approach2_v5_20260910_1453.csv (16모델 배깅 + 배율 안정화) |
-| approach2_v6_20260910_1505.py | 2. team/approaches/approach2.md | 5. submissions/approach2_v6_20260910_1505.csv (후처리 전용: v5 원시 확률 × 3차 복원 배율) |
-| approach2_v7_20260910_1651.py | 2. team/approaches/approach2.md | 5. submissions/approach2_v7_20260910_1651.csv (mild colsample 0.7) |
-| approach2_v8_20260910_1651.py | 2. team/approaches/approach2.md | 5. submissions/approach2_v8_20260910_1651.csv (mild cw_variant 제거) |
-| approach2_v9_20260910_1651.py | 2. team/approaches/approach2.md | 5. submissions/approach2_v9_20260910_1651.csv (mild mcw3·lambda3) |
+| approach12_v1_20260910_1451.py | 2. team/approaches/approach2.md | 5. submissions/approach12_v1_20260910_1451.csv (fold 배깅) |
+| approach12_v2_20260910_1453.py | 2. team/approaches/approach2.md | 5. submissions/approach12_v2_20260910_1453.csv (16모델 배깅 + 배율 안정화) |
+| approach12_v3_20260910_1505.py | 2. team/approaches/approach2.md | 5. submissions/approach12_v3_20260910_1505.csv (후처리 전용: v5 원시 확률 × 3차 복원 배율) |
+| approach12_v4_20260910_1651.py | 2. team/approaches/approach2.md | 5. submissions/approach12_v4_20260910_1651.csv (mild colsample 0.7) |
+| approach12_v5_20260910_1651.py | 2. team/approaches/approach2.md | 5. submissions/approach12_v5_20260910_1651.csv (mild cw_variant 제거) |
+| approach12_v6_20260910_1651.py | 2. team/approaches/approach2.md | 5. submissions/approach12_v6_20260910_1651.csv (mild mcw3·lambda3) |
+| approach12_v7_20260911_1014.py | 2. team/approaches/approach2.md | 5. submissions/approach12_v7_20260911_1014.csv (colsample 0.5) |
+| approach12_v8_20260911_1014.py | 2. team/approaches/approach2.md | 5. submissions/approach12_v8_20260911_1014.csv (colsample 0.7 + mcw3·lambda3) |
+| approach12_v9_20260911_1129.py | 2. team/approaches/approach2.md | 5. submissions/approach12_v9_20260911_1129.csv (colsample 0.5 + mcw3·lambda3) |
+| approach13_v1_20260911_1602.py | 2. team/approaches/approach13.md | 5. submissions/approach13_v1_20260911_1602.csv (개선판 라우팅) |
+| approach14_v3_20260913_2132.py | 2. team/approaches/approach14.md | 5. submissions/approach14_v3_20260913_2132.csv (두 모델 로그평균) |
+| approach14_v4_20260913_2150.py | 2. team/approaches/approach14.md | 5. submissions/approach14_v4_20260913_2150.csv (v3 + HNSC/STES 라우터) |
+| approach14_v5_20260913_2150.py | 2. team/approaches/approach14.md | 5. submissions/approach14_v5_20260913_2150.csv (w=0.3) |
+| approach14_v6_20260913_2150.py | 2. team/approaches/approach14.md | 5. submissions/approach14_v6_20260913_2150.csv (w=0.7) |
+| approach14_v9_20260914_0010.py | 2. team/approaches/approach14.md | 5. submissions/approach14_v9_20260914_0010.csv (16차 + 이진 유전자 LR w3=0.2) |
+| approach14_v10_20260914_0110.py | 2. team/approaches/approach14.md | 5. submissions/approach14_v10_20260914_0110.csv (9차+v2+a7 세 모델) |
