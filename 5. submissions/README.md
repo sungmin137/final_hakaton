@@ -73,5 +73,5 @@
 - 2026-09-13 밤: 쌍둥이 규칙 동점(KIPAN·KIRC 둘 다 train) 처리가 무작위였던 버그 수정 → 이후 규칙본은 동점 행에서 모델 답 유지. 16차 규칙본은 366·1071행이 무작위 KIPAN(모델 KIRC)인 채 보존.
 | 19차 | approach14_v9_20260914_0010_twin_rule.csv (twin_rule/) | 접근14 v9: 16차 + 이진 유전자 LR(C=1.0) w3=0.2 + 규칙 | 0.5010 (+0.007) | **0.4428 (16차 −0.0136, 역효과)** |
 | 20차 | approach14_v10_20260914_0110_twin_rule.csv (twin_rule/) | 접근14 v10: 9차 .4 / v2 .3 / 접근7 a7 .3 로그 결합 + 배율 + 규칙 | **0.5049 (+0.0108, 절반 교차 양방향 +0.01)** | **0.4483 (16차 −0.0081, 역효과)** |
-| (후보) | approach14_v3_20260913_2132_twin_rule_hypermut.csv (twin_rule/) | 17차 + 초과변이 규칙(변이>396 & ACC·DLBC·SARC·LUSC 예측 31행 → STES/UCEC/CESC/BRCA) | (OOF 검증 불가, train 근거) | 제출 대기 |
-| (후보) | approach14_v10_20260914_0110_hybrid_epifreeze.csv (twin_rule/) | 상피 동결 하이브리드: 상피 관련 행 17차, 나머지 101행 v10 | 0.5013 | 제출 중 |
+| **21차** | **approach14_v3_20260913_2132_twin_rule_hypermut.csv (twin_rule/)** | 17차 + 초과변이 규칙(변이>396 & ACC·DLBC·SARC·LUSC 예측 31행 → STES/UCEC/CESC/BRCA) | (OOF 검증 불가, train 근거) | **0.4689119 (팀 최고, 16차 +0.0125)** |
+| (후보) | approach14_v10_20260914_0110_hybrid_epifreeze.csv (twin_rule/) | 상피 동결 하이브리드: 상피 관련 행 17차, 나머지 101행 v10 | 0.5013 | 미제출 |
