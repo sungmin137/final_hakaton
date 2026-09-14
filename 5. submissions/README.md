@@ -76,3 +76,5 @@
 | **21차** | **approach14_v3_20260913_2132_twin_rule_hypermut.csv (twin_rule/)** | 17차 + 초과변이 규칙(변이>396 & ACC·DLBC·SARC·LUSC 예측 31행 → STES/UCEC/CESC/BRCA) | (OOF 검증 불가, train 근거) | **0.4689119 (팀 최고, 16차 +0.0125)** |
 | (후보) | approach14_v10_20260914_0110_hybrid_epifreeze.csv (twin_rule/) | 상피 동결 하이브리드: 상피 관련 행 17차, 나머지 101행 v10 | 0.5013 | 미제출 |
 | 22차 | approach14_v3_20260913_2132_twin_rule_hypermut_testpair.csv (twin_rule/) | 21차 + test 동일 행 쌍 규칙 8행 | - | 0.4682665 (21차 −0.0006, 폐기) |
+| (후보) | approach14_v11_20260914_1627_twin_rule.csv (twin_rule/) | 접근14 v11: v4s(v4+치환 스펙트럼) 0.5 + v2 0.5 + 배율 + 규칙 | **0.5137 (+0.0196)** | 제출 대기 (train 전용) |
+| (후보) | approach14_v12_20260914_1627_twin_rule.csv (twin_rule/) | 접근14 v12: 9차/v2/v4s/v4sp 1/4 | 0.5172 (+0.0231) | v11 뒤 |
