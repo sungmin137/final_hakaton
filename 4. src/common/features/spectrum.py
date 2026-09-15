@@ -49,3 +49,19 @@ def spectrum_features_v2(df, genes):
     for k, a in enumerate(AA): base[f"spf_{a}_fs"] = np.round(F[:, k] / np.maximum(F.sum(1), 1), 4)
     base["spx_n_stop"] = S.sum(1); base["spf_n_fs"] = F.sum(1)
     return base
+
+
+# --- v3 (2026-09-15): 표본 수 기반 수축. missense가 적은 행의 치환 비율은 잡음이므로 균등분포(1/380) 쪽으로 당긴다: (count + K/380) / (n_mis + K). fit 없음.
+def spectrum_features_v3(df, genes, K=10.0):
+    base = spectrum_features(df, genes); cols = [f"sp_{p}" for p in PAIRS]
+    n_mis = (base[cols].to_numpy() > 0).sum(1)  # 근사 대신 원래 count 복원: ratio*n_mis
+    # base의 sp_는 ratio(반올림)이므로 count를 다시 세는 편이 정확
+    G = df[genes].to_numpy(); n = len(df); pi = {p: i for i, p in enumerate(PAIRS)}; S = np.zeros((n, len(PAIRS)))
+    for i in range(n):
+        for j in np.nonzero(G[i] != "WT")[0]:
+            for t in G[i, j].split(" "):
+                m = _MIS.match(t)
+                if m and m.group(1) != m.group(3) and f"{m.group(1)}>{m.group(3)}" in pi: S[i, pi[f"{m.group(1)}>{m.group(3)}"]] += 1
+    nm = S.sum(1, keepdims=True); shr = (S + K / len(PAIRS)) / (nm + K)
+    base[cols] = np.round(shr, 4); base["sp_conf"] = np.round(nm[:, 0] / (nm[:, 0] + K), 4)   # 비율 신뢰도
+    return base
