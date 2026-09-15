@@ -78,4 +78,10 @@
 | 22차 | approach14_v3_20260913_2132_twin_rule_hypermut_testpair.csv (twin_rule/) | 21차 + test 동일 행 쌍 규칙 8행 | - | 0.4682665 (21차 −0.0006, 폐기) |
 | **23차** | approach14_v11_20260914_1627_twin_rule.csv (twin_rule/) | 접근14 v11: v4s(v4+치환 스펙트럼) 0.5 + v2 0.5 + 배율 + 규칙 | **0.5137 (+0.0196)** | **0.4752484 (23차, 팀 최고, train 전용; 21차 +0.0063, 16차 +0.0188)** |
 | (후보) | approach14_v12_20260914_1627_twin_rule.csv (twin_rule/) | 접근14 v12: 9차/v2/v4s/v4sp 1/4 | 0.5172 (+0.0231) | v11 뒤 |
-| (후보) | approach14_v13_20260915_0900_twin_rule.csv (twin_rule/) | 접근14 v13: v4s .6 / v2 .4 (v11 저장 확률 재사용) | 0.5177 | v12 뒤 |
+| **24차** | approach14_v13_20260915_0900_twin_rule.csv (twin_rule/) | 접근14 v13: v4s .6 / v2 .4 (v11 저장 확률 재사용) | 0.5177 | **0.4765141 (24차, 팀 최고, v11 +0.0013)** |
+| **25차** | approach14_v14_20260915_1030_twin_rule.csv (twin_rule/) | 접근14 v14: v4s .5 / v2 .3 / v4sp .2 | 0.5200 | **0.4784149 (25차, 팀 최고, v13 +0.0019)** |
+| (후보) | approach14_v15_20260915_1030_twin_rule.csv (twin_rule/) | 접근14 v15: v4s .7 / v2 .3 | 0.5194 | v14 뒤 |
+| (후보) | approach14_v16_20260915_1130_twin_rule.csv (twin_rule/) | 접근14 v16: v14 + spec 저차원 모델 .15 (v4s .45/v2 .25/v4sp .15/spec .15) | 0.5234 | v15 뒤 |
+| 26차(혜림) | approach16_v1_spectrum_profile_nb_20260915_twin_rule.csv (5. submissions/; DACON 제출명 approach21_v1_spectrum_profile_nb_20260915_twin_rule) | 접근16 v1: v4s .45 / v2 .25 / v4sp .15 / 스펙트럼 프로필 NB .15 + 규칙 | OOF 0.5306 (v16 +0.0071) | **0.4799 (팀 최고, 25차 +0.0015)** |
+| (후보) | approach14_v17_20260915_1345_twin_rule.csv (twin_rule/) | 접근14 v17: v4s.4/v2.25/v4sp.2/NB.15 | 0.5317 | 대기 |
+| 27차 | approach14_v18_20260915_1400_twin_rule.csv (twin_rule/) | 접근14 v18: v4s.25/v4sn.2/v2.25/v4sp.15/NB.15 (5모델) | 0.5348 | **0.4639488 (27차, 접근16 −0.0160, 역효과)** |

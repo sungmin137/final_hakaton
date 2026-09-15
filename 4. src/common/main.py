@@ -33,7 +33,8 @@ from postprocess.twin_rule import TwinRule
 from approach2_knowledge.knowledge_features import KnowledgeFeatures
 from approach4_literature.literature_features import LiteratureFeatures
 from approach14_cw_plus.cw_plus import CWPlusFeatures
-from features.spectrum import spectrum_features
+from features.spectrum import spectrum_features, spectrum_features_v2
+from features.spectrum_nb import SpectrumNBFeatures
 from approach7_preprocess.preprocess_features import PreprocessFeatures
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -133,7 +134,7 @@ class FeatureMaker:
             self._enc = OrdinalEncoder(handle_unknown="use_encoded_value", unknown_value=-1)
             self._enc.fit(df[self.genes])
             self.columns = list(self.genes)
-        elif self.kind in ("v1", "v2", "v3", "v4", "v5", "v6", "a2", "a4", "a7", "v4p", "v4p2", "v4p:pos", "v4p:prop", "v4p:pair", "v4p:band", "v4s", "v4sp", "spec"):
+        elif self.kind in ("v1", "v2", "v3", "v4", "v5", "v6", "a2", "a4", "a7", "v4p", "v4p2", "v4p:pos", "v4p:prop", "v4p:pair", "v4p:band", "v4s", "v4sp", "spec", "v4sn", "v4s2"):
             X = build_features(df, self.genes)
             # 전부 WT인 유전자 컬럼 제거 (train 부분 기준)
             self.columns = [c for c in X.columns if not (c.startswith("g_") and (self.kind == "spec" or X[c].sum() == 0))]
@@ -149,8 +150,12 @@ class FeatureMaker:
             if self.kind.startswith("v4p") or self.kind == "v4sp":                     # 접근 14: cw_ 점수 고도화 (유형 분리·위치 구간·군집 상대)
                 self._cwp = CWPlusFeatures(extra={"v4p": None, "v4p2": "bucket_hi", "v4sp": None}.get(self.kind, self.kind.split(":")[-1])).fit(df)
                 self.columns += list(self._cwp.transform(df).columns)
-            if self.kind in ("v4s", "v4sp", "spec"):         # 치환 스펙트럼 (train 전용, fit 통계 없음)
+            if self.kind in ("v4s", "v4sp", "spec", "v4sn"): # 치환 스펙트럼 (train 전용, fit 통계 없음)
                 self.columns += list(spectrum_features(df, self.genes).columns)
+            if self.kind == "v4s2":                       # 스펙트럼 v2 (+ 종결·프레임시프트 잔기)
+                self.columns += list(spectrum_features_v2(df, self.genes).columns)
+            if self.kind == "v4sn":                       # + NB 점수표 26열 (내부 OOF)
+                self._snb = SpectrumNBFeatures().fit(df); self.columns += list(self._snb.transform(df).columns)
             if self.kind in ("v5", "a4"):              # 접근 4: 문헌 driver·경로·역할 피처 (a4 = 기본 피처 + 문헌 피처만, 단독 평가)
                 self._lit = LiteratureFeatures().fit(df)
                 self.columns += list(self._lit.transform(df).columns)
@@ -187,8 +192,12 @@ class FeatureMaker:
             X = pd.concat([X, self._kf.transform(df)], axis=1)
         if self.kind.startswith("v4p") or self.kind == "v4sp":
             X = pd.concat([X, self._cwp.transform(df)], axis=1)
-        if self.kind in ("v4s", "v4sp", "spec"):
+        if self.kind in ("v4s", "v4sp", "spec", "v4sn"):
             X = pd.concat([X, spectrum_features(df, self.genes)], axis=1)
+        if self.kind == "v4sn":
+            X = pd.concat([X, self._snb.transform(df)], axis=1)
+        if self.kind == "v4s2":
+            X = pd.concat([X, spectrum_features_v2(df, self.genes)], axis=1)
         if self.kind in ("v5", "a4"):
             X = pd.concat([X, self._lit.transform(df)], axis=1)
         if self.kind in ("v6", "a7"):
@@ -274,7 +283,7 @@ def fit_full_and_submit(train: pd.DataFrame, kind: str, params: dict, tag: str,
 
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--features", default="v1", choices=["official", "v1", "v2", "v3", "v4", "v5", "v6", "a2", "a4", "a7", "a8", "v4p", "v4p2", "v4p:pos", "v4p:prop", "v4p:pair", "v4p:band", "v4s", "v4sp", "spec"])
+    ap.add_argument("--features", default="v1", choices=["official", "v1", "v2", "v3", "v4", "v5", "v6", "a2", "a4", "a7", "a8", "v4p", "v4p2", "v4p:pos", "v4p:prop", "v4p:pair", "v4p:band", "v4s", "v4sp", "spec", "v4sn", "v4s2"])
     ap.add_argument("--cv", action="store_true", help="Stratified 5-Fold 평가")
     ap.add_argument("--submit", action="store_true", help="전체 학습 후 test 추론 및 제출 파일 생성")
     ap.add_argument("--twin-rule", action="store_true", help="추론 시 쌍둥이 규칙 적용 (3. docs/07 참고, 기본 꺼짐)")
