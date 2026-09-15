@@ -40,3 +40,5 @@
 | approach14_v14_20260915_1030.py | 2. team/approaches/approach14.md | 5. submissions/approach14_v14_20260915_1030.csv (v4s .5/v2 .3/v4sp .2) |
 | approach14_v15_20260915_1030.py | 2. team/approaches/approach14.md | 5. submissions/approach14_v15_20260915_1030.csv (v4s .7/v2 .3) |
 | approach14_v16_20260915_1130.py | 2. team/approaches/approach14.md | 5. submissions/approach14_v16_20260915_1130.csv (v14 + spec .15) |
+| approach14_v17_20260915_1345.py | approach14.md | 5. submissions/approach14_v17_20260915_1345.csv (혜림 NB + 스펙트럼 모델군) |
+| approach14_v18_20260915_1400.py | approach14.md | 5. submissions/approach14_v18_20260915_1400.csv (5모델, v4sn 포함) |
