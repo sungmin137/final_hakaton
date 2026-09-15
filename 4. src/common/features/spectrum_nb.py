@@ -22,9 +22,16 @@ def spectrum_counts(G):
     return X
 
 class SpectrumNBFeatures:
-    def __init__(self, alpha=0.5, n_inner=5, seed=42): self.alpha, self.n_inner, self.seed = alpha, n_inner, seed
-    def _cols(self, P): 
-        out = pd.DataFrame(np.round(np.log(P + 1e-9), 4), columns=[f"snb_{c}" for c in self.classes]); out["snb_max"] = out.max(1); s = np.sort(out.to_numpy()[:, :len(self.classes)], 1); out["snb_margin"] = s[:, -1] - s[:, -2]; return out
+    def __init__(self, alpha=0.5, n_inner=5, seed=42, normalized=False):
+        self.alpha, self.n_inner, self.seed, self.normalized = alpha, n_inner, seed, normalized   # normalized: 토큰 수로 나눈 평균 로그우도비(유계) — 27차 교훈
+    def _score(self, m, X):
+        if not self.normalized: return m.predict_proba(X)
+        W = m.feature_log_prob_ - m.feature_log_prob_.mean(0, keepdims=True)       # 클래스별 로그우도 - 클래스 평균 (비율 형태)
+        n = np.maximum(X.sum(1, keepdims=True), 1); S = (X @ W.T) / n; S[X.sum(1) == 0] = 0.0
+        full = np.zeros((len(X), len(self.classes))); full[:, m.classes_] = S; return np.round(full, 4)
+    def _cols(self, P):
+        V = P if self.normalized else np.log(P + 1e-9)
+        out = pd.DataFrame(np.round(V, 4), columns=[f"snb_{c}" for c in self.classes]); out["snb_max"] = out.max(1); s = np.sort(out.to_numpy()[:, :len(self.classes)], 1); out["snb_margin"] = s[:, -1] - s[:, -2]; return out
     def fit(self, train):
         from main import twin_groups
         self.genes = [c for c in train.columns if c not in ("ID", "SUBCLASS")]; X = spectrum_counts(train[self.genes].to_numpy())
@@ -32,8 +39,10 @@ class SpectrumNBFeatures:
         self.model = MultinomialNB(alpha=self.alpha).fit(X, y)
         oof = np.zeros((len(train), len(self.classes)))
         for tri, vai in StratifiedGroupKFold(self.n_inner, shuffle=True, random_state=self.seed).split(X, y, twin_groups(train)):
-            m = MultinomialNB(alpha=self.alpha).fit(X[tri], y[tri]); p = m.predict_proba(X[vai]); full = np.zeros((len(vai), len(self.classes))); full[:, m.classes_] = p; oof[vai] = full
+            m = MultinomialNB(alpha=self.alpha).fit(X[tri], y[tri])
+            if self.normalized: oof[vai] = self._score(m, X[vai])
+            else: p = m.predict_proba(X[vai]); full = np.zeros((len(vai), len(self.classes))); full[:, m.classes_] = p; oof[vai] = full
         self._train_index = train.index; self._train_oof = self._cols(oof).set_index(train.index); return self
     def transform(self, df):
         if df.index.equals(self._train_index): return self._train_oof
-        return self._cols(self.model.predict_proba(spectrum_counts(df[self.genes].to_numpy()))).set_index(df.index)
+        X = spectrum_counts(df[self.genes].to_numpy()); return self._cols(self._score(self.model, X) if self.normalized else self.model.predict_proba(X)).set_index(df.index)
