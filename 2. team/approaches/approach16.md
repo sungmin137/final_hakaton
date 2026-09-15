@@ -42,5 +42,6 @@ NB는 같은 암종에서 자주 보인 필체의 로그 증거를 합산한다.
 ## 파일
 
 - `4. src/common/approach16_spectrum_profile_score_cv.py`: train OOF 검증
+- `4. src/common/approach21_spectrum_profile_score_cv.py`: 초기 파일명을 찾는 팀원을 위한 호환 경로. 위 접근16 검증과 같은 아미노산 필체 NB 실험이다.
 - `4. src/submissions_source/approach16_v1_spectrum_profile_nb_20260915.py`: 최종 추론 재현 스크립트
 - `5. submissions/approach16_v1_spectrum_profile_nb_20260915_twin_rule.csv`: 제출한 파일
