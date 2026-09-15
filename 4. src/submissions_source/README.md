@@ -37,3 +37,5 @@
 | approach14_v11_20260914_1627.py | 2. team/approaches/approach14.md | 5. submissions/approach14_v11_20260914_1627.csv (v4s 스펙트럼 + v2) |
 | approach14_v12_20260914_1627.py | 2. team/approaches/approach14.md | 5. submissions/approach14_v12_20260914_1627.csv (4모델) |
 | approach14_v13_20260915_0900.py | 2. team/approaches/approach14.md | 5. submissions/approach14_v13_20260915_0900.csv (v4s .6 / v2 .4) |
+| approach14_v14_20260915_1030.py | 2. team/approaches/approach14.md | 5. submissions/approach14_v14_20260915_1030.csv (v4s .5/v2 .3/v4sp .2) |
+| approach14_v15_20260915_1030.py | 2. team/approaches/approach14.md | 5. submissions/approach14_v15_20260915_1030.csv (v4s .7/v2 .3) |
