@@ -31,3 +31,21 @@ def spectrum_features(df, genes):
     for k, name in enumerate(["mis", "syn", "nons", "fs", "oth"]): out[f"spt_{name}"] = np.round(T[:, k] / np.maximum(tot[:, 0], 1), 4)
     out["spt_trunc"] = np.round((T[:, 2] + T[:, 3]) / np.maximum(tot[:, 0], 1), 4)
     return out
+
+
+# --- v2 (2026-09-15): 종결·프레임시프트에도 서명 정보가 있다. 종결은 "어느 아미노산이 *로"(X→*, 20열), 프레임시프트는 직전 잔기(20열).
+_STOP = re.compile(r"^([A-Z])(\d+)\*$"); _FS = re.compile(r"^([A-Z])(\d+)[A-Za-z]*fs")
+def spectrum_features_v2(df, genes):
+    base = spectrum_features(df, genes); G = df[genes].to_numpy(); n = len(df); ai = {a: i for i, a in enumerate(AA)}
+    S = np.zeros((n, 20)); F = np.zeros((n, 20))
+    for i in range(n):
+        for j in np.nonzero(G[i] != "WT")[0]:
+            for t in G[i, j].split(" "):
+                m = _STOP.match(t)
+                if m and m.group(1) in ai: S[i, ai[m.group(1)]] += 1; continue
+                m = _FS.match(t)
+                if m and m.group(1) in ai: F[i, ai[m.group(1)]] += 1
+    for k, a in enumerate(AA): base[f"spx_{a}_stop"] = np.round(S[:, k] / np.maximum(S.sum(1), 1), 4)
+    for k, a in enumerate(AA): base[f"spf_{a}_fs"] = np.round(F[:, k] / np.maximum(F.sum(1), 1), 4)
+    base["spx_n_stop"] = S.sum(1); base["spf_n_fs"] = F.sum(1)
+    return base
