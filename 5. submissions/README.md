@@ -82,3 +82,4 @@
 | **25차** | approach14_v14_20260915_1030_twin_rule.csv (twin_rule/) | 접근14 v14: v4s .5 / v2 .3 / v4sp .2 | 0.5200 | **0.4784149 (25차, 팀 최고, v13 +0.0019)** |
 | (후보) | approach14_v15_20260915_1030_twin_rule.csv (twin_rule/) | 접근14 v15: v4s .7 / v2 .3 | 0.5194 | v14 뒤 |
 | (후보) | approach14_v16_20260915_1130_twin_rule.csv (twin_rule/) | 접근14 v16: v14 + spec 저차원 모델 .15 (v4s .45/v2 .25/v4sp .15/spec .15) | 0.5234 | v15 뒤 |
+| 26차(혜림) | approach16_v1_spectrum_profile_nb_20260915_twin_rule.csv (5. submissions/) | 접근16 v1: v4s .45 / v2 .25 / v4sp .15 / 스펙트럼 프로필 NB .15 + 규칙 | OOF 0.5306 (v16 +0.0071) | **0.4799 (팀 최고, 25차 +0.0015)** |
