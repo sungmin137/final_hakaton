@@ -34,3 +34,9 @@
 - `github` MCP: `GITHUB_PERSONAL_ACCESS_TOKEN` 미설정으로 연결 실패. 토큰 설정 후 세션 재시작하면 해결.
 - `context7` MCP: 키가 비어 있으면 빈 Authorization 헤더를 보내 401 발생. https://context7.com 에서 무료 API 키를 받아
   `export CONTEXT7_API_KEY="..."`를 `~/.zshrc`에 추가하면 해결. 둘 다 없어도 코드 작업에는 지장 없음.
+
+## 백그라운드 실험 실행 규칙 (2026-09-15, 조용한 실패 재발 방지)
+- 정직 CV는 반드시 `bash "4. src/common/run_cv.sh" <features> [params]`로 실행한다. 인자를 선택지와 대조하고, 시작·종료·결과를 `6. experiments/cv_runs.log`에 남기며, 실패하면 exit≠0.
+- zsh에서 `for job in "a b"; do set -- $job` 같은 공백 분리 의존 코드를 쓰지 않는다(zsh는 변수를 분리하지 않음). 인자는 따로 넘긴다.
+- 백그라운드로 던진 뒤에는 "시작됨" 메시지로 끝내지 말고, 출력 파일 첫 줄과 `ps`로 실제 진행을 확인한 뒤 다음 일을 한다.
+- 로그 줄 수를 기다리는 대기 루프 대신, 작업 자체를 백그라운드로 실행해 종료 코드로 알림을 받는다.
