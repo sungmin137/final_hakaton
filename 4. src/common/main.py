@@ -33,7 +33,7 @@ from postprocess.twin_rule import TwinRule
 from approach2_knowledge.knowledge_features import KnowledgeFeatures
 from approach4_literature.literature_features import LiteratureFeatures
 from approach14_cw_plus.cw_plus import CWPlusFeatures
-from features.spectrum import spectrum_features, spectrum_features_v2, spectrum_features_v3
+from features.spectrum import spectrum_features, spectrum_features_v2, spectrum_features_v3, spectrum_features_tp53
 from features.spectrum_nb import SpectrumNBFeatures
 from approach7_preprocess.preprocess_features import PreprocessFeatures
 
@@ -134,17 +134,17 @@ class FeatureMaker:
             self._enc = OrdinalEncoder(handle_unknown="use_encoded_value", unknown_value=-1)
             self._enc.fit(df[self.genes])
             self.columns = list(self.genes)
-        elif self.kind in ("v1", "v2", "v3", "v4", "v5", "v6", "a2", "a4", "a7", "v4p", "v4p2", "v4p:pos", "v4p:prop", "v4p:pair", "v4p:band", "v4s", "v4sp", "spec", "v4sn", "v4s2", "v4s3", "v4sm"):
+        elif self.kind in ("v1", "v2", "v3", "v4", "v5", "v6", "a2", "a4", "a7", "v4p", "v4p2", "v4p:pos", "v4p:prop", "v4p:pair", "v4p:band", "v4s", "v4sp", "spec", "v4sn", "v4s2", "v4s3", "v4sm", "v4st"):
             X = build_features(df, self.genes)
             # 전부 WT인 유전자 컬럼 제거 (train 부분 기준)
             self.columns = [c for c in X.columns if not (c.startswith("g_") and (self.kind == "spec" or X[c].sum() == 0))]
-            if self.kind in ("v2", "v3", "v4", "v5", "v6", "v4p", "v4p2", "v4p:pos", "v4p:prop", "v4p:pair", "v4p:band", "v4s", "v4sp"):  # 접근 1: 클래스별 개수 가중치 점수 피처
+            if self.kind in ("v2", "v3", "v4", "v5", "v6", "v4p", "v4p2", "v4p:pos", "v4p:prop", "v4p:pair", "v4p:band", "v4s", "v4sp", "v4sn", "v4sm", "v4s2", "v4s3", "v4st"):  # 접근 1: 클래스별 개수 가중치 점수 피처
                 self._cw = CountWeightFeatures().fit(df)
                 self.columns += list(self._cw.transform(df).columns)
-            if self.kind in ("v3", "v4", "v5", "v6", "a2", "v4p", "v4p2", "v4p:pos", "v4p:prop", "v4p:pair", "v4p:band", "v4s", "v4sp"):  # 인사이트 피처: hotspot 위치, LoF 유전자, 조합, 특수 그룹
+            if self.kind in ("v3", "v4", "v5", "v6", "a2", "v4p", "v4p2", "v4p:pos", "v4p:prop", "v4p:pair", "v4p:band", "v4s", "v4sp", "v4sn", "v4sm", "v4s2", "v4s3", "v4st"):  # 인사이트 피처: hotspot 위치, LoF 유전자, 조합, 특수 그룹
                 self._ins = InsightFeatures().fit(df)
                 self.columns += list(self._ins.transform(df).columns)
-            if self.kind in ("v4", "v5", "v6", "a2", "v4p", "v4p2", "v4p:pos", "v4p:prop", "v4p:pair", "v4p:band", "v4s", "v4sp"):  # 지식 피처: BLOSUM62·아미노산 특성 변화 (3. docs/10 해석)
+            if self.kind in ("v4", "v5", "v6", "a2", "v4p", "v4p2", "v4p:pos", "v4p:prop", "v4p:pair", "v4p:band", "v4s", "v4sp", "v4sn", "v4sm", "v4s2", "v4s3", "v4st"):  # 지식 피처: BLOSUM62·아미노산 특성 변화 (3. docs/10 해석)
                 self._kf = KnowledgeFeatures().fit(df)
                 self.columns += list(self._kf.transform(df).columns)
             if self.kind.startswith("v4p") or self.kind == "v4sp":                     # 접근 14: cw_ 점수 고도화 (유형 분리·위치 구간·군집 상대)
@@ -156,6 +156,8 @@ class FeatureMaker:
                 self.columns += list(spectrum_features_v2(df, self.genes).columns)
             if self.kind == "v4s3":                       # 스펙트럼 v3 (표본 수 수축)
                 self.columns += list(spectrum_features_v3(df, self.genes).columns)
+            if self.kind == "v4st":                       # 스펙트럼 + TP53 단일 유전자 성질 스펙트럼
+                self.columns += list(spectrum_features_tp53(df, self.genes).columns)
             if self.kind == "v4sn":                       # + NB 점수표 26열 (내부 OOF)
                 self._snb = SpectrumNBFeatures().fit(df); self.columns += list(self._snb.transform(df).columns)
             if self.kind == "v4sm":                       # + NB 점수표, 토큰 수 정규화(유계) — 27차 교훈 반영
@@ -188,11 +190,11 @@ class FeatureMaker:
             X = self._fm5.transform(df)
             return X.reindex(columns=self.columns, fill_value=0)
         X = build_features(df, self.genes)
-        if self.kind in ("v2", "v3", "v4", "v5", "v6", "v4p", "v4p2", "v4p:pos", "v4p:prop", "v4p:pair", "v4p:band", "v4s", "v4sp"):
+        if self.kind in ("v2", "v3", "v4", "v5", "v6", "v4p", "v4p2", "v4p:pos", "v4p:prop", "v4p:pair", "v4p:band", "v4s", "v4sp", "v4sn", "v4sm", "v4s2", "v4s3", "v4st"):
             X = pd.concat([X, self._cw.transform(df)], axis=1)
-        if self.kind in ("v3", "v4", "v5", "v6", "a2", "v4p", "v4p2", "v4p:pos", "v4p:prop", "v4p:pair", "v4p:band", "v4s", "v4sp"):
+        if self.kind in ("v3", "v4", "v5", "v6", "a2", "v4p", "v4p2", "v4p:pos", "v4p:prop", "v4p:pair", "v4p:band", "v4s", "v4sp", "v4sn", "v4sm", "v4s2", "v4s3", "v4st"):
             X = pd.concat([X, self._ins.transform(df)], axis=1)
-        if self.kind in ("v4", "v5", "v6", "a2", "v4p", "v4p2", "v4p:pos", "v4p:prop", "v4p:pair", "v4p:band", "v4s", "v4sp"):
+        if self.kind in ("v4", "v5", "v6", "a2", "v4p", "v4p2", "v4p:pos", "v4p:prop", "v4p:pair", "v4p:band", "v4s", "v4sp", "v4sn", "v4sm", "v4s2", "v4s3", "v4st"):
             X = pd.concat([X, self._kf.transform(df)], axis=1)
         if self.kind.startswith("v4p") or self.kind == "v4sp":
             X = pd.concat([X, self._cwp.transform(df)], axis=1)
@@ -204,6 +206,8 @@ class FeatureMaker:
             X = pd.concat([X, spectrum_features_v2(df, self.genes)], axis=1)
         if self.kind == "v4s3":
             X = pd.concat([X, spectrum_features_v3(df, self.genes)], axis=1)
+        if self.kind == "v4st":
+            X = pd.concat([X, spectrum_features_tp53(df, self.genes)], axis=1)
         if self.kind in ("v5", "a4"):
             X = pd.concat([X, self._lit.transform(df)], axis=1)
         if self.kind in ("v6", "a7"):
@@ -289,7 +293,7 @@ def fit_full_and_submit(train: pd.DataFrame, kind: str, params: dict, tag: str,
 
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--features", default="v1", choices=["official", "v1", "v2", "v3", "v4", "v5", "v6", "a2", "a4", "a7", "a8", "v4p", "v4p2", "v4p:pos", "v4p:prop", "v4p:pair", "v4p:band", "v4s", "v4sp", "spec", "v4sn", "v4s2", "v4s3", "v4sm"])
+    ap.add_argument("--features", default="v1", choices=["official", "v1", "v2", "v3", "v4", "v5", "v6", "a2", "a4", "a7", "a8", "v4p", "v4p2", "v4p:pos", "v4p:prop", "v4p:pair", "v4p:band", "v4s", "v4sp", "spec", "v4sn", "v4s2", "v4s3", "v4sm", "v4st"])
     ap.add_argument("--cv", action="store_true", help="Stratified 5-Fold 평가")
     ap.add_argument("--submit", action="store_true", help="전체 학습 후 test 추론 및 제출 파일 생성")
     ap.add_argument("--twin-rule", action="store_true", help="추론 시 쌍둥이 규칙 적용 (3. docs/07 참고, 기본 꺼짐)")

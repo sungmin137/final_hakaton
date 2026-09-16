@@ -65,3 +65,24 @@ def spectrum_features_v3(df, genes, K=10.0):
     nm = S.sum(1, keepdims=True); shr = (S + K / len(PAIRS)) / (nm + K)
     base[cols] = np.round(shr, 4); base["sp_conf"] = np.round(nm[:, 0] / (nm[:, 0] + K), 4)   # 비율 신뢰도
     return base
+
+
+# --- v4 (2026-09-16): TP53 한 유전자의 치환 성질 스펙트럼(5×5 = 25열, 행 내부 비율) + TP53 변이 유형(missense/절단/동의) 비율. fit 없음.
+def spectrum_features_tp53(df, genes, gene="TP53"):
+    base = spectrum_features(df, genes); n = len(df); ci = {p: i for i, p in enumerate(CLSP)}; Cm = np.zeros((n, len(CLSP))); T = np.zeros((n, 3))
+    if gene in df.columns:
+        col = df[gene].to_numpy()
+        for i in range(n):
+            if col[i] == "WT": continue
+            for t in str(col[i]).split(" "):
+                m = _MIS.match(t)
+                if m and m.group(1) != m.group(3):
+                    T[i, 0] += 1; k = f"{_CLS.get(m.group(1), '?')}>{_CLS.get(m.group(3), '?')}"
+                    if k in ci: Cm[i, ci[k]] += 1
+                elif m: T[i, 2] += 1
+                elif t.endswith("*") or "fs" in t: T[i, 1] += 1
+    for k, p in enumerate(CLSP): base[f"tp53c_{p}"] = np.round(Cm[:, k] / np.maximum(Cm.sum(1), 1), 4)
+    tot = np.maximum(T.sum(1), 1)
+    for k, name in enumerate(["mis", "trunc", "syn"]): base[f"tp53t_{name}"] = np.round(T[:, k] / tot, 4)
+    base["tp53_has"] = (T.sum(1) > 0).astype(np.int8)
+    return base
