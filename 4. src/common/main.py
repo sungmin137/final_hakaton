@@ -138,13 +138,13 @@ class FeatureMaker:
             X = build_features(df, self.genes)
             # 전부 WT인 유전자 컬럼 제거 (train 부분 기준)
             self.columns = [c for c in X.columns if not (c.startswith("g_") and (self.kind == "spec" or X[c].sum() == 0))]
-            if self.kind in ("v2", "v3", "v4", "v5", "v6", "v4p", "v4p2", "v4p:pos", "v4p:prop", "v4p:pair", "v4p:band", "v4s", "v4sp"):  # 접근 1: 클래스별 개수 가중치 점수 피처
+            if self.kind in ("v2", "v3", "v4", "v5", "v6", "v4p", "v4p2", "v4p:pos", "v4p:prop", "v4p:pair", "v4p:band", "v4s", "v4sp", "v4sn", "v4sm", "v4s2", "v4s3", "v4st"):  # 접근 1: 클래스별 개수 가중치 점수 피처
                 self._cw = CountWeightFeatures().fit(df)
                 self.columns += list(self._cw.transform(df).columns)
-            if self.kind in ("v3", "v4", "v5", "v6", "a2", "v4p", "v4p2", "v4p:pos", "v4p:prop", "v4p:pair", "v4p:band", "v4s", "v4sp"):  # 인사이트 피처: hotspot 위치, LoF 유전자, 조합, 특수 그룹
+            if self.kind in ("v3", "v4", "v5", "v6", "a2", "v4p", "v4p2", "v4p:pos", "v4p:prop", "v4p:pair", "v4p:band", "v4s", "v4sp", "v4sn", "v4sm", "v4s2", "v4s3", "v4st"):  # 인사이트 피처: hotspot 위치, LoF 유전자, 조합, 특수 그룹
                 self._ins = InsightFeatures().fit(df)
                 self.columns += list(self._ins.transform(df).columns)
-            if self.kind in ("v4", "v5", "v6", "a2", "v4p", "v4p2", "v4p:pos", "v4p:prop", "v4p:pair", "v4p:band", "v4s", "v4sp"):  # 지식 피처: BLOSUM62·아미노산 특성 변화 (3. docs/10 해석)
+            if self.kind in ("v4", "v5", "v6", "a2", "v4p", "v4p2", "v4p:pos", "v4p:prop", "v4p:pair", "v4p:band", "v4s", "v4sp", "v4sn", "v4sm", "v4s2", "v4s3", "v4st"):  # 지식 피처: BLOSUM62·아미노산 특성 변화 (3. docs/10 해석)
                 self._kf = KnowledgeFeatures().fit(df)
                 self.columns += list(self._kf.transform(df).columns)
             if self.kind.startswith("v4p") or self.kind == "v4sp":                     # 접근 14: cw_ 점수 고도화 (유형 분리·위치 구간·군집 상대)
@@ -190,11 +190,11 @@ class FeatureMaker:
             X = self._fm5.transform(df)
             return X.reindex(columns=self.columns, fill_value=0)
         X = build_features(df, self.genes)
-        if self.kind in ("v2", "v3", "v4", "v5", "v6", "v4p", "v4p2", "v4p:pos", "v4p:prop", "v4p:pair", "v4p:band", "v4s", "v4sp"):
+        if self.kind in ("v2", "v3", "v4", "v5", "v6", "v4p", "v4p2", "v4p:pos", "v4p:prop", "v4p:pair", "v4p:band", "v4s", "v4sp", "v4sn", "v4sm", "v4s2", "v4s3", "v4st"):
             X = pd.concat([X, self._cw.transform(df)], axis=1)
-        if self.kind in ("v3", "v4", "v5", "v6", "a2", "v4p", "v4p2", "v4p:pos", "v4p:prop", "v4p:pair", "v4p:band", "v4s", "v4sp"):
+        if self.kind in ("v3", "v4", "v5", "v6", "a2", "v4p", "v4p2", "v4p:pos", "v4p:prop", "v4p:pair", "v4p:band", "v4s", "v4sp", "v4sn", "v4sm", "v4s2", "v4s3", "v4st"):
             X = pd.concat([X, self._ins.transform(df)], axis=1)
-        if self.kind in ("v4", "v5", "v6", "a2", "v4p", "v4p2", "v4p:pos", "v4p:prop", "v4p:pair", "v4p:band", "v4s", "v4sp"):
+        if self.kind in ("v4", "v5", "v6", "a2", "v4p", "v4p2", "v4p:pos", "v4p:prop", "v4p:pair", "v4p:band", "v4s", "v4sp", "v4sn", "v4sm", "v4s2", "v4s3", "v4st"):
             X = pd.concat([X, self._kf.transform(df)], axis=1)
         if self.kind.startswith("v4p") or self.kind == "v4sp":
             X = pd.concat([X, self._cwp.transform(df)], axis=1)
