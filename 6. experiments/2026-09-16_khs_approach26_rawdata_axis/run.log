@@ -1,0 +1,43 @@
+=== frequency cutoff justification (per-fold train portion) ===
+fold0: n_fit=4960  genes total=4384  genes>=|20|carriers=2961  median_carrier_count=29.0
+fold1: n_fit=4961  genes total=4384  genes>=|20|carriers=3010  median_carrier_count=29.0
+fold2: n_fit=4960  genes total=4384  genes>=|20|carriers=2988  median_carrier_count=29.0
+fold3: n_fit=4962  genes total=4384  genes>=|20|carriers=2990  median_carrier_count=29.0
+fold4: n_fit=4961  genes total=4384  genes>=|20|carriers=2972  median_carrier_count=29.0
+fold0 embedding: n_freq_genes=2961  explained_var_ratio(top12)=[0.3234, 0.0407, 0.0359, 0.0268, 0.0237, 0.0181, 0.0162, 0.0156, 0.0145, 0.0135, 0.0114, 0.0111]
+fold0 done (311s)  embed-only F1=0.1309  v4s(refit)F1=0.4608  v4s+embedF1=0.4735
+fold1 done (590s)  embed-only F1=0.1385  v4s(refit)F1=0.4957  v4s+embedF1=0.4896
+fold2 done (876s)  embed-only F1=0.1566  v4s(refit)F1=0.4789  v4s+embedF1=0.4729
+fold3 done (1173s)  embed-only F1=0.1456  v4s(refit)F1=0.4917  v4s+embedF1=0.4766
+fold4 done (1448s)  embed-only F1=0.1490  v4s(refit)F1=0.5228  v4s+embedF1=0.5023
+
+=== Step2 standalone summary ===
+embed-only OOF macro F1: 0.14367582770597773
+
+=== sanity: v4s refit-in-this-script vs cached v4s ===
+cached v4s OOF macro F1: 0.48876484456002117
+this-run v4s-refit OOF macro F1: 0.48876484456002117
+
+=== Step3 ensemble comparison ===
+BASE (cached v4s)      macro F1 = 0.530907  burden={'0_10': 0.25597, '11_30': 0.44605, '31_100': 0.50474, '101_plus': 0.40396}
+BASE (v4s refit here)  macro F1 = 0.530907  burden={'0_10': 0.25597, '11_30': 0.44605, '31_100': 0.50474, '101_plus': 0.40396}
+v4s+embed              macro F1 = 0.527133  burden={'0_10': 0.25779, '11_30': 0.44272, '31_100': 0.49948, '101_plus': 0.35214}  delta_vs_refit_base=-0.003774
+changed=563  helped=141  hurt=158  net=-17
+
+worst 5 class deltas:
+ CESC   -0.035015
+LIHC   -0.017187
+COAD   -0.014596
+HNSC   -0.014517
+THYM   -0.013021
+dtype: float64
+
+best 5 class deltas:
+ KIPAN    0.004729
+LGG      0.006250
+TGCT     0.013570
+SARC     0.014573
+PCPG     0.018357
+dtype: float64
+
+saved report to /private/tmp/claude-501/-Users-admin-Desktop---------/9403559b-a83c-4ed4-b2a6-937dec6f03d0/scratchpad/pmi_embedding_result.json

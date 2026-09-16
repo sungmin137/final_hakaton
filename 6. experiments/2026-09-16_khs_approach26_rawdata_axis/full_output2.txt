@@ -1,0 +1,280 @@
+n_rows 6201 n_genes 4384
+n_classes 26
+
+Frequency distribution of gene carrier counts:
+  >= 0: 4384 genes
+  >= 1: 4230 genes
+  >= 2: 4225 genes
+  >= 5: 4171 genes
+  >= 10: 3969 genes
+  >= 15: 3678 genes
+  >= 20: 3319 genes
+  >= 30: 2655 genes
+  >= 50: 1524 genes
+  >= 100: 428 genes
+count    4384.000000
+mean       49.929973
+std        57.635063
+min         0.000000
+25%        20.000000
+50%        36.000000
+75%        61.000000
+max      1770.000000
+dtype: float64
+
+Selected genes with carrier_count >= 15: 3678
+
+Full gene x class rate matrix shape: (3678, 26)
+
+Q1/Q2/Q4 profile type counts:
+type
+애매(2class)    2315
+특이             918
+기타             445
+Name: count, dtype: int64
+
+fold train sizes: [np.int64(4960), np.int64(4961), np.int64(4961), np.int64(4961), np.int64(4961)]
+[GBMLGG vs LGG] dropped 3639/3678 genes with dominant_count < 10 (insufficient carriers in the class they'd favor -> unstable rate-ratio artifacts)
+[KIPAN vs KIRC] dropped 3621/3678 genes with dominant_count < 10 (insufficient carriers in the class they'd favor -> unstable rate-ratio artifacts)
+
+
+=== GBMLGG vs LGG top boundary genes (evidence-filtered, count-based log-OR) ===
+         gene  count_A  count_B    rate_A    rate_B  dir_score  n_folds_same_sign  fold_sign_consistent_5of5  is_known_driver
+3189    SPTA1       23        1  0.049892  0.004367   2.099712                  5                       True            False
+1574     IDH1      189      180  0.409978  0.786026  -1.657008                  5                       True             True
+2705     PTEN       75        8  0.162690  0.034934   1.627357                  5                       True             True
+1833    LAMA1       14        1  0.030369  0.004367   1.596543                  5                       True            False
+1042     EGFR       67        8  0.145336  0.034934   1.494865                  5                       True             True
+2504   PIK3CG       12        1  0.026030  0.004367   1.443664                  5                       True            False
+3321    TEX15       11        1  0.023861  0.004367   1.358060                  5                       True            False
+2795      RB1       18        2  0.039046  0.008734   1.333932                  5                       True             True
+2819     RELN       18        2  0.039046  0.008734   1.333932                  5                       True            False
+3113    SLIT3       10        1  0.021692  0.004367   1.264871                  5                       True            False
+1898     LRP1       10        1  0.021692  0.004367   1.264871                  5                       True            False
+2955   SEMA3C       10        1  0.021692  0.004367   1.264871                  5                       True            False
+3308     TCHH       19        3  0.041215  0.013100   1.047956                  5                       True            False
+2400     PCLO       34        7  0.073753  0.030568   0.873029                  5                       True            False
+143     AHNAK       11        2  0.023861  0.008734   0.842848                  5                       True            False
+2265   NOTCH1       16       17  0.034707  0.074236  -0.799096                  5                       True             True
+442   CACNA1B       10        2  0.021692  0.008734   0.749659                  5                       True            False
+2517    PKHD1       26        6  0.056399  0.026201   0.738259                  5                       True            False
+324      ATRX       99       83  0.214751  0.362445  -0.730688                  5                       True             True
+2908     RYR2       33        8  0.071584  0.034934   0.711611                  5                       True            False
+2907     RYR1       13        3  0.028200  0.013100   0.666763                  5                       True            False
+12      ABCB1       13        3  0.028200  0.013100   0.666763                  5                       True            False
+1769      KEL       12        3  0.026030  0.013100   0.587575                  5                       True            False
+3438     TP53      169      116  0.366594  0.506550  -0.571700                  5                       True             True
+624    CELSR1       11        3  0.023861  0.013100   0.501971                  5                       True            False
+1191     FBN2       14        4  0.030369  0.017467   0.484715                  5                       True            False
+3273    SYNE1       23        7  0.049892  0.030568   0.463665                  5                       True            False
+747    COL6A3       19        6  0.041215  0.026201   0.415583                  5                       True            False
+2928   SCN10A       10        3  0.021692  0.013100   0.408782                  5                       True            False
+2213      NF1       36       12  0.078091  0.052402   0.400518                  5                       True             True
+957       DMD       15        5  0.032538  0.021834   0.348528                  5                       True            False
+2139   MYO15A       12        4  0.026030  0.017467   0.331836                  4                      False            False
+2111    MXRA5       14        5  0.030369  0.021834   0.279600                  5                       True            False
+426        C3       14        5  0.030369  0.021834   0.279600                  5                       True            False
+737    COL1A2       11        4  0.023861  0.017467   0.246232                  5                       True            False
+2125     MYH2       16        6  0.034707  0.026201   0.241772                  4                      False            False
+2129     MYH8       13        5  0.028200  0.021834   0.205909                  4                      False            False
+2536     PLEC       10        4  0.021692  0.017467   0.153043                  4                      False            False
+2501   PIK3CA       31       15  0.067245  0.065502   0.012510                  2                      False             True
+
+
+=== KIPAN vs KIRC top boundary genes (evidence-filtered, count-based log-OR) ===
+         gene  count_A  count_B    rate_A    rate_B  dir_score  n_folds_same_sign  fold_sign_consistent_5of5  is_known_driver
+3019      SKI       10        0  0.019417  0.000000   2.631611                  5                       True            False
+978     DOCK4       12        1  0.023301  0.002994   1.708323                  5                       True            False
+2202     NEFH       10        1  0.019417  0.002994   1.530005                  5                       True            False
+625    CELSR2       11        2  0.021359  0.005988   1.109128                  5                       True            False
+3438     TP53       24        5  0.046602  0.014970   1.094039                  5                       True             True
+1461    HELZ2       10        2  0.019417  0.005988   1.016176                  5                       True            False
+579     CDC27       18        4  0.034951  0.011976   1.004704                  5                       True            False
+2515     PKD1       13        3  0.025243  0.008982   0.933959                  5                       True            False
+2011      MET       19        5  0.036893  0.014970   0.855659                  5                       True             True
+441   CACNA1A       15        4  0.029126  0.011976   0.821762                  5                       True            False
+1482    HLA-B       11        3  0.021359  0.008982   0.769644                  5                       True             True
+1934    MAML2       16        5  0.031068  0.014970   0.682581                  5                       True            False
+7       ABCA4       10        3  0.019417  0.008982   0.676692                  5                       True            False
+444   CACNA1H       10        3  0.019417  0.008982   0.676692                  5                       True            False
+3584      VHL      154      151  0.299029  0.452096  -0.658439                  5                       True             True
+143     AHNAK       15        5  0.029126  0.014970   0.618061                  5                       True            False
+2177    NCOA6       15        5  0.029126  0.014970   0.618061                  5                       True            False
+2139   MYO15A       12        4  0.023301  0.011976   0.600674                  5                       True            False
+2536     PLEC       19        7  0.036893  0.020958   0.539416                  5                       True            False
+3173     SPEG       11        4  0.021359  0.011976   0.515308                  5                       True            False
+2239    NIPBL       11        4  0.021359  0.011976   0.515308                  5                       True            False
+2175    NCOA3       11        4  0.021359  0.011976   0.515308                  5                       True            False
+3332       TG       15        6  0.029126  0.017964   0.447967                  5                       True            False
+2266   NOTCH2       12       12  0.023301  0.035928  -0.445481                  5                       True             True
+2263     NOS1       10       10  0.019417  0.029940  -0.443263                  5                       True            False
+788     CROCC       10        4  0.019417  0.011976   0.422356                  5                       True            False
+3189    SPTA1       10        4  0.019417  0.011976   0.422356                  5                       True            False
+957       DMD       12        5  0.023301  0.014970   0.396973                  5                       True            False
+324      ATRX       11        5  0.021359  0.014970   0.311607                  5                       True             True
+3573     VCAN       11        5  0.021359  0.014970   0.311607                  5                       True            False
+1126    ESPL1       11        5  0.021359  0.014970   0.311607                  4                      False            False
+1481    HLA-A       13        6  0.025243  0.017964   0.305829                  5                       True             True
+602      CDH8       12        6  0.023301  0.017964   0.226880                  4                      False            False
+836      CUL3       10        5  0.019417  0.014970   0.218655                  5                       True             True
+38       ABL1       10        5  0.019417  0.014970   0.218655                  4                      False            False
+1731    ITPR2       10        5  0.019417  0.014970   0.218655                  4                      False            False
+626     CENPE       10        5  0.019417  0.014970   0.218655                  5                       True            False
+3429     TNS1       10        5  0.019417  0.014970   0.218655                  4                      False            False
+2099     MTOR       25       19  0.048544  0.056886  -0.173003                  5                       True             True
+2442     PEG3       13        7  0.025243  0.020958   0.159679                  4                      False            False
+1776    KIF1B       11        6  0.021359  0.017964   0.141514                  4                      False            False
+1833    LAMA1       11        6  0.021359  0.017964   0.141514                  4                      False            False
+2517    PKHD1       16        9  0.031068  0.026946   0.123823                  4                      False            False
+2400     PCLO       21       12  0.040777  0.035928   0.114880                  5                       True            False
+2907     RYR1       19       11  0.036893  0.032934   0.099683                  4                      False            False
+994       DST       27       19  0.052427  0.056886  -0.093409                  4                      False            False
+404     BRCA2       12        7  0.023301  0.020958   0.080730                  4                      False             True
+2265   NOTCH1       12        7  0.023301  0.020958   0.080730                  4                      False             True
+1524      HRC       10        6  0.019417  0.017964   0.048562                  3                      False            False
+2415  PDE4DIP       10        6  0.019417  0.017964   0.048562                  3                      False            False
+
+--- known-driver sanity scores, GBMLGG(A) vs LGG(B) ---
+gene  count_A  count_B   rate_A   rate_B  dir_score
+IDH1      189      180 0.409978 0.786026  -1.657008
+ATRX       99       83 0.214751 0.362445  -0.730688
+TP53      169      116 0.366594 0.506550  -0.571700
+EGFR       67        8 0.145336 0.034934   1.494865
+PTEN       75        8 0.162690 0.034934   1.627357
+
+--- known-driver sanity scores, KIPAN(A) vs KIRC(B) ---
+gene  count_A  count_B   rate_A   rate_B  dir_score
+ VHL      154      151 0.299029 0.452096  -0.658439
+ MET       19        5 0.036893 0.014970   0.855659
+
+
+=== GBMLGG/LGG: stable(5/5) genes = 34 / top50 ===
+Of these, NOT in known-pair-driver set AND NOT in GENE_INFO (189 literature genes): 26
+         gene    rate_A    rate_B  dir_score  carrier_count
+3189    SPTA1  0.049892  0.004367   2.099712            461
+1833    LAMA1  0.030369  0.004367   1.596543            296
+2504   PIK3CG  0.026030  0.004367   1.443664            166
+3321    TEX15  0.023861  0.004367   1.358060            214
+2819     RELN  0.039046  0.008734   1.333932            377
+3113    SLIT3  0.021692  0.004367   1.264871            186
+1898     LRP1  0.021692  0.004367   1.264871            296
+2955   SEMA3C  0.021692  0.004367   1.264871             74
+3308     TCHH  0.041215  0.013100   1.047956            213
+2400     PCLO  0.073753  0.030568   0.873029            593
+143     AHNAK  0.023861  0.008734   0.842848            349
+442   CACNA1B  0.021692  0.008734   0.749659            200
+2517    PKHD1  0.056399  0.026201   0.738259            360
+2908     RYR2  0.071584  0.034934   0.711611            643
+2907     RYR1  0.028200  0.013100   0.666763            473
+12      ABCB1  0.028200  0.013100   0.666763            206
+1769      KEL  0.026030  0.013100   0.587575            136
+624    CELSR1  0.023861  0.013100   0.501971            224
+1191     FBN2  0.030369  0.017467   0.484715            304
+3273    SYNE1  0.049892  0.030568   0.463665            642
+747    COL6A3  0.041215  0.026201   0.415583            347
+2928   SCN10A  0.021692  0.013100   0.408782            278
+957       DMD  0.032538  0.021834   0.348528            406
+2111    MXRA5  0.030369  0.021834   0.279600            329
+426        C3  0.030369  0.021834   0.279600            199
+737    COL1A2  0.023861  0.017467   0.246232            195
+
+Also in COMBO_GENES (features.py)? [False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False]
+
+
+=== KIPAN/KIRC: stable(5/5) genes = 35 / top50 ===
+Of these, NOT in known-pair-driver set AND NOT in GENE_INFO (189 literature genes): 26
+         gene    rate_A    rate_B  dir_score  carrier_count
+3019      SKI  0.019417  0.000000   2.631611             39
+978     DOCK4  0.023301  0.002994   1.708323            158
+2202     NEFH  0.019417  0.002994   1.530005             96
+625    CELSR2  0.021359  0.005988   1.109128            187
+1461    HELZ2  0.019417  0.005988   1.016176            151
+579     CDC27  0.034951  0.011976   1.004704            143
+2515     PKD1  0.025243  0.008982   0.933959            211
+441   CACNA1A  0.029126  0.011976   0.821762            234
+1934    MAML2  0.031068  0.014970   0.682581            106
+7       ABCA4  0.019417  0.008982   0.676692            202
+444   CACNA1H  0.019417  0.008982   0.676692            170
+143     AHNAK  0.029126  0.014970   0.618061            349
+2177    NCOA6  0.029126  0.014970   0.618061            176
+2139   MYO15A  0.023301  0.011976   0.600674            258
+2536     PLEC  0.036893  0.020958   0.539416            347
+3173     SPEG  0.021359  0.011976   0.515308            242
+2239    NIPBL  0.021359  0.011976   0.515308            192
+2175    NCOA3  0.021359  0.011976   0.515308            127
+3332       TG  0.029126  0.017964   0.447967            289
+2263     NOS1  0.019417  0.029940  -0.443263            225
+788     CROCC  0.019417  0.011976   0.422356            134
+3189    SPTA1  0.019417  0.011976   0.422356            461
+957       DMD  0.023301  0.014970   0.396973            406
+3573     VCAN  0.021359  0.014970   0.311607            294
+626     CENPE  0.019417  0.014970   0.218655            158
+2400     PCLO  0.040777  0.035928   0.114880            593
+
+Also in COMBO_GENES (features.py)? [False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False]
+
+
+=== Coverage check: GBMLGG/LGG new genes ===
+Sample size=100 from classes ['GBMLGG', 'LGG']
+Rows carrying >=1 of the 26 new genes: 43 (43.0%)
+Per-gene carrier counts in this sample:
+PCLO       9
+RYR2       7
+SYNE1      6
+AHNAK      5
+SPTA1      4
+SLIT3      3
+PKHD1      3
+C3         3
+COL6A3     3
+PIK3CG     3
+KEL        3
+ABCB1      3
+TEX15      3
+RELN       3
+SEMA3C     3
+CACNA1B    2
+LAMA1      2
+RYR1       2
+FBN2       2
+TCHH       2
+MXRA5      2
+LRP1       1
+CELSR1     1
+DMD        1
+COL1A2     1
+SCN10A     0
+
+
+=== Coverage check: KIPAN/KIRC new genes ===
+Sample size=100 from classes ['KIPAN', 'KIRC']
+Rows carrying >=1 of the 26 new genes: 43 (43.0%)
+Per-gene carrier counts in this sample:
+PCLO       7
+TG         6
+NOS1       4
+CENPE      3
+VCAN       3
+SPTA1      3
+PKD1       3
+ABCA4      3
+CACNA1H    3
+AHNAK      3
+NCOA6      3
+NCOA3      2
+DMD        2
+CROCC      2
+SKI        2
+MAML2      2
+CACNA1A    2
+CDC27      2
+CELSR2     2
+NEFH       2
+MYO15A     2
+SPEG       1
+NIPBL      1
+PLEC       1
+HELZ2      1
+DOCK4      0
+
+DONE

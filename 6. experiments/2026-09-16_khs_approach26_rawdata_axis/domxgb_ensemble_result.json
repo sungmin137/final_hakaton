@@ -1,0 +1,10 @@
+{
+  "f1_cached_v4s_standalone": 0.48876484456002117,
+  "f1_this_session_v4s_refit_standalone": 0.48876484456002117,
+  "approach16_base_cached_v4s": 0.5305555914758169,
+  "approach16_this_session_v4s_refit_no_domain": 0.5305555914758169,
+  "approach16_delta_refit_vs_cached": 0.0,
+  "approach16_v4s_plus_domain": 0.5293712599148495,
+  "approach16_delta_domain_vs_base": -0.001184331560967422,
+  "approach16_delta_domain_vs_refit_only": -0.001184331560967422
+}
