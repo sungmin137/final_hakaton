@@ -43,3 +43,7 @@
 | approach14_v17_20260915_1345.py | approach14.md | 5. submissions/approach14_v17_20260915_1345.csv (혜림 NB + 스펙트럼 모델군) |
 | approach14_v18_20260915_1400.py | approach14.md | 5. submissions/approach14_v18_20260915_1400.csv (5모델, v4sn 포함) |
 | approach14_v19_20260916_1110.py | approach14.md | 5. submissions/approach14_v19_20260916_1110.csv (수정 v4sn 5모델) |
+| approach14_v20_20260916_1140.py | approach14.md | 5. submissions/approach14_v20_20260916_1140.csv (v4sn .4) |
+| approach14_v21_20260917_0900.py | approach14.md | 5. submissions/approach14_v21_20260917_0900.csv (v4sn .45 / NB .1) |
+| approach14_v22_20260917_1030.py | approach14.md | 5. submissions/approach14_v22_20260917_1030.csv (NB 파트너 0, v4sn .5) |
+| approach14_v23_20260917_1120.py | approach14.md | 5. submissions/approach14_v23_20260917_1120.csv (v21 + v4sn10) |
