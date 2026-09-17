@@ -7,16 +7,9 @@ ROOT="$(cd "$(dirname "$0")/../.." && pwd)"; cd "$ROOT" || exit 2
 FEAT="${1:?features 인자 필요}"; PARAMS="${2:-mild_col}"; LOG="$ROOT/6. experiments/cv_runs.log"
 CHOICES="$(PYTHONPATH="4. src/common" python3 -c "import re,sys;s=open('4. src/common/main.py').read();print(' '.join(re.search(r'\"--features\".*?choices=\[(.*?)\]',s,re.S).group(1).replace('\"','').replace(',',' ').split()))")"
 if ! grep -qw -- "$FEAT" <<<"$CHOICES"; then echo "FAIL $(date '+%F %T') features='$FEAT' 는 선택지에 없음: $CHOICES" | tee -a "$LOG"; exit 3; fi
-# 골격 누락 자가 점검 (2026-09-17): v4 골격 계열이면 cw_ 열 수가 v4와 같아야 한다
+# 골격 누락 자가 점검 (2026-09-17): v4 골격 계열이면 cw_ 열 수가 v4와 같아야 한다 (check_features.py)
 case "$FEAT" in official|v1|a4|a7|a8|spec) ;; *)
-  CHK="$(PYTHONPATH="4. src/common" python3 - "$FEAT" 2>/dev/null <<'PY'
-import sys, warnings; warnings.filterwarnings("ignore")
-from main import load_train, FeatureMaker
-tr=load_train().iloc[:300]; k=sys.argv[1]
-a=sum(c.startswith("cw_") for c in FeatureMaker("v4").fit(tr).transform(tr).columns); b=sum(c.startswith("cw_") for c in FeatureMaker(k).fit(tr).transform(tr).columns)
-print("OK" if a==b else f"MISSING cw_ {b}/{a}")
-PY
-)"
+  CHK="$(PYTHONPATH="4. src/common" python3 "4. src/common/check_features.py" "$FEAT" 2>/dev/null | tail -1)"
   if [ "$CHK" != "OK" ]; then echo "FAIL $(date '+%F %T') features=$FEAT 골격 누락: $CHK (main.py 등록 목록 확인)" | tee -a "$LOG"; exit 5; fi ;;
 esac
 echo "START $(date '+%F %T') features=$FEAT params=$PARAMS" | tee -a "$LOG"
