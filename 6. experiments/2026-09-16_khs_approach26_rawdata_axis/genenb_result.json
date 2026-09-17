@@ -1,0 +1,6 @@
+{
+  "bernoulli_f1": 0.1773032837335919,
+  "multinomial_f1": 0.27048005000608477,
+  "avg_gene_cols": 4228.4,
+  "total_genes": 4384
+}

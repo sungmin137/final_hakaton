@@ -1,0 +1,5 @@
+condition,macro_f1_mean,macro_f1_std,GBMLGG_f1_mean,GBMLGG_f1_std,LGG_f1_mean,LGG_f1_std
+baseline,0.4605,0.0067,0.5098,0.0177,0.3894,0.0189
+gbmlgg_synth50,0.4525,0.0048,0.5489,0.0054,0.1736,0.0577
+lgg_synth50,0.4588,0.0055,0.4202,0.0049,0.5532,0.0038
+both_synth50,0.4604,0.0037,0.4791,0.0111,0.4566,0.032

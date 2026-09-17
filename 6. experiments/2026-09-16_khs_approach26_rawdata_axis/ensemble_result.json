@@ -1,0 +1,18 @@
+{
+  "base_f1": 0.5305555914758169,
+  "swap_f1": 0.5105161678971164,
+  "swap_delta": -0.020039423578700477,
+  "add1_f1": 0.5330758066395581,
+  "add1_delta": 0.002520215163741235,
+  "add2_f1": 0.5310643910316315,
+  "add2_delta": 0.0005087995558146208,
+  "rescue_ensemble_net": -67,
+  "rescue_candidates_standalone": 515,
+  "base_wrong_n": 3078,
+  "quadrant": {
+    "spec_c_gene_c": 890,
+    "spec_c_gene_w": 888,
+    "spec_w_gene_c": 1060,
+    "spec_w_gene_w": 3363
+  }
+}

@@ -1,0 +1,140 @@
+{
+  "solo_macro_f1": 0.2391,
+  "n_wrong": 3239,
+  "n_fixed": 389,
+  "fix_rate": 0.1201,
+  "disagree": 4752,
+  "avg_vocab": 8632,
+  "per_class": {
+    "ACC": {
+      "n_wrong": 5,
+      "n_fixed": 0,
+      "rate": 0.0
+    },
+    "BLCA": {
+      "n_wrong": 62,
+      "n_fixed": 11,
+      "rate": 0.1774
+    },
+    "BRCA": {
+      "n_wrong": 278,
+      "n_fixed": 1,
+      "rate": 0.0036
+    },
+    "CESC": {
+      "n_wrong": 118,
+      "n_fixed": 4,
+      "rate": 0.0339
+    },
+    "COAD": {
+      "n_wrong": 61,
+      "n_fixed": 7,
+      "rate": 0.1148
+    },
+    "DLBC": {
+      "n_wrong": 21,
+      "n_fixed": 1,
+      "rate": 0.0476
+    },
+    "GBMLGG": {
+      "n_wrong": 215,
+      "n_fixed": 1,
+      "rate": 0.0047
+    },
+    "HNSC": {
+      "n_wrong": 162,
+      "n_fixed": 20,
+      "rate": 0.1235
+    },
+    "KIPAN": {
+      "n_wrong": 266,
+      "n_fixed": 6,
+      "rate": 0.0226
+    },
+    "KIRC": {
+      "n_wrong": 270,
+      "n_fixed": 19,
+      "rate": 0.0704
+    },
+    "LAML": {
+      "n_wrong": 73,
+      "n_fixed": 5,
+      "rate": 0.0685
+    },
+    "LGG": {
+      "n_wrong": 142,
+      "n_fixed": 81,
+      "rate": 0.5704
+    },
+    "LIHC": {
+      "n_wrong": 115,
+      "n_fixed": 12,
+      "rate": 0.1043
+    },
+    "LUAD": {
+      "n_wrong": 127,
+      "n_fixed": 13,
+      "rate": 0.1024
+    },
+    "LUSC": {
+      "n_wrong": 89,
+      "n_fixed": 8,
+      "rate": 0.0899
+    },
+    "OV": {
+      "n_wrong": 151,
+      "n_fixed": 15,
+      "rate": 0.0993
+    },
+    "PAAD": {
+      "n_wrong": 96,
+      "n_fixed": 11,
+      "rate": 0.1146
+    },
+    "PCPG": {
+      "n_wrong": 100,
+      "n_fixed": 7,
+      "rate": 0.07
+    },
+    "PRAD": {
+      "n_wrong": 162,
+      "n_fixed": 124,
+      "rate": 0.7654
+    },
+    "SARC": {
+      "n_wrong": 169,
+      "n_fixed": 5,
+      "rate": 0.0296
+    },
+    "SKCM": {
+      "n_wrong": 48,
+      "n_fixed": 0,
+      "rate": 0.0
+    },
+    "STES": {
+      "n_wrong": 170,
+      "n_fixed": 7,
+      "rate": 0.0412
+    },
+    "TGCT": {
+      "n_wrong": 61,
+      "n_fixed": 3,
+      "rate": 0.0492
+    },
+    "THCA": {
+      "n_wrong": 122,
+      "n_fixed": 6,
+      "rate": 0.0492
+    },
+    "THYM": {
+      "n_wrong": 91,
+      "n_fixed": 15,
+      "rate": 0.1648
+    },
+    "UCEC": {
+      "n_wrong": 65,
+      "n_fixed": 7,
+      "rate": 0.1077
+    }
+  }
+}

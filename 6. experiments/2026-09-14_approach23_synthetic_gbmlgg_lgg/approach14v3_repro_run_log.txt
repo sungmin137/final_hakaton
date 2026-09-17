@@ -1,0 +1,63 @@
+fold0 완료
+fold1 완료
+fold2 완료
+fold3 완료
+fold4 완료
+
+=== 재현된 approach14 v3 정직 CV macro F1 = 0.4941 (문서 기록 0.4941과 비교) ===
+
+=== GBMLGG/LGG confusion (행=실제, 열=예측) ===
+실제 GBMLGG (n=461): GBMLGG=193, LGG=125, SARC=49, PRAD=17, OV=15, BRCA=11, UCEC=8, KIPAN=8, STES=6, LAML=3, LUAD=3, PAAD=3, TGCT=3, KIRC=2, LIHC=2, CESC=2, PCPG=2, THCA=2, THYM=2, LUSC=2, HNSC=1, COAD=1, SKCM=1
+실제 LGG (n=229): LGG=120, GBMLGG=80, SARC=12, BRCA=3, OV=3, THYM=3, LAML=2, PRAD=2, CESC=1, STES=1, THCA=1, UCEC=1
+GBMLGG F1=0.4656
+LGG F1=0.4979
+
+=== mutation burden: 맞은 행 vs 틀린 행 (GBMLGG/LGG 실제 라벨 기준) ===
+GBMLGG 정답 (n=193): mean=14.8 median=14.0 std=5.7 min=3 max=27
+GBMLGG 오답 (n=268): mean=10.9 median=9.0 std=9.4 min=0 max=121
+LGG 정답 (n=120): mean=6.5 median=6.0 std=2.7 min=2 max=15
+LGG 오답 (n=109): mean=11.1 median=10.0 std=11.6 min=0 max=121
+
+=== 유전자 빈도 차이: 정답군 vs 오답군 (사전 목록 없이 데이터로만 계산, 상위 10개) ===
+-- GBMLGG (정답 n=193, 오답 n=268) --
+  EGFR: 정답군=0.280 오답군=0.049 diff=-0.231
+  PTEN: 정답군=0.295 오답군=0.067 diff=-0.228
+  IDH1: 정답군=0.352 오답군=0.451 diff=+0.099
+  SPTA1: 정답군=0.088 오답군=0.022 diff=-0.066
+  FBN2: 정답군=0.062 오답군=0.007 diff=-0.055
+  PKHD1: 정답군=0.088 오답군=0.034 diff=-0.055
+  NF1: 정답군=0.109 오답군=0.056 diff=-0.053
+  TP53: 정답군=0.337 오답군=0.388 diff=+0.051
+  RYR2: 정답군=0.098 오답군=0.052 diff=-0.046
+  PCLO: 정답군=0.098 오답군=0.056 diff=-0.042
+-- LGG (정답 n=120, 오답 n=109) --
+  IDH1: 정답군=0.992 오답군=0.560 diff=-0.432
+  TP53: 정답군=0.550 오답군=0.459 diff=-0.091
+  EGFR: 정답군=0.000 오답군=0.073 diff=+0.073
+  PTEN: 정답군=0.000 오답군=0.073 diff=+0.073
+  IDH2: 정답군=0.008 오답군=0.073 diff=+0.065
+  PCLO: 정답군=0.000 오답군=0.064 diff=+0.064
+  RYR2: 정답군=0.008 오답군=0.064 diff=+0.056
+  C3: 정답군=0.000 오답군=0.046 diff=+0.046
+  MXRA5: 정답군=0.000 오답군=0.046 diff=+0.046
+  NF1: 정답군=0.033 오답군=0.073 diff=+0.040
+
+=== 참고: 기존 approach11 문헌 마커 기준 정답/오답군 변이율 ===
+-- GBMLGG --
+  IDH1: 정답군=0.352 오답군=0.451
+  EGFR: 정답군=0.280 오답군=0.049
+  ATRX: 정답군=0.207 오답군=0.220
+  PTEN: 정답군=0.295 오답군=0.067
+  IDH2: 정답군=0.021 오답군=0.019
+  TP53: 정답군=0.337 오답군=0.388
+-- LGG --
+  IDH1: 정답군=0.992 오답군=0.560
+  EGFR: 정답군=0.000 오답군=0.073
+  ATRX: 정답군=0.375 오답군=0.349
+  PTEN: 정답군=0.000 오답군=0.073
+  IDH2: 정답군=0.008 오답군=0.073
+  TP53: 정답군=0.550 오답군=0.459
+
+saved: /Users/admin/Desktop/해커톤_암종분류/branch_khs/6. experiments/2026-09-14_approach23_synthetic_gbmlgg_lgg
+
+[exited with code 0]
