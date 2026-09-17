@@ -1,0 +1,195 @@
+# 최종 보고서 — 유전자 변이 기반 암 아형(SUBCLASS) 26종 분류 (2026-09-09 ~ 09-18)
+
+팀: 성민(주 파이프라인·접근 1·2·12·14), 혜림(접근 15·16·19), 혜성(접근 8·9·11·22). 저장소 `sungmin137/final_hakaton`, main 브랜치.
+**최종 제출 = 32차 `6. experiments/submissions/twin_rule/approach14_v21_20260917_0900_twin_rule.csv`, Public LB 0.49598 (팀 최고).** 재현: `python3 "4. src/submissions_source/approach14_v21_20260917_0900.py"`.
+
+---
+
+## 1. 문제와 데이터
+
+| 항목 | 내용 |
+|---|---|
+| 과제 | 환자 한 명의 유전자 변이 프로파일로 암 아형 26종(SUBCLASS) 다중 분류 |
+| 입력 | 유전자 4,384개 열. 값은 `WT`(변이 없음) 또는 아미노산 변이 문자열(예 `V600E`, `R273C`, `W288fs`, `R213*`). 한 셀에 여러 변이는 공백으로 구분 |
+| train | 6,201행, 26 클래스. 최대 BRCA 786, 최소 DLBC 38 |
+| test | 2,546행 (라벨 없음). 결측 셀 237개는 상수 `WT`로 처리(통계 미사용) |
+| 평가 | Macro F1. Public = test 100%, 리더보드가 최종 |
+| 규칙 | 외부 데이터 금지, 사전학습 모델 허용, 하루 4회 제출, test를 학습·인코딩·스케일링·결측 처리에 쓰면 수상 제외. 팀 기준(9/14 확정): **test 데이터 분석 자체 금지, 모든 근거는 train** |
+
+### 데이터에서 발견한 구조 (전부 train)
+1. **쌍둥이 중복**: 같은 환자가 두 라벨로 두 번 들어 있음 — KIPAN↔KIRC 276쌍, GBMLGG↔LGG 173쌍(완전 동일 행). KIPAN은 KIRC를 포함하는 상위 범주, GBMLGG는 LGG를 포함. 일반 K-fold CV는 이 때문에 +0.05 부풀려짐 → **쌍둥이를 같은 fold에 두는 정직 CV**(`--group-twins`, StratifiedGroupKFold) 도입. `3. docs/04_duplicate_twins.md`
+2. **변이 수 분포**: train은 0~10개가 40%, 11~30개 38%, 31~100개 16%, 101~396개 5%, 396개 초과 1%. 저변이 행(SARC·PRAD·PCPG·THYM·OV·THCA·LAML)은 정보가 거의 없어 어떤 방법으로도 F1 0.2~0.35.
+3. **동의변이 배치 표지**: ACC는 특정 동의변이(SOWAHC L42L 등 12개)가 순도 1.0으로 붙어 있어 F1 0.94. 기술적 배치 효과로 해석. `3. docs/02`
+4. **고순도 마커**: IDH1 R132H→뇌(0.96), VHL→신장(0.90), NPM1 fs→LAML(1.0), APC R1450*→COAD(0.86), BRAF V600K→SKCM(1.0). 모델이 이미 학습해 규칙으로 덮어써도 이득 없음. `3. docs/06 §9`
+
+### 1.5 데이터를 어떻게 봤나 — 탐색 과정 (전부 train, 시간순)
+1. **구조 확인(9/9 오전)**: 열 4,386개 = ID + SUBCLASS + 유전자 4,384. 값은 문자열. 한 셀에 변이가 여러 개면 공백으로 이어져 있음 → 셀을 토큰으로 쪼개는 파서가 첫 번째 도구. 개별 변이 토큰 255,164개.
+2. **변이 표기 파싱**(`3. docs/01`): HGVS 단백질 표기. 정규식으로 다섯 유형으로 나눔 — missense(`R273C`), 동의(`L42L`, 앞뒤 글자 같음), 종결(`R213*`), 프레임시프트(`W288fs`), 기타(삽입·결실·splice). 위치 숫자도 뽑아 hotspot(반복 위치) 집계.
+3. **타깃 불균형**: 26 클래스, BRCA 786 ~ DLBC 38(20배). 평가가 Macro F1이라 소수 클래스 하나가 전체의 1/26 = 0.038을 차지 → 소수 클래스 재현율이 점수의 열쇠라는 것을 처음부터 인식.
+4. **클래스별 변이 수**: 중앙값이 THYM 2, LAML 3, THCA 4 … LUSC 57, SKCM 85.5로 클래스마다 크게 다름 → 변이 개수 자체가 강한 피처. 동시에 저변이 클래스(SARC·PRAD·PCPG·THYM·OV)는 "구분할 정보가 거의 없다"는 한계도 확인.
+5. **클래스별 표지 유전자 프로필**(`3. docs/03`): 클래스마다 lift(클래스 내 변이율 ÷ 나머지 변이율)가 큰 유전자와 구체 변이를 표로. 예: COAD APC 72%, LGG IDH1 79%, LUSC TP53 71%·RYR2 43%, KIRC VHL 45%, LAML NPM1 26%, ACC SOWAHC 33%(동의변이). 표지 커버리지(표지 유전자 하나라도 있는 비율)가 LUSC 84%·LGG 83%인 반면 CESC 21%·PCPG·SARC는 낮음 → 어느 클래스가 원리적으로 어려운지 지도가 생김.
+6. **도메인 지식 대조**(`3. docs/02`): 이 데이터가 TCGA 체세포 변이라는 것, 코드 26개의 뜻, **라벨 계층 문제**(KIPAN ⊃ KIRC, GBMLGG ⊃ LGG), driver/passenger/hotspot 개념, 암종별 대표 driver 변이율, 패널에 없는 유명 driver(TERT·KIT 등 77개), 변이 부담(TMB)과 초과변이. 문헌 표는 `approach4_literature/literature_map.py`에 정리(환자 데이터 아님).
+7. **쌍둥이 발견(9/9 저녁)**: 접근 1 점수를 넣은 v2가 일반 CV에서 0.3845→0.4942로 급등한 것이 수상해 원인을 파헤침 → 같은 환자가 KIPAN/KIRC, GBMLGG/LGG로 두 번 들어 있고, 정확히 같은 행이 fold를 넘나들며 답을 외우고 있었음. 라벨 뒤집기 규칙이 99.5% 정확. → **쌍둥이를 같은 fold에 묶는 정직 CV**로 전환(v2 0.449). 1차 제출 LB 0.41이 CV 0.494와 크게 어긋난 것도 이것으로 설명.
+8. **1차 제출 후 test 관찰(9/9, `3. docs/05`)**: 결측 237셀(WT로), train과 동일 행 235개(9.2%), 초과변이 5.6%(train 1.6%). 당시엔 관찰만 기록. 9/14 팀 기준 확정 뒤에는 이 문서를 근거로 쓰지 않음(기록용 표시).
+9. **시각화**(`3. docs/viz/mutation_associations.html`): 클래스×유전자 연관 대시보드로 표지 구조를 팀이 같이 봄.
+10. **실패 뒤 재분석(9/13~14)**: 16차 블렌드 OOF의 클래스별 F1·혼동 행렬로 손실 위치를 짚음 — SARC(정밀 0.13)·PRAD(0.23)가 큰 클래스(BRCA)를 빨아들이는 "싱크"인데, 배율을 재적합하면 오히려 나빠짐(중첩 CV) → 그것이 Macro F1의 최적 교환이라는 결론.
+
+---
+
+## 2. 진행 방법 (워크플로우)
+
+1. **정직 CV만 신뢰**: 5-fold, 쌍둥이 그룹 묶음, seed 42. 모든 fit(인코더·열 목록·점수표·배율·규칙)은 fold 학습부에서만.
+2. **한 번에 한 요소**: 기준선 대비 요소 하나만 바꿔 제출, 판단은 LB. 두 모델 확률은 저장본을 재사용해 재학습 편차(±0.015)를 배제.
+3. **재현성**: 제출 csv = 같은 이름의 재현 스크립트(`4. src/submissions_source/approachN_vK_YYYYMMDD_HHMM.py`), 두 번 실행해 md5 일치 확인. 실수 피처는 float64 + 소수점 4자리.
+4. **기록**: 접근별 `2. team/approaches/approachN.md`, 제출 색인 `5. submissions/README.md`, 실험 한 줄 로그 `3. docs/experiments_log.md`, 현재 상태 `2. team/STATUS.md`, 규칙 대조 `2. team/rules_compliance.md`.
+5. **실행기**: 정직 CV는 `bash "4. src/common/run_cv.sh" <features> [params]`로만. 인자 검증, 골격 누락 자가 점검(`check_features.py`: cw_ 열 수를 v4와 대조), 시작·종료·결과를 `6. experiments/cv_runs.log`에 기록, 실패 시 exit≠0.
+6. 제출 전 점검은 형식만(2,546행, ID·SUBCLASS, ID 순서, 라벨 집합). test 예측 분포는 보지 않는다.
+
+### 2.5 접근 순서와 판단의 흐름 (왜 그 다음으로 갔나)
+| 시점 | 관찰 | 판단 → 다음 행동 |
+|---|---|---|
+| 9/9 | 변이 개수·표지 유전자가 강함 | 접근 1: 클래스별 변이 개수 가중치 점수 140개를 XGB에 투입(LB 0.415) |
+| 9/9 | 소수 클래스 재현율이 관건 | 클래스 배율 후처리(train OOF 좌표 상승) + 쌍둥이 규칙 → 3차 0.437 |
+| 9/9~10 | 피처를 더 넣으면(문헌·전처리) CV↑ LB↓ | "트리는 지배 피처 때문에 새 정보를 무시한다" 가설. 피처 추가 축 중단 |
+| 9/10~11 | 규제·배깅·라우팅 전부 LB↓ | CV↔LB 무상관 확인. 판단은 LB로, 한 번에 한 요소 원칙 |
+| 9/13 | 9차 이득의 77%가 접근 1 점수 | **새 정보는 같은 "클래스별 집약 점수" 형태로** 넣자 → 접근 14(유형 분리 점수) |
+| 9/13 | 유형 분리 모델 단독은 낮지만 31~100 구간이 큼 | 합치지 말고 **다른 정보 모델끼리 로그평균** → 16차 0.4564(첫 도약) |
+| 9/14 | 라우터·가중치·규칙·선형 파트너 전부 ±0 또는 ↓ | 후처리 축 플래토. "다른 표현"이 아니라 "다른 정보"만 통한다 |
+| 9/14 | 팀 기준 확정: test 분석 금지 | 초과변이 규칙(21차)·하이브리드 제외. 이후 train 근거만 |
+| 9/14 저녁 | 아직 안 쓴 정보 = 변이 서명 | 치환 스펙트럼(행 내부 비율, fit 없음) → v4s 단독 +0.019, 23차 0.4752(둘째 도약) |
+| 9/15 | 혜림: NB 파트너 +0.0015 (0.4799) | NB 정보를 피처로도 넣어보자(v4sn) → 첫 시도는 등록 버그로 실패(27차) |
+| 9/16 | 버그 발견·수정 | v4sn 단독 0.5324(최고). 파트너 .2 → 30차 0.4803, .4 → 31차 0.4810 |
+| 9/17 | NB 파트너와 v4sn은 같은 정보 | 파트너 .1로 내리고 v4sn .45로 → **32차 0.4960(셋째 도약)**. 주변 변형은 전부 ↓ → 최종 확정 |
+
+---
+
+## 3. 최종 모델 v21 — 구성 상세
+
+로그 가중 결합 5파트 → 클래스 배율 26개 곱 → argmax → 쌍둥이 규칙.
+
+| 파트 | 가중 | 피처 종류 | 모델 | 단독 정직 CV(배율) | 무엇을 보나 |
+|---|---|---|---|---|---|
+| v4s | 0.10 | `v4s` = v4 + 치환 스펙트럼 | XGB mild_col | 0.5035 | 유전자 유무 + 오타의 필체 |
+| **v4sn** | **0.45** | `v4sn` = v4s + NB 점수표 26열(내부 OOF) | XGB mild_col | **0.5324** (단일 최고) | 위 + "필체가 어느 암종 증거인가" |
+| v2 | 0.20 | `v4p` = v4 + 변이 유형 분리 점수 | XGB mild_col | 0.4767 | 같은 유전자라도 missense/절단/동의 구분 |
+| v4sp | 0.15 | `v4sp` = v4p + 치환 스펙트럼 | XGB mild_col | 0.4980 | 유형 분리 + 필체 |
+| NB | 0.10 | 치환 프로필 383개 횟수 | MultinomialNB α0.5 | 0.2393 | 필체를 증거 합산으로 읽는 파트너(혜림 접근16) |
+
+- **결합**: 각 파트 확률의 로그를 가중합 → softmax (기하평균). 한 파트가 "절대 아님"이라고 한 클래스는 낮게 남는다. `approach14_cw_plus/blend.py` `run_multi`.
+- **클래스 배율**(`6. experiments/2026-09-09_v4_xgb_cs/class_scales_recovered.json`): 9/9 3차 모델의 train OOF에서 좌표 상승으로 맞춘 26개 값. 이후 어떤 재적합도(중첩 CV 포함) 이보다 나빠 **고정**. 값: SARC 3.0, KIRC 2.5, THYM 2.5, DLBC 2.0, LUSC 2.0, PRAD 2.0, CESC 1.5, BLCA·LGG·LUAD·PAAD·PCPG 1.2, KIPAN·LIHC·UCEC 1.0, OV 0.85, GBMLGG·HNSC·LAML·TGCT 0.7, ACC·BRCA·COAD·SKCM·STES·THCA 0.5.
+- **쌍둥이 규칙**(`postprocess/twin_rule.py`): test 행이 train 행과 완전히 같으면 그 train 라벨의 짝(KIPAN↔KIRC, GBMLGG↔LGG)으로 답. 행 단위 추론(1-NN 성격). 동점(train에 양쪽 다)이면 모델 답 유지(9/13 수정).
+- 정직 CV 0.5433, LB 0.49598. CV−LB 차이 −0.047(test에 고변이 행이 많은 분포 차이).
+
+### 3.1 v4 골격 피처 (3,844열, `features/features.py` + 접근 1·2)
+- `g_<유전자>` 4,384개 켜짐/꺼짐(전부 WT인 열 제거), 변이 개수 계열(`n_mut_genes`, `n_missense`, `n_synonymous`, `n_nonsense`, `n_frameshift`, `n_other`, `n_tokens`, `n_functional`).
+- **접근 1 클래스별 집약 점수 `cw_*` 140열**(`approach1_count_weight/count_weights.py`): 유전자 단위·변이 단위 토큰의 Bernoulli NB 로그우도비를 클래스별로 합산(토큰 수 평균), 내부 5-fold OOF, float64+4자리. 9차 모델 분기 이득의 77%.
+- **인사이트 피처**(`approach2_knowledge`, hotspot 위치·LoF 유전자·조합·특수 그룹)와 **지식 피처**(BLOSUM62·아미노산 성질 변화량, Henikoff 1992·Kyte-Doolittle 1982) 118열.
+- XGBoost `mild_col`: 100그루, 학습률 0.1, 깊이 6, colsample_bytree 0.7, hist, seed 42. 규제를 더 세게(colsample 0.5, 잎 규제) 하면 LB 하락(11차).
+
+### 3.2 접근 14 v2 점수 `cwp_*` (v4p, `approach14_cw_plus/cw_plus.py`)
+- 토큰 `유전자:missense|lof|syn`(유형 분리) NB 점수 28열 + 저변이·상피암 군집 내 log-softmax 상대 점수 12열. 내부 OOF, 쌍둥이는 하나로만 셈.
+- v4p 단독은 9차보다 낮지만(0.4767) 변이 31~100 구간이 0.403→0.457로 올라, 9차와 로그평균한 16차(0.4564, +0.019)가 첫 도약.
+
+### 3.3 치환 스펙트럼 (`features/spectrum.py` `spectrum_features`, 411열)
+- 행 안에서 missense 치환 쌍 20×20=380종의 비율(합 1), 성질 클래스(H 소수성/P 극성/+/−/G) 5×5 접힘 25열, 변이 유형 비율 6열. **fit 통계 없음(행 내부 정규화만)**.
+- 도메인 근거: 변이 서명(UV→SKCM, 흡연→LUAD·LUSC, POLE→UCEC, MSI→COAD·STES, APOBEC→BLCA·CESC·HNSC)은 특정 뉴클레오타이드 치환이라 아미노산 치환 쌍 분포로 드러난다.
+- v4s 단독 0.5035(9차 0.4847 +0.019). 23차 v11(v4s+v2) LB 0.4752로 두 번째 도약(+0.019). 변형(종결·fs 잔기 분포 v2, 수축 v3, TP53 전용 v4st)은 이득 없음 → 원시 비율이 최선.
+
+### 3.4 NB 점수표 피처 (`features/spectrum_nb.py` `SpectrumNBFeatures`, 28열)
+- 혜림 접근16의 MultinomialNB(383개 횟수: 방향 있는 치환 380 + 절단·동의·기타)를 **파트너가 아니라 v4s 모델의 피처(클래스별 로그확률 26 + max·margin)**로. 학습 행은 내부 5-fold OOF(쌍둥이 묶음), test는 전체 fit 후 transform.
+- v4sn 단독 0.5324(단일 최고). 파트너 비중을 .2→.45로 올리고 NB 파트너를 .15→.1로 내린 32차가 LB 0.4960(+0.015)으로 세 번째 도약. NB 파트너를 0으로 빼면(33차) −0.013, 내부 10-fold 변형 추가(34차) −0.007 → v21은 날카로운 최적점.
+- 주의: NB 로그확률은 변이 수에 따라 포화(train margin 평균 0~10개 0.7 → 396+ 19.0). 정규화판(v4sm 0.5177)은 오히려 낮음. 27차(0.4639)는 이 피처 종류 등록 버그(골격 누락)로 골격 없이 학습된 v4sn 때문이었고 수정 후 정정(9/16).
+
+---
+
+## 4. 접근법 전체 요약 (통한 것 / 안 통한 것)
+
+### 통한 것 (LB 도약 순)
+| 도약 | 내용 | LB |
+|---|---|---|
+| 3차 | 클래스 배율 후처리(train OOF) + 쌍둥이 규칙 | 0.415 → 0.437 |
+| 9차 | colsample 0.7 (유일하게 무해한 규제) | 0.4377 |
+| 16차 | 접근 14 v2(변이 유형 분리 점수) 모델을 9차와 로그평균 | 0.4564 |
+| 23차 | 치환 스펙트럼 모델(v4s) + v2 | 0.4752 |
+| 26차(혜림) | 접근16: NB 파트너 .15 | 0.4799 |
+| 30~32차 | NB 점수표를 v4s 피처로(v4sn) + 비중 조정 | 0.4803 → 0.4810 → **0.4960** |
+
+공통 조건: **원본 표에 없던 정보**(변이 유형·치환 필체·필체의 클래스별 증거)를 트리가 쓸 수 있는 형태(클래스별 집약 점수 또는 행 내부 비율)로 넣고, 그 모델을 기존 모델과 로그평균. 이득은 test에 많은 변이 31~100 구간에서 나옴.
+
+### 안 통한 것 (정직 CV 또는 LB로 닫힘)
+- 피처를 원본 열로 추가: 문헌 driver(접근 4), 전처리 확장을 v4에 합치기(접근 7), 위치 구간·치환 성질·공변이 쌍·밴드별 토큰(접근 14 v10). 트리가 무시하거나 소수 클래스 붕괴.
+- 같은 정보의 다른 모델 블렌딩: 접근 3·5, CatBoost, 16모델 배깅(8차 0.4228), 이진 유전자 LR(19차 0.4428), 접근 7 모델(20차 0.4483), 스펙트럼 LR 파트너.
+- 규제·구조: colsample 0.5 + 잎 규제(11차 0.4112), 트리 수, 계층 학습(24클래스), 군집 전문가, 배율 재적합(중첩 CV 포함, 14·15차), STES 밴드별 배율.
+- 라우팅·규칙: GBMLGG/LGG·KIRC/KIPAN 라우팅(혜성 접근 11 v1~v22, 12차 0.4331), HNSC/STES 재판기 확률 결합, 선택적 NB 게이트(28차 0.4687), 문헌 확정 마커 덮어쓰기, 마커 일관성 규칙, 클래스별 변이 수 범위 규칙.
+- 규정상 제외: 초과변이 규칙(21차 0.4689, 발견 계기가 test 예측 점검), test 행 간 동일 쌍 규칙(22차), 상피 동결 하이브리드, 제출 전 STES 비율 점검. `rules_compliance.md`
+
+---
+
+## 5. 코드 지도
+
+```
+4. src/common/
+  main.py                     load_train/load_test(fillna WT), FeatureMaker(kind).fit/transform, PARAM_SETS, cross_validate(--group-twins), fit_full_and_submit
+  run_cv.sh · check_features.py   정직 CV 실행기 + 골격 누락 자가 점검
+  make_submission.py          test.csv를 읽는 유일한 제출 경로(구형 접근용)
+  features/features.py        build_features: g_ 켜짐/꺼짐 + 변이 개수
+  features/spectrum.py        spectrum_features(원시 비율, 최종 사용) · _v2/_v3/_tp53(폐기)
+  features/spectrum_nb.py     spectrum_counts, SpectrumNBFeatures(내부 OOF NB 점수표; normalized 옵션은 폐기)
+  approach1_count_weight/     CountWeightFeatures: cw_ 140열
+  approach2_knowledge/        InsightFeatures, KnowledgeFeatures(BLOSUM62)
+  approach14_cw_plus/cw_plus.py    CWPlusFeatures(cwp_ 유형 분리·군집 상대), 토큰 생성기들
+  approach14_cw_plus/blend.py      log_blend, run(2모델), run_multi(다중 파트, 형식 assert), model_proba(kind), third_*
+  approach14_cw_plus/pair_referee.py   쌍 재판기 확률 결합(폐기)
+  postprocess/class_scale.py  배율 적합(참고용; 최종은 복원 벡터 고정)
+  postprocess/twin_rule.py    쌍둥이 규칙(동점 = 모델 답 유지)
+  postprocess/{hypermut,test_pair,class_range,marker_consistency}_rule.py   실험 기록용, 최종 미사용
+  approach16_spectrum_profile_score_cv.py (혜림)   NB 파트너 OOF 검증; approach21_* 은 동일 실험 호환 경로
+  approach15_*.py (혜림) · approach11_twin_handling/ (혜성) · approach10_*, approach12_*, approach13_*, approach18_* (라우팅·규제 실험)
+4. src/submissions_source/    제출 재현 스크립트(v3~v23). 최종 approach14_v21_20260917_0900.py
+5. submissions/ · 6. experiments/submissions/twin_rule/   제출 csv(기본본 / 쌍둥이 규칙본)
+6. experiments/               OOF 확률(2026-09-11_v4_xgb_mild_col_grp=9차, 2026-09-13_v4p=v2, 2026-09-14_v4s, v4sp, 2026-09-16_v4sn …), 배율 json, cv_runs.log
+```
+
+### 최종 파일 재현 경로
+1. 9/13 `approach14_v3_20260913_2132.py` → v2 모델 test 확률 저장(`6. experiments/submissions/approach14_v3_20260913_2132/test_proba_v2.npy`, p2).
+2. 9/14 `approach14_v11_…`(v4s), 9/14 `approach14_v12_…`(v4sp) → 각 test 확률 저장(part0, part3).
+3. 9/16 `approach14_v19_…` → v4sn·NB test 확률 저장(part1, part4).
+4. 9/17 `approach14_v21_20260917_0900.py` → 위 저장본을 .1/.45/.2/.15/.1로 로그 결합 → 배율 → 규칙 → `twin_rule/approach14_v21_…_twin_rule.csv` (md5 8eeec38f…, 두 번 실행 동일).
+처음부터 다시 만들려면 `run_multi`에 `model_proba("v4s")`, `model_proba("v4sn")`, `model_proba("v4p")`, `model_proba("v4sp")`, NB 함수를 넣으면 된다(XGB seed 42, 결정적).
+
+---
+
+## 6. 리더보드 전체 이력 (34회)
+| 차수 | 구성 | LB |
+|---|---|---|
+| 1 | 접근1 v2 | 0.4150 |
+| 2 | 접근3 v3 CatBoost 앙상블 + 배율 | 0.4173 |
+| 3 | 접근2 v2 v4 피처 + 배율 + 규칙 | 0.4369 |
+| 4~8 | 문헌 오버라이드(0.4032)·접근5(0.4122/0.4121)·압축(0.3973)·배깅(0.4228) | ↓ |
+| 9 | colsample 0.7 + 복원 배율 | 0.4377 |
+| 10~12 | 변이 단위 점수 제거(0.4297)·강한 규제(0.4112)·혜성 라우팅(0.4331) | ↓ |
+| 13 | 혜림 접근19 라우터 + 규칙 | 0.4424 |
+| 14~15 | 혜성 배율 재계산 | 0.4342 / 0.4390 |
+| 16 / 17 / 18 | 9차+v2 로그평균 / +규칙 / w0.3 | 0.4564 / 0.4564 / 0.4563 |
+| 19 / 20 | + 이진 LR / + 접근7 모델 | 0.4428 / 0.4483 |
+| 21 / 22 | 초과변이 규칙 / + test 쌍 규칙 (규정상 제외) | 0.4689 / 0.4683 |
+| 23 / 24 / 25 | v11 v4s+v2 / v13 .6/.4 / v14 +v4sp | 0.4752 / 0.4765 / 0.4784 |
+| 26(혜림) | 접근16 v1 NB 파트너 | 0.4799 |
+| 27 | v18 (골격 누락 v4sn, 버그) | 0.4639 |
+| 28 / 29 | 혜림 게이트 / v17 가중치 | 0.4687 / 0.4785 |
+| 30 / 31 | v19 v4sn .2 / v20 v4sn .4 | 0.4803 / 0.4810 |
+| **32** | **v21 v4sn .45 / NB .1** | **0.49598** |
+| 33 / 34 | v22 NB 0 / v23 + v4sn10 | 0.4832 / 0.4887 |
+
+---
+
+## 7. 교훈
+1. CV는 LB 절대값을 예측하지 못한다(차이 −0.03~−0.07, ±0.02 흔들림). 옮겨진 것은 "새 정보 모델의 로그평균"(16·23·32차)뿐이고, 같은 정보의 재표현·수백 행을 바꾸는 규칙·스태킹은 CV가 올라도 LB에서 떨어졌다.
+2. 새 정보는 원본 열이 아니라 **클래스별 집약 점수 또는 행 내부 비율**로 넣어야 트리가 쓴다. 합치지 말고 별도 모델로 블렌드.
+3. 배율은 한 번 맞춘 뒤 고정. 재적합은 항상 손해.
+4. LB는 블렌드 비중에 매우 민감(v21 주변 ±0.015). 최종 선택은 실제 LB 최고인 파일로.
+5. 공정: 새 피처 종류 등록 시 목록 7곳 전부(자가 점검으로 강제), 백그라운드 작업은 시작 확인, zsh 변수 분리 주의, 재현은 md5로.
+
+## 8. 규정 준수 요약
+- test는 `load_test` 한 곳에서 추론 시에만. 결측은 상수. 모든 fit·배율·규칙·가중치·검증 선택은 train.
+- 최종 v21은 test 근거가 전혀 없는 구성. 회색 항목(21차 초과변이 규칙, 22차 test 쌍 규칙, 상피 동결 하이브리드, 게이트 선택)은 최종에 포함하지 않았고 `rules_compliance.md`에 경위를 남겼다.

@@ -1,0 +1,98 @@
+{
+  "rule": "train.csv only; test.csv is never read",
+  "seed": 42,
+  "v11_reconstructed_macro_f1": 0.513696,
+  "score_table_only_macro_f1": 0.238332,
+  "blends": [
+    {
+      "score_table_weight": 0.02,
+      "macro_f1": 0.517899,
+      "delta_vs_v11": 0.004203,
+      "accuracy": 0.493791,
+      "changed": 105,
+      "helped": 33,
+      "hurt": 17,
+      "burden_macro_f1": {
+        "0_10": 0.2559,
+        "11_30": 0.42387,
+        "31_100": 0.47114,
+        "101_plus": 0.39652
+      }
+    },
+    {
+      "score_table_weight": 0.05,
+      "macro_f1": 0.523991,
+      "delta_vs_v11": 0.010295,
+      "accuracy": 0.498307,
+      "changed": 269,
+      "helped": 91,
+      "hurt": 47,
+      "burden_macro_f1": {
+        "0_10": 0.25964,
+        "11_30": 0.43165,
+        "31_100": 0.47532,
+        "101_plus": 0.37973
+      }
+    },
+    {
+      "score_table_weight": 0.08,
+      "macro_f1": 0.529112,
+      "delta_vs_v11": 0.015416,
+      "accuracy": 0.501532,
+      "changed": 407,
+      "helped": 135,
+      "hurt": 71,
+      "burden_macro_f1": {
+        "0_10": 0.25918,
+        "11_30": 0.4377,
+        "31_100": 0.50549,
+        "101_plus": 0.36912
+      }
+    },
+    {
+      "score_table_weight": 0.1,
+      "macro_f1": 0.530808,
+      "delta_vs_v11": 0.017112,
+      "accuracy": 0.503145,
+      "changed": 489,
+      "helped": 162,
+      "hurt": 88,
+      "burden_macro_f1": {
+        "0_10": 0.25742,
+        "11_30": 0.44299,
+        "31_100": 0.50795,
+        "101_plus": 0.36804
+      }
+    },
+    {
+      "score_table_weight": 0.15,
+      "macro_f1": 0.528054,
+      "delta_vs_v11": 0.014358,
+      "accuracy": 0.501209,
+      "changed": 696,
+      "helped": 213,
+      "hurt": 151,
+      "burden_macro_f1": {
+        "0_10": 0.25338,
+        "11_30": 0.44517,
+        "31_100": 0.50618,
+        "101_plus": 0.3974
+      }
+    },
+    {
+      "score_table_weight": 0.2,
+      "macro_f1": 0.526842,
+      "delta_vs_v11": 0.013147,
+      "accuracy": 0.498952,
+      "changed": 911,
+      "helped": 260,
+      "hurt": 212,
+      "burden_macro_f1": {
+        "0_10": 0.25746,
+        "11_30": 0.44991,
+        "31_100": 0.49776,
+        "101_plus": 0.33845
+      }
+    }
+  ]
+}

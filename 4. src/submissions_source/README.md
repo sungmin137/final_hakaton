@@ -33,3 +33,17 @@
 | approach14_v5_20260913_2150.py | 2. team/approaches/approach14.md | 5. submissions/approach14_v5_20260913_2150.csv (w=0.3) |
 | approach14_v6_20260913_2150.py | 2. team/approaches/approach14.md | 5. submissions/approach14_v6_20260913_2150.csv (w=0.7) |
 | approach14_v9_20260914_0010.py | 2. team/approaches/approach14.md | 5. submissions/approach14_v9_20260914_0010.csv (16차 + 이진 유전자 LR w3=0.2) |
+| approach14_v10_20260914_0110.py | 2. team/approaches/approach14.md | 5. submissions/approach14_v10_20260914_0110.csv (9차+v2+a7 세 모델) |
+| approach14_v11_20260914_1627.py | 2. team/approaches/approach14.md | 5. submissions/approach14_v11_20260914_1627.csv (v4s 스펙트럼 + v2) |
+| approach14_v12_20260914_1627.py | 2. team/approaches/approach14.md | 5. submissions/approach14_v12_20260914_1627.csv (4모델) |
+| approach14_v13_20260915_0900.py | 2. team/approaches/approach14.md | 5. submissions/approach14_v13_20260915_0900.csv (v4s .6 / v2 .4) |
+| approach14_v14_20260915_1030.py | 2. team/approaches/approach14.md | 5. submissions/approach14_v14_20260915_1030.csv (v4s .5/v2 .3/v4sp .2) |
+| approach14_v15_20260915_1030.py | 2. team/approaches/approach14.md | 5. submissions/approach14_v15_20260915_1030.csv (v4s .7/v2 .3) |
+| approach14_v16_20260915_1130.py | 2. team/approaches/approach14.md | 5. submissions/approach14_v16_20260915_1130.csv (v14 + spec .15) |
+| approach14_v17_20260915_1345.py | approach14.md | 5. submissions/approach14_v17_20260915_1345.csv (혜림 NB + 스펙트럼 모델군) |
+| approach14_v18_20260915_1400.py | approach14.md | 5. submissions/approach14_v18_20260915_1400.csv (5모델, v4sn 포함) |
+| approach14_v19_20260916_1110.py | approach14.md | 5. submissions/approach14_v19_20260916_1110.csv (수정 v4sn 5모델) |
+| approach14_v20_20260916_1140.py | approach14.md | 5. submissions/approach14_v20_20260916_1140.csv (v4sn .4) |
+| approach14_v21_20260917_0900.py | approach14.md | 5. submissions/approach14_v21_20260917_0900.csv (v4sn .45 / NB .1) |
+| approach14_v22_20260917_1030.py | approach14.md | 5. submissions/approach14_v22_20260917_1030.csv (NB 파트너 0, v4sn .5) |
+| approach14_v23_20260917_1120.py | approach14.md | 5. submissions/approach14_v23_20260917_1120.csv (v21 + v4sn10) |
