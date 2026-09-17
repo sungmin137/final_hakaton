@@ -44,3 +44,4 @@
 | approach14_v18_20260915_1400.py | approach14.md | 5. submissions/approach14_v18_20260915_1400.csv (5모델, v4sn 포함) |
 | approach14_v19_20260916_1110.py | approach14.md | 5. submissions/approach14_v19_20260916_1110.csv (수정 v4sn 5모델) |
 | approach14_v20_20260916_1140.py | approach14.md | 5. submissions/approach14_v20_20260916_1140.csv (v4sn .4) |
+| approach14_v21_20260917_0900.py | approach14.md | 5. submissions/approach14_v21_20260917_0900.csv (v4sn .45 / NB .1) |
