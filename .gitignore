@@ -3,6 +3,8 @@
 /models/
 *.csv
 !5. submissions/*.csv
+# submission.csv는 "마지막으로 실행한 사람"이 계속 덮어쓰는 개인 임시 사본이라 브랜치마다 내용이 달라짐 → merge 충돌 반복 유발, 추적 제외
+5. submissions/submission.csv
 
 # Python
 __pycache__/
@@ -18,6 +20,9 @@ venv/
 !6. experiments/**/per_class_f1.csv
 !6. experiments/**/cv_results.csv
 !6. experiments/**/confusion_matrix.csv
+# 9/15~16 진단 실험 2건: 결과 CSV까지 재현성 위해 전부 포함 (해당 폴더만 예외)
+!6. experiments/2026-09-14_approach23_synthetic_gbmlgg_lgg/*.csv
+!6. experiments/2026-09-14_approach23_anomaly_scan/*.csv
 optuna.db
 catboost_info/
 lightning_logs/

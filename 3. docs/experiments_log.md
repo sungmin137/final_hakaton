@@ -50,6 +50,7 @@
 | 2026-09-11 | v12 정직 CV (col0.5 + mcw3·λ3) | | 0.4712 (배율 0.4867) | - | v11(0.4721/0.4878)과 동급 |
 | 2026-09-11 | 11차 approach2 v12 (col0.5 + mcw3·λ3) | | 0.4712 (배율 0.4895, CV 최고) | **0.4112** | LB 최저. CV와 LB 역상관 재확인. 규제 세기의 상한은 col0.7 단독 |
 | 2026-09-11 | 접근13 v1 개선판 라우팅 (정직 CV) | 9차 OOF×배율 + 쌍별 LR(쌍둥이 제외, conf≥0.5, gap≤0.1) | 0.4847 → 0.4883 (+0.0036) | - | 쌍별 기여 ±0.001. 소폭 |
+| 2026-09-10 | 접근10 혼동 암종 쌍 재판기 (혜림) | V4 상위 2개가 고정 혼동 쌍이며 확률 차이≤0.30일 때만, 해당 쌍 전용 LR로 원본 변이 유무 재판 | **MacroF1 0.4749 / Acc 0.4796** | - | V4 0.4683 대비 +0.0066. KIRC–KIPAN·LGG–GBMLGG 쌍둥이 충돌 제외. test 미사용 |
 | 2026-09-13 | 접근14 v1 v4p (정직 CV, col0.7) | cw_ 확장 96열(유형분리·구간·군집상대) | 0.4582 (배율 0.4780) | - | 9차 0.4669/0.4847보다 낮음. THYM·LAML·TGCT 급락 |
 | 2026-09-13 | 접근14 v2 (정직 CV, col0.7) | 유전자 단위 유형 분리 점수 + 군집 상대, 토큰 없는 행 0 | 0.4608 | - | 9차 0.4669보다 여전히 낮음 |
 | 2026-09-13 | 접근14 v3 approach14_v3_20260913_2132 | 9차 모델 + v2 모델 로그평균(w0.5) + 복원 배율 + 규칙 | 배율 0.4941 (heldout +0.010/+0.004), 31~100구간 0.403→0.457 | (제출 예정) | 후보 |
@@ -66,6 +67,13 @@
 | 2026-09-14 | 접근14 v10 새 토큰 4종 (정직 CV) | v4p + pos/prop/pair/band 각각, 9차 블렌드 | 단독 0.4882/0.4828/0.4690/0.4712, 블렌드 최고 0.4972(+0.003) | - | 31~100 개선 없음, 절반 교차 불일치. 전부 미제출. 집약 점수 레시피 소진 |
 | 2026-09-14 | 배율 재적합 중첩 CV (16차 블렌드 OOF) | 26개 전부 / STES·HNSC 고정 / SARC·PRAD만 / 저변이 6개 | 0.4890 / 0.4864 / 0.4936 / 0.4921 vs 고정 0.4941 | - | 전부 고정 벡터보다 낮음. 배율 축 종료. SARC 싱크는 macro F1 최적해 |
 | 2026-09-14 | 문헌 확정 마커 덮어쓰기 규칙 (OOF) | 한 암종 전용 driver 58개 기능성 변이 / hotspot만 | 0.4941 → 0.3624 / 0.4843 | - | 규칙별 순이득 전부 ≤0. train 고순도 마커 326행은 모델 94.8% > 규칙 93.6%. 여백 0 |
+| 2026-09-14 | (혜성) 진단 4종: BRCA-OV-PRAD 재판기·mutation-event LR·오류상관·저변이구간 | 16차 블렌드 OOF 재사용, 새 학습 없음 | 개선 없음 | - | 전부 폐기, 기록만 유지. `6. experiments/2026-09-14_khs_*` |
+| 2026-09-14 | (혜성) 접근23 v1: GBMLGG/LGG synthetic augmentation (+50, 2-도너 crossover) | v4+mild_col 단일모델, 3seed×5fold | Both+50 0.4639(+0.0034, baseline 표준편차 절반) | 미제출 | GBMLGG/LGG 트레이드오프 확인, LB 검증 전 보류 |
+| 2026-09-14 | (혜성) 접근23 이상탐지 스캔 (기존 28개 실험 재분석, 학습 없음) | result.json/oof_proba 재사용 | - | - | CV→LB 전이 정황 패턴, burden=0 단절점, KIRC/KIPAN 비대칭 발견. 우선순위 5축 정리 |
+| 2026-09-14 | (혜성) 접근23 v17~v25: light aug·burden정규화·pathway·BLOSUM분포·consequence구성·gene-rate Gini | v4s 기반 각 피처 단독 추가 | 전부 baseline 대비 하락 또는 유의미한 개선 없음 | - | 6개 전부 NO-GO |
+| 2026-09-15~16 | (혜성) 접근24: NB 앙상블 보강 8종 (position×spectrum·burden가중·pairwise referee 2종·asymmetric routing·397+ deep dive·position-bucket NB·domain-hit NB) | 접근16(v19) 골격 + 각 보강 얹음 | standalone 0.14~0.22대, 결합 delta 대부분 음수(seed 재현성도 실패) | - | 8개 전부 NO-GO. `6. experiments/2026-09-15_khs_approach24_nb_referee_routing` |
+| 2026-09-16 | (혜성) 접근25: v19 class_scale 오류 메커니즘 진단 (Stage0 confusion boundary → Stage1 attribution → OV-SARC counterfactual) | 새 모델 없음, v19 OOF raw/scaled 비교 | - | - | PRAD↔THYM·STES↔LUSC·OV-SARC pairwise·3-way 전부 NO-GO. SARC 배율이 raw 3~5위까지 끌어올리는 전역 증폭 장치이며 주대상 BRCA(64%)임을 규명(지식 자산) |
+| 2026-09-16 | (혜성) 접근26: raw-data 신규 정보축 6종 (EG/max_tok scalar·gene-NB·PMI/SVD 임베딩·domain→XGB 병합·gene×class-boundary→gene×multi-event) | v4s 기반 각 축 단독/결합 테스트 | EG/maxtok −0.002~−0.010, geneNB standalone 0.18~0.27, PMI임베딩 −0.0038, domain병합 앙상블에서 −0.0012, multi-event indicator 4종 전부 하락 | - | 6개 전부 NO-GO. 접근16 이후 독립 정보축 못 찾음. `6. experiments/2026-09-16_khs_approach26_rawdata_axis` |
 | 2026-09-14 | A 계층 학습 24클래스 (정직 CV) | v4·v4p 신장/뇌 병합 학습 → 26 확장 | 0.4965 (+0.0024), 24클래스 동급 | - | 가설 기각, 미채택 |
 | 2026-09-14 | B 근사 쌍둥이·결측 허용 매칭 | 결측 무시 재매칭, 해밍≤2 | 회수 0행 | - | 여백 없음 |
 | 2026-09-14 | C test 내 동일 행 쌍 규칙 | 변이≥3 동일 쌍이 SARC/PRAD면 신장·뇌 쌍 배정 | (train 근거: 동일 그룹 100% 신장·뇌) | 후보 | 8행 변경, +4행 기대. _testpair.csv |

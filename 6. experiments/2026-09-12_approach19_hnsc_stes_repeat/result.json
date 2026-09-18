@@ -1,0 +1,57 @@
+{
+  "description": "HNSC/STES C=.1 threshold=.7 fixed repeat SGKF; test 미사용",
+  "rows": [
+    {
+      "split_seed": 13,
+      "base": {
+        "macro_f1": 0.49477947192644073,
+        "accuracy": 0.47395581357845507
+      },
+      "router": {
+        "macro_f1": 0.4953620372577727,
+        "accuracy": 0.4742783422028705
+      },
+      "delta_macro_f1": 0.0005825653313319967,
+      "changed": 11,
+      "helped": 4,
+      "hurt": 2,
+      "seconds": 502.8
+    },
+    {
+      "split_seed": 77,
+      "base": {
+        "macro_f1": 0.5028058186179957,
+        "accuracy": 0.48072891469117884
+      },
+      "router": {
+        "macro_f1": 0.5030421158024734,
+        "accuracy": 0.48089017900338654
+      },
+      "delta_macro_f1": 0.0002362971844777073,
+      "changed": 9,
+      "helped": 3,
+      "hurt": 2,
+      "seconds": 476.7
+    },
+    {
+      "split_seed": 202,
+      "base": {
+        "macro_f1": 0.5001927698158961,
+        "accuracy": 0.4783099500080632
+      },
+      "router": {
+        "macro_f1": 0.5007187658041687,
+        "accuracy": 0.4784712143202709
+      },
+      "delta_macro_f1": 0.0005259959882726317,
+      "changed": 11,
+      "helped": 4,
+      "hurt": 3,
+      "seconds": 470.6
+    }
+  ],
+  "mean_delta": 0.00044828616802744525,
+  "std_delta": 0.00015166744212998895,
+  "positive_seeds": 3,
+  "decision": "반복 분할 평균 개선이 표준편차보다 작거나 음수 seed가 있으면 제출 후보 탈락"
+}

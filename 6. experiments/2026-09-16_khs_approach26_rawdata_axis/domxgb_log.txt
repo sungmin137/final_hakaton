@@ -1,0 +1,34 @@
+seed=42 fold sizes: [1241, 1240, 1241, 1239, 1240]
+fold0: n_dom_cols=65 BASE_f1=0.4608 DOM_f1=0.4748 (286s)
+fold1: n_dom_cols=65 BASE_f1=0.4957 DOM_f1=0.4991 (578s)
+fold2: n_dom_cols=65 BASE_f1=0.4789 DOM_f1=0.4867 (862s)
+fold3: n_dom_cols=65 BASE_f1=0.4917 DOM_f1=0.4926 (1142s)
+fold4: n_dom_cols=65 BASE_f1=0.5228 DOM_f1=0.5111 (1420s)
+
+Overall BASE (v4s) macro F1 = 0.4888
+Overall v4s+domain-hit macro F1 = 0.4916
+Delta = +0.0028
+avg dom cols per fold = 65.0
+  burden 0_10: n=2488 BASE=0.2416 DOM=0.2413 delta=-0.0003
+  burden 11_30: n=2333 BASE=0.4028 DOM=0.4154 delta=+0.0127
+  burden 31_100: n= 993 BASE=0.4511 DOM=0.4570 delta=+0.0059
+  burden 101_plus: n= 387 BASE=0.3955 DOM=0.3863 delta=-0.0093
+
+worst 5 (biggest negative delta):
+class  base_f1   dom_f1     delta
+ LUSC 0.571429 0.543909 -0.027519
+   OV 0.389610 0.367942 -0.021669
+ TGCT 0.644860 0.626168 -0.018692
+ PCPG 0.327869 0.310078 -0.017791
+KIPAN 0.484794 0.469738 -0.015056
+
+best 5 (biggest positive delta):
+class  base_f1   dom_f1    delta
+ KIRC 0.253165 0.270492 0.017327
+ UCEC 0.666667 0.687831 0.021164
+  LGG 0.427553 0.451163 0.023609
+ BLCA 0.474576 0.520231 0.045655
+ DLBC 0.571429 0.644068 0.072639
+
+total elapsed: 1420s
+saved to /private/tmp/claude-501/-Users-admin-Desktop---------/9403559b-a83c-4ed4-b2a6-937dec6f03d0/scratchpad
