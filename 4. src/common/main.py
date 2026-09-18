@@ -152,7 +152,7 @@ class FeatureMaker:
             if self.kind.startswith("v4p") or self.kind in ("v4sp", "v4spn", "v4spng"):                     # 접근 14: cw_ 점수 고도화 (유형 분리·위치 구간·군집 상대)
                 self._cwp = CWPlusFeatures(extra={"v4p": None, "v4p2": "bucket_hi", "v4sp": None, "v4spn": None, "v4spng": None, "v4png": None}.get(self.kind, self.kind.split(":")[-1])).fit(df)
                 self.columns += list(self._cwp.transform(df).columns)
-            if self.kind in ("v4s", "v4sp", "spec", "v4sn", "v4sm", "v4spn", "v4sna", "v4snb", "v4sn10", "v4snx", "v4snng", "v4sng", "v4spng", "v4png"): # 치환 스펙트럼 (train 전용, fit 통계 없음)
+            if self.kind in ("v4s", "v4sp", "spec", "v4sn", "v4sm", "v4spn", "v4sna", "v4snb", "v4sn10", "v4snx", "v4snng", "v4sng", "v4spng"): # 치환 스펙트럼 (train 전용, fit 통계 없음)
                 self.columns += list(spectrum_features(df, self.genes).columns)
             if self.kind == "v4s2":                       # 스펙트럼 v2 (+ 종결·프레임시프트 잔기)
                 self.columns += list(spectrum_features_v2(df, self.genes).columns)
@@ -163,7 +163,7 @@ class FeatureMaker:
             if self.kind == "v4snx":                      # NB 점수표 두 벌 (α0.5 + α2)
                 self._snb = SpectrumNBFeatures(alpha=0.5).fit(df); self._snb2 = SpectrumNBFeatures(alpha=2.0, prefix="snb2").fit(df)
                 self.columns += list(self._snb.transform(df).columns) + list(self._snb2.transform(df).columns)
-            if self.kind in ("v4sn", "v4spn", "v4sna", "v4snb", "v4sn10", "v4snng", "v4sng", "v4spng", "v4png"):   # + NB 점수표 26열 (내부 OOF); 변형: α0.1 / α2 / 내부 10fold
+            if self.kind in ("v4sn", "v4spn", "v4sna", "v4snb", "v4sn10", "v4snng"):   # + NB 점수표 26열 (내부 OOF); 변형: α0.1 / α2 / 내부 10fold
                 kw = {"v4sna": dict(alpha=0.1), "v4snb": dict(alpha=2.0), "v4sn10": dict(n_inner=10)}.get(self.kind, {})
                 self._snb = SpectrumNBFeatures(**kw).fit(df); self.columns += list(self._snb.transform(df).columns)
             if self.kind in ("v4snng", "v4sng", "v4spng", "v4png"):   # 원본 g_ 열 제거 → 점수·스펙트럼·NB·카운트만 (다른 피처 공간의 파트너)
@@ -206,11 +206,11 @@ class FeatureMaker:
             X = pd.concat([X, self._kf.transform(df)], axis=1)
         if self.kind.startswith("v4p") or self.kind in ("v4sp", "v4spn", "v4spng"):
             X = pd.concat([X, self._cwp.transform(df)], axis=1)
-        if self.kind in ("v4s", "v4sp", "spec", "v4sn", "v4sm", "v4spn", "v4sna", "v4snb", "v4sn10", "v4snx", "v4snng", "v4sng", "v4spng", "v4png"):
+        if self.kind in ("v4s", "v4sp", "spec", "v4sn", "v4sm", "v4spn", "v4sna", "v4snb", "v4sn10", "v4snx", "v4snng", "v4sng", "v4spng"):
             X = pd.concat([X, spectrum_features(df, self.genes)], axis=1)
         if self.kind == "v4snx":
             X = pd.concat([X, self._snb.transform(df), self._snb2.transform(df)], axis=1)
-        if self.kind in ("v4sn", "v4sm", "v4spn", "v4sna", "v4snb", "v4sn10", "v4snng", "v4sng", "v4spng", "v4png"):
+        if self.kind in ("v4sn", "v4sm", "v4spn", "v4sna", "v4snb", "v4sn10", "v4snng"):
             X = pd.concat([X, self._snb.transform(df)], axis=1)
         if self.kind == "v4s2":
             X = pd.concat([X, spectrum_features_v2(df, self.genes)], axis=1)
