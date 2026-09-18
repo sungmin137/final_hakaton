@@ -136,23 +136,23 @@ class FeatureMaker:
             self._enc = OrdinalEncoder(handle_unknown="use_encoded_value", unknown_value=-1)
             self._enc.fit(df[self.genes])
             self.columns = list(self.genes)
-        elif self.kind in ("v1", "v2", "v3", "v4", "v5", "v6", "a2", "a4", "a7", "v4p", "v4p2", "v4p:pos", "v4p:prop", "v4p:pair", "v4p:band", "v4s", "v4sp", "spec", "v4sn", "v4s2", "v4s3", "v4sm", "v4st", "v4spn", "v4sna", "v4snb", "v4sn10", "v4snx", "v4snng"):
+        elif self.kind in ("v1", "v2", "v3", "v4", "v5", "v6", "a2", "a4", "a7", "v4p", "v4p2", "v4p:pos", "v4p:prop", "v4p:pair", "v4p:band", "v4s", "v4sp", "spec", "v4sn", "v4s2", "v4s3", "v4sm", "v4st", "v4spn", "v4sna", "v4snb", "v4sn10", "v4snx", "v4snng", "v4sng", "v4spng", "v4png"):
             X = build_features(df, self.genes)
             # 전부 WT인 유전자 컬럼 제거 (train 부분 기준)
             self.columns = [c for c in X.columns if not (c.startswith("g_") and (self.kind == "spec" or X[c].sum() == 0))]
-            if self.kind in ("v2", "v3", "v4", "v5", "v6", "v4p", "v4p2", "v4p:pos", "v4p:prop", "v4p:pair", "v4p:band", "v4s", "v4sp", "v4sn", "v4sm", "v4s2", "v4s3", "v4st", "v4spn", "v4sna", "v4snb", "v4sn10", "v4snx", "v4snng"):  # 접근 1: 클래스별 개수 가중치 점수 피처
+            if self.kind in ("v2", "v3", "v4", "v5", "v6", "v4p", "v4p2", "v4p:pos", "v4p:prop", "v4p:pair", "v4p:band", "v4s", "v4sp", "v4sn", "v4sm", "v4s2", "v4s3", "v4st", "v4spn", "v4sna", "v4snb", "v4sn10", "v4snx", "v4snng", "v4sng", "v4spng", "v4png"):  # 접근 1: 클래스별 개수 가중치 점수 피처
                 self._cw = CountWeightFeatures().fit(df)
                 self.columns += list(self._cw.transform(df).columns)
-            if self.kind in ("v3", "v4", "v5", "v6", "a2", "v4p", "v4p2", "v4p:pos", "v4p:prop", "v4p:pair", "v4p:band", "v4s", "v4sp", "v4sn", "v4sm", "v4s2", "v4s3", "v4st", "v4spn", "v4sna", "v4snb", "v4sn10", "v4snx", "v4snng"):  # 인사이트 피처: hotspot 위치, LoF 유전자, 조합, 특수 그룹
+            if self.kind in ("v3", "v4", "v5", "v6", "a2", "v4p", "v4p2", "v4p:pos", "v4p:prop", "v4p:pair", "v4p:band", "v4s", "v4sp", "v4sn", "v4sm", "v4s2", "v4s3", "v4st", "v4spn", "v4sna", "v4snb", "v4sn10", "v4snx", "v4snng", "v4sng", "v4spng", "v4png"):  # 인사이트 피처: hotspot 위치, LoF 유전자, 조합, 특수 그룹
                 self._ins = InsightFeatures().fit(df)
                 self.columns += list(self._ins.transform(df).columns)
-            if self.kind in ("v4", "v5", "v6", "a2", "v4p", "v4p2", "v4p:pos", "v4p:prop", "v4p:pair", "v4p:band", "v4s", "v4sp", "v4sn", "v4sm", "v4s2", "v4s3", "v4st", "v4spn", "v4sna", "v4snb", "v4sn10", "v4snx", "v4snng"):  # 지식 피처: BLOSUM62·아미노산 특성 변화 (3. docs/10 해석)
+            if self.kind in ("v4", "v5", "v6", "a2", "v4p", "v4p2", "v4p:pos", "v4p:prop", "v4p:pair", "v4p:band", "v4s", "v4sp", "v4sn", "v4sm", "v4s2", "v4s3", "v4st", "v4spn", "v4sna", "v4snb", "v4sn10", "v4snx", "v4snng", "v4sng", "v4spng", "v4png"):  # 지식 피처: BLOSUM62·아미노산 특성 변화 (3. docs/10 해석)
                 self._kf = KnowledgeFeatures().fit(df)
                 self.columns += list(self._kf.transform(df).columns)
-            if self.kind.startswith("v4p") or self.kind in ("v4sp", "v4spn"):                     # 접근 14: cw_ 점수 고도화 (유형 분리·위치 구간·군집 상대)
-                self._cwp = CWPlusFeatures(extra={"v4p": None, "v4p2": "bucket_hi", "v4sp": None, "v4spn": None}.get(self.kind, self.kind.split(":")[-1])).fit(df)
+            if self.kind.startswith("v4p") or self.kind in ("v4sp", "v4spn", "v4spng"):                     # 접근 14: cw_ 점수 고도화 (유형 분리·위치 구간·군집 상대)
+                self._cwp = CWPlusFeatures(extra={"v4p": None, "v4p2": "bucket_hi", "v4sp": None, "v4spn": None, "v4spng": None, "v4png": None}.get(self.kind, self.kind.split(":")[-1])).fit(df)
                 self.columns += list(self._cwp.transform(df).columns)
-            if self.kind in ("v4s", "v4sp", "spec", "v4sn", "v4sm", "v4spn", "v4sna", "v4snb", "v4sn10", "v4snx", "v4snng"): # 치환 스펙트럼 (train 전용, fit 통계 없음)
+            if self.kind in ("v4s", "v4sp", "spec", "v4sn", "v4sm", "v4spn", "v4sna", "v4snb", "v4sn10", "v4snx", "v4snng", "v4sng", "v4spng", "v4png"): # 치환 스펙트럼 (train 전용, fit 통계 없음)
                 self.columns += list(spectrum_features(df, self.genes).columns)
             if self.kind == "v4s2":                       # 스펙트럼 v2 (+ 종결·프레임시프트 잔기)
                 self.columns += list(spectrum_features_v2(df, self.genes).columns)
@@ -163,10 +163,10 @@ class FeatureMaker:
             if self.kind == "v4snx":                      # NB 점수표 두 벌 (α0.5 + α2)
                 self._snb = SpectrumNBFeatures(alpha=0.5).fit(df); self._snb2 = SpectrumNBFeatures(alpha=2.0, prefix="snb2").fit(df)
                 self.columns += list(self._snb.transform(df).columns) + list(self._snb2.transform(df).columns)
-            if self.kind in ("v4sn", "v4spn", "v4sna", "v4snb", "v4sn10", "v4snng"):   # + NB 점수표 26열 (내부 OOF); 변형: α0.1 / α2 / 내부 10fold
+            if self.kind in ("v4sn", "v4spn", "v4sna", "v4snb", "v4sn10", "v4snng", "v4sng", "v4spng", "v4png"):   # + NB 점수표 26열 (내부 OOF); 변형: α0.1 / α2 / 내부 10fold
                 kw = {"v4sna": dict(alpha=0.1), "v4snb": dict(alpha=2.0), "v4sn10": dict(n_inner=10)}.get(self.kind, {})
                 self._snb = SpectrumNBFeatures(**kw).fit(df); self.columns += list(self._snb.transform(df).columns)
-            if self.kind == "v4snng":                     # 원본 g_ 열 제거 → 점수·스펙트럼·NB·카운트만 (다른 피처 공간의 파트너)
+            if self.kind in ("v4snng", "v4sng", "v4spng", "v4png"):   # 원본 g_ 열 제거 → 점수·스펙트럼·NB·카운트만 (다른 피처 공간의 파트너)
                 self.columns = [c for c in self.columns if not c.startswith("g_")]
             if self.kind == "v4sm":                       # + NB 점수표, 토큰 수 정규화(유계) — 27차 교훈 반영
                 self._snb = SpectrumNBFeatures(normalized=True).fit(df); self.columns += list(self._snb.transform(df).columns)
@@ -198,19 +198,19 @@ class FeatureMaker:
             X = self._fm5.transform(df)
             return X.reindex(columns=self.columns, fill_value=0)
         X = build_features(df, self.genes)
-        if self.kind in ("v2", "v3", "v4", "v5", "v6", "v4p", "v4p2", "v4p:pos", "v4p:prop", "v4p:pair", "v4p:band", "v4s", "v4sp", "v4sn", "v4sm", "v4s2", "v4s3", "v4st", "v4spn", "v4sna", "v4snb", "v4sn10", "v4snx", "v4snng"):
+        if self.kind in ("v2", "v3", "v4", "v5", "v6", "v4p", "v4p2", "v4p:pos", "v4p:prop", "v4p:pair", "v4p:band", "v4s", "v4sp", "v4sn", "v4sm", "v4s2", "v4s3", "v4st", "v4spn", "v4sna", "v4snb", "v4sn10", "v4snx", "v4snng", "v4sng", "v4spng", "v4png"):
             X = pd.concat([X, self._cw.transform(df)], axis=1)
-        if self.kind in ("v3", "v4", "v5", "v6", "a2", "v4p", "v4p2", "v4p:pos", "v4p:prop", "v4p:pair", "v4p:band", "v4s", "v4sp", "v4sn", "v4sm", "v4s2", "v4s3", "v4st", "v4spn", "v4sna", "v4snb", "v4sn10", "v4snx", "v4snng"):
+        if self.kind in ("v3", "v4", "v5", "v6", "a2", "v4p", "v4p2", "v4p:pos", "v4p:prop", "v4p:pair", "v4p:band", "v4s", "v4sp", "v4sn", "v4sm", "v4s2", "v4s3", "v4st", "v4spn", "v4sna", "v4snb", "v4sn10", "v4snx", "v4snng", "v4sng", "v4spng", "v4png"):
             X = pd.concat([X, self._ins.transform(df)], axis=1)
-        if self.kind in ("v4", "v5", "v6", "a2", "v4p", "v4p2", "v4p:pos", "v4p:prop", "v4p:pair", "v4p:band", "v4s", "v4sp", "v4sn", "v4sm", "v4s2", "v4s3", "v4st", "v4spn", "v4sna", "v4snb", "v4sn10", "v4snx", "v4snng"):
+        if self.kind in ("v4", "v5", "v6", "a2", "v4p", "v4p2", "v4p:pos", "v4p:prop", "v4p:pair", "v4p:band", "v4s", "v4sp", "v4sn", "v4sm", "v4s2", "v4s3", "v4st", "v4spn", "v4sna", "v4snb", "v4sn10", "v4snx", "v4snng", "v4sng", "v4spng", "v4png"):
             X = pd.concat([X, self._kf.transform(df)], axis=1)
-        if self.kind.startswith("v4p") or self.kind in ("v4sp", "v4spn"):
+        if self.kind.startswith("v4p") or self.kind in ("v4sp", "v4spn", "v4spng"):
             X = pd.concat([X, self._cwp.transform(df)], axis=1)
-        if self.kind in ("v4s", "v4sp", "spec", "v4sn", "v4sm", "v4spn", "v4sna", "v4snb", "v4sn10", "v4snx", "v4snng"):
+        if self.kind in ("v4s", "v4sp", "spec", "v4sn", "v4sm", "v4spn", "v4sna", "v4snb", "v4sn10", "v4snx", "v4snng", "v4sng", "v4spng", "v4png"):
             X = pd.concat([X, spectrum_features(df, self.genes)], axis=1)
         if self.kind == "v4snx":
             X = pd.concat([X, self._snb.transform(df), self._snb2.transform(df)], axis=1)
-        if self.kind in ("v4sn", "v4sm", "v4spn", "v4sna", "v4snb", "v4sn10", "v4snng"):
+        if self.kind in ("v4sn", "v4sm", "v4spn", "v4sna", "v4snb", "v4sn10", "v4snng", "v4sng", "v4spng", "v4png"):
             X = pd.concat([X, self._snb.transform(df)], axis=1)
         if self.kind == "v4s2":
             X = pd.concat([X, spectrum_features_v2(df, self.genes)], axis=1)
@@ -303,7 +303,7 @@ def fit_full_and_submit(train: pd.DataFrame, kind: str, params: dict, tag: str,
 
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--features", default="v1", choices=["official", "v1", "v2", "v3", "v4", "v5", "v6", "a2", "a4", "a7", "a8", "v4p", "v4p2", "v4p:pos", "v4p:prop", "v4p:pair", "v4p:band", "v4s", "v4sp", "spec", "v4sn", "v4s2", "v4s3", "v4sm", "v4st", "v4spn", "v4sna", "v4snb", "v4sn10", "v4snx", "v4snng"])
+    ap.add_argument("--features", default="v1", choices=["official", "v1", "v2", "v3", "v4", "v5", "v6", "a2", "a4", "a7", "a8", "v4p", "v4p2", "v4p:pos", "v4p:prop", "v4p:pair", "v4p:band", "v4s", "v4sp", "spec", "v4sn", "v4s2", "v4s3", "v4sm", "v4st", "v4spn", "v4sna", "v4snb", "v4sn10", "v4snx", "v4snng", "v4sng", "v4spng", "v4png"])
     ap.add_argument("--cv", action="store_true", help="Stratified 5-Fold 평가")
     ap.add_argument("--submit", action="store_true", help="전체 학습 후 test 추론 및 제출 파일 생성")
     ap.add_argument("--twin-rule", action="store_true", help="추론 시 쌍둥이 규칙 적용 (3. docs/07 참고, 기본 꺼짐)")
