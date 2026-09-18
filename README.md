@@ -24,6 +24,6 @@ python3 "4. src/submissions_source/approach2_v2_20260909_1653.py"               
 ```
 
 ## 성적·제출 기록
-**최종 보고서(데이터·탐색 과정·접근 흐름·최종 모델·코드 지도·34회 이력): `2. team/FINAL_REPORT_2026-09-18.md`** · 쉬운 버전(중학생 눈높이) `2. team/FINAL_REPORT_EZ.md` · 중간 정리 `2. team/PROGRESS_2026-09-14.md` · 현재 상태 한 장 `2. team/STATUS.md` · 제출 색인과 리더보드 점수 `5. submissions/README.md` · 실험 기록 `3. docs/experiments_log.md` · 접근법별 상세 `2. team/approaches/`.
+**최종 보고서(데이터·탐색 과정·접근 흐름·최종 모델·코드 지도·34회 이력): `2. team/FINAL_REPORT_2026-09-18.md`** · 쉬운 버전(중학생 눈높이) `2. team/FINAL_REPORT_EZ.md` · 최종 파이프라인 노트북 `4. src/final_v21_pipeline.ipynb` · 중간 정리 `2. team/PROGRESS_2026-09-14.md` · 현재 상태 한 장 `2. team/STATUS.md` · 제출 색인과 리더보드 점수 `5. submissions/README.md` · 실험 기록 `3. docs/experiments_log.md` · 접근법별 상세 `2. team/approaches/`.
 
 팀 최고 LB **0.49598** (32차 v21, 2026-09-17): v4s .1 / v4sn(치환 스펙트럼 + NB 점수표 피처) .45 / v2 .2 / v4sp .15 / NB 파트너 .1 로그 결합 + 3차 복원 배율 + 쌍둥이 규칙. 전부 train 근거.

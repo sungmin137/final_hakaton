@@ -150,6 +150,9 @@
 6. experiments/               OOF 확률(2026-09-11_v4_xgb_mild_col_grp=9차, 2026-09-13_v4p=v2, 2026-09-14_v4s, v4sp, 2026-09-16_v4sn …), 배율 json, cv_runs.log
 ```
 
+### 노트북
+`4. src/final_v21_pipeline.ipynb` — 데이터 확인 → 피처(핵심 함수 소스 표시) → 모델·결합·배율·규칙 → A. 저장 확률로 1분 재현(md5 8eeec38f 동일 확인) → B. 전체 학습 경로 → 저장 OOF로 파트별·결합 정직 CV → 규정 체크. 루트에서 실행.
+
 ### 최종 파일 재현 경로
 1. 9/13 `approach14_v3_20260913_2132.py` → v2 모델 test 확률 저장(`6. experiments/submissions/approach14_v3_20260913_2132/test_proba_v2.npy`, p2).
 2. 9/14 `approach14_v11_…`(v4s), 9/14 `approach14_v12_…`(v4sp) → 각 test 확률 저장(part0, part3).
