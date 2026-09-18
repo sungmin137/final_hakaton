@@ -47,3 +47,5 @@
 | approach14_v21_20260917_0900.py | approach14.md | 5. submissions/approach14_v21_20260917_0900.csv (v4sn .45 / NB .1) |
 | approach14_v22_20260917_1030.py | approach14.md | 5. submissions/approach14_v22_20260917_1030.csv (NB 파트너 0, v4sn .5) |
 | approach14_v23_20260917_1120.py | approach14.md | 5. submissions/approach14_v23_20260917_1120.csv (v21 + v4sn10) |
+| approach14_v24_20260918_1000.py | approach14.md | 5. submissions/approach14_v24_20260918_1000.csv (v21 + v4snb) |
+| approach14_v25/v26_20260918_1130.py | approach14.md | v4sn .475/.425 비중 탐색 |

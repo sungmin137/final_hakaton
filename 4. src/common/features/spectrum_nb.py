@@ -22,8 +22,8 @@ def spectrum_counts(G):
     return X
 
 class SpectrumNBFeatures:
-    def __init__(self, alpha=0.5, n_inner=5, seed=42, normalized=False):
-        self.alpha, self.n_inner, self.seed, self.normalized = alpha, n_inner, seed, normalized   # normalized: 토큰 수로 나눈 평균 로그우도비(유계) — 27차 교훈
+    def __init__(self, alpha=0.5, n_inner=5, seed=42, normalized=False, prefix="snb"):
+        self.alpha, self.n_inner, self.seed, self.normalized, self.prefix = alpha, n_inner, seed, normalized, prefix   # normalized: 토큰 수로 나눈 평균 로그우도비(유계) — 27차 교훈
     def _score(self, m, X):
         if not self.normalized: return m.predict_proba(X)
         W = m.feature_log_prob_ - m.feature_log_prob_.mean(0, keepdims=True)       # 클래스별 로그우도 - 클래스 평균 (비율 형태)
@@ -31,7 +31,7 @@ class SpectrumNBFeatures:
         full = np.zeros((len(X), len(self.classes))); full[:, m.classes_] = S; return np.round(full, 4)
     def _cols(self, P):
         V = P if self.normalized else np.log(P + 1e-9)
-        out = pd.DataFrame(np.round(V, 4), columns=[f"snb_{c}" for c in self.classes]); out["snb_max"] = out.max(1); s = np.sort(out.to_numpy()[:, :len(self.classes)], 1); out["snb_margin"] = s[:, -1] - s[:, -2]; return out
+        P_ = self.prefix; out = pd.DataFrame(np.round(V, 4), columns=[f"{P_}_{c}" for c in self.classes]); out[f"{P_}_max"] = out.max(1); s = np.sort(out.to_numpy()[:, :len(self.classes)], 1); out[f"{P_}_margin"] = s[:, -1] - s[:, -2]; return out
     def fit(self, train):
         from main import twin_groups
         self.genes = [c for c in train.columns if c not in ("ID", "SUBCLASS")]; X = spectrum_counts(train[self.genes].to_numpy())
